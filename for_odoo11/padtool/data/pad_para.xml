@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!-- 
+	<record id="boolean1" model="ir.model.fields">
+            <field name="model">pad</field>
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="name">x_boolean1</field>
+            <field name="field_description">it is a description</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    
+    <record id="char1" model="ir.model.fields">
+            <field name="model">pad</field>
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="name">x_char1</field>
+            <field name="field_description">it is a description</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">char</field>
+            <field name="required">true</field>
+            <field name="size">10</field>
+            <field name="default" eval="test" />
+    </record>
+    
+    <record id="float1" model="ir.model.fields">
+            <field name="model">pad</field>
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="name">x_float1</field>
+            <field name="field_description">it is a description</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.15" />
+    </record>
+    
+    <record id="intrger1" model="ir.model.fields">
+            <field name="model">pad</field>
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="name">x_integer1</field>
+            <field name="field_description">it is a description</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="15" />
+    </record>
+     
+    <record id="selection1" model="ir.model.fields">
+            <field name="model">pad</field>
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="name">x_selection1</field>
+            <field name="field_description">it is a description</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">selection</field>
+            <field name="required">true</field>
+            <field name="selection">[('blue','Blue'),('yellow','Yellow')]</field>
+            <field name="default" eval="yellow" />
+    </record>
+ -->  
+ 
+    <record model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..BMPeriod</field>
+            <field name="name">BMMode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    
+    <record model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..BMPeriod</field>
+            <field name="name">BMPeriodX0</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..BMPeriod</field>
+            <field name="name">BMPeriodY0</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..BMPeriod</field>
+            <field name="name">BMPeriodX1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..BMPeriod</field>
+            <field name="name">BMPeriodY1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="min">0</field>
+            <field name="max">1000</field>
+            <field name="default" eval="0.0" />
+    </record>
+    
+    <record model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..GolbalTolerance</field>
+            <field name="name">GolbalToleranceRegular</field>
+            <field name="field_description">Regular</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="min">0</field>
+            <field name="max">1000</field>
+            <field name="default" eval="[10,10]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..GolbalTolerance</field>
+            <field name="name">GolbalToleranceUnregular</field>
+            <field name="field_description">Unregular</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[15,15]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..GolbalTolerance</field>
+            <field name="name">GolbalToleranceRegularDynamic</field>
+            <field name="field_description">RegularDynamic</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0.15,0.16]" />
+    </record>
+
+	<record model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..</field>
+            <field name="name">GlassToGlassMode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">selection</field>
+            <field name="required">true</field>
+            <field name="selection">[(0, 'panel to panel'), (2, 'glass to golden')]</field>
+            <field name="default" eval="2" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="padtool.model_padtool_pad" />
+            
+            <field name="scope">Common..</field>
+            <field name="name">SubmarkSize</field>
+            <field name="field_description">Submark Size</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[500,500]" />
+    </record>
+
+</odoo>

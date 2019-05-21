@@ -1,0 +1,213 @@
+<odoo>
+  <data>
+  	<record id="tour_view_form" model="ir.ui.view">
+            <field name="name">tour.view.form.simplified</field>
+            <field name="model">web_demo.tour</field>
+            <field name="arch" type="xml">
+                <form string="Tour">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" class="oe_inline"
+                                    string="Tour Name" placeholder="e.g. Project Create"/>
+                            </group>
+                            <group>
+                                <label for="module_id" string="Choose a Module"/>
+                                <div name="alias_def">
+                                    <field name="module_id" class="oe_inline"/>
+                                </div>
+                            </group>
+                        </group>
+                        <group string="Tour steps">
+                        	<field name="steps"  nolabel="1" colspan="2">
+                        		<tree string="Steps">
+                    				<field name="sequence" widget="handle"/>
+                    				<field name="content"/>
+                				</tree>
+                        	</field>
+                        </group>
+                        <group>
+                        	<p class="text-muted" colspan="2">
+                                You can also add a description to help your users understand the meaning and purpose of the tour.
+                            </p>
+                            <field name="summary" placeholder="Add a description..." nolabel="1" colspan="2"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+  	<record id="tour_view_form_simplified" model="ir.ui.view">
+            <field name="name">tour.view.form.simplified</field>
+            <field name="model">web_demo.tour</field>
+            <field name="arch" type="xml">
+                <form string="Tour">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" class="oe_inline"
+                                    string="Tour Name" placeholder="e.g. Project Create"/>
+                                <label for="module_id" string="Choose a Module"/>
+                                <div name="alias_def">
+                                    <field name="module_id" class="oe_inline"/>
+                                </div>
+                            </group>
+                        </group>
+                        <footer>
+                            <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Create &amp; Edit" name="edit_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+  	<record id="open_create_tour" model="ir.actions.act_window">
+            <field name="name">Create a Tour</field>
+            <field name="res_model">web_demo.tour</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="tour_view_form_simplified"/>
+            <field name="target">new</field>
+   	</record>
+   	
+   	<record id="act_tour_2_step_all" model="ir.actions.act_window">
+            <field name="name">Steps</field>
+            <field name="res_model">web_demo.step</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{
+                'search_default_tour_id': [active_id],
+                'default_tour_id': active_id,
+            }</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Here, you can create new tasks
+                </p>
+                <p>
+                    You can now manage your tasks in order to get things done efficiently. Track progress, discuss, attach documents, etc.
+                </p>
+            </field>
+        </record>
+   	
+  	<record id="tour_view_kanban" model="ir.ui.view">
+            <field name="name">web_demo.tour.kanban</field>
+            <field name="model">web_demo.tour</field>
+            <field name="arch" type="xml">
+                <kanban on_create="web_demo.open_create_tour">
+                    <field name="name"/>
+                    <field name="summary"/>
+                    <field name="module_id"/>
+                    <field name="module_state"/>
+                    <field name="module_shortdesc"/>
+                    <field name="module_icon"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_module_vignette oe_kanban_global_click">
+								<t t-set="installed" t-value="record.module_state.raw_value == 'installed'"/>
+                        		<img t-attf-src="#{record.module_icon.value}" class="oe_module_icon"/>
+                        		<div class="oe_module_desc">
+                          			<h4 class="o_kanban_record_title"><field name="name"/></h4>
+                          			<p class="oe_module_name">
+                             			<t t-if="record.summary.raw_value"><field name="summary"/><br/></t>
+                          			</p>
+                          			<div class="oe_module_action">
+                          				<code><small><field name="module_shortdesc"/></small></code>
+                            			<button t-if="installed" class="btn btn-primary pull-right btn-sm" data-type="play">Play</button>
+                            			<span t-else="" class="pull-right text-muted mr8">Module is not installed</span>
+                          			</div>
+                        		</div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        
+	<record id="view_tour_filter" model="ir.ui.view">
+            <field name="name">tour.select</field>
+            <field name="model">web_demo.tour</field>
+            <field name="arch" type="xml">
+                <search string="Search Project">
+                    <field name="name" string="Tour Name"/>
+                    <group expand="0" string="Group By">
+                        <filter string="App" name="App" context="{'group_by':'module_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>    
+   
+   	<!-- steps -->    
+
+        
+   	<record id="step_form" model="ir.ui.view">
+            <field name="name">web_demo.step.form</field>
+            <field name="model">web_demo.step</field>
+            <field name="arch" type="xml">
+                <form string="Tour step">
+                    <sheet>
+                        <group>
+                            <group>
+                            	<field name="sequence"/>
+                                <field name="trigger"/>
+                                <field name="content"/>
+                            </group>
+                            <group>
+                                <field name="position" />
+                                <field name="width"/>
+                                <field name="run"/>
+                                <field name="extra_trigger"/>
+                                <field name="audio"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>     
+        
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="web_demo.action_server">
+      <field name="name">web_demo server</field>
+      <field name="model_id" ref="model_web_demo_web_demo"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    <menuitem name="Demo" id="web_demo.menu_root"/>
+
+    <!-- menu categories -->
+    <menuitem name="Apps" id="web_demo.menu_apps" parent="web_demo.menu_root"/>
+    
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="web_demo.action_window_tours">
+      <field name="name">All Tours</field>
+      <field name="res_model">web_demo.tour</field>
+      <field name="view_mode">kanban,form</field>
+    </record>
+    <menuitem name="All" id="web_demo.menu_all" parent="web_demo.menu_apps" action="web_demo.action_window_tours" />
+    
+    <!-- 
+    <record model="ir.actions.act_window" id="web_demo.action_window_padtool">
+      <field name="name">padtool Tours</field>
+      <field name="res_model">web_demo.tour</field>
+      <field name="domain" eval="[('module_id', '=', ref('base.module_padtool'))]"/>
+      <field name="view_mode">kanban</field>
+    </record>
+    <menuitem name="padtool" id="web_demo.menu_padtool" parent="web_demo.menu_modules" action="web_demo.action_window_padtool" />
+     
+     --> 
+    
+    
+
+  </data>
+</odoo>

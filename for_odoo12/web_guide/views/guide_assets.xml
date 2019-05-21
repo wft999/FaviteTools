@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <template id="assets_backend" name="web_guide assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+<!--                 <link rel="stylesheet" href="/web_guide/static/src/less/guide_dashboard.less"/> -->
+            </xpath>
+        </template>
+        
+        <template id="assets_common" name="tours assets" inherit_id="web.assets_common">
+        	<xpath expr="//script[@src='/web_tour/static/src/js/tour_service.js']" position="after">
+                <script type="text/javascript" src="/web_guide/static/src/js/guide.js"></script>
+            </xpath>
+        </template>
+</odoo>

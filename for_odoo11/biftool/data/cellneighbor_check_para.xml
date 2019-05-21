@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.adjustdistance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="300" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.adjustshift</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.compareshift</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.tpstrict</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.resizeradius</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[45,45]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padindent</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="50,50" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.sizerange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.widthrange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.heightrange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.sizerangepad</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.widthrangepad</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.heightrangepad</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,10000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.usefilter</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.closepixel</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.marcrodefecttol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="20" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.checktype</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.search_pinhole</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.longperiodlocateinterval</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="200" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.polygonregionimagescaling</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="200.0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.pmbrim</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1000" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.pmfiltermode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.pmshiftallowance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="40" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.defaultpadindent</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[15,15,15,15]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.maxpadindent</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[250,250,250,250]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.pmperiodmul</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[2,2]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.macrolimit</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="3" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padenlargerange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="2" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padenhancerate</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="4" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padnearfilterdistance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="200" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padclusernorestriction</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padbackgoundautofixed</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padsearchhalfsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[50,50]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.padrematchpixelno</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="100" />
+    </record>
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.one</field>
+            <field name="name">cellneighbor.check.matchsmall</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    
+    
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmbrimpara</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[20,40,60,30]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmcriticaltol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[50,50]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmtopbottomothertol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[40,40]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmtopbottomlength</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="25000" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmbrimtol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[70,70]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmautochangedefectnumber</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="500" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.pmtftmode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.speedmode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="2" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.tpconnectormode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.overlap</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="500" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.errorimagenum</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.defectdistance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="300" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.maxdefectnumberwithdyanmictol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="500" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.subpixelrate</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0.200000, 0.200000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.needStrictBorder</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0, 0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.panelsearchhalfsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[300, 300]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.indentnumber</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[2, 2, 2, 2]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.defaultindentnumber</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[6, 6, 6, 6]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.bordercondition</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[12,12]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.redilationneed</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.padinitsearchrange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[100,100]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.padnearsearchrange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[12,12]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.macrofalsedefect</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.cpcnfalsedefect</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.standardglassmode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.rotate</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.standardstartpoint</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.p2presize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="4" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.largeblockheight</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.nonperiodbrimsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[5000,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">cellneighbor.check.two</field>
+            <field name="name">cellneighbor.check.panelmirrormode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+ 
+
+</odoo>

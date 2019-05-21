@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+<t t-name="Map">
+	<div class="canvas-map">
+		<canvas id="map" width="800" height="600"  style="border:1px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+		</canvas>
+	</div>
+</t>
+
+<t t-name="Glassmap.Buttons">
+    <div class="btn-group glassmap-mode" role="group">
+		<button class="btn btn-default fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
+        <button class="btn btn-default fa  fa-search-plus" title="Zoom In" data-mode="zoom-in" accesskey="i"/>
+		<button class="btn btn-default fa fa-search-minus" title="Zoom Out" data-mode="zoom-out" accesskey="o"/>
+    </div>
+</t>
+
+<t t-name="Map.info">
+	<li class="o_planner_systray">
+		<a><span class="map-info" align="right"></span></a>
+    </li>
+</t>
+
+<t t-name="Panelmap.Buttons">
+	<div class="btn-group btn-group-md" role="group">
+        <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Objects <span class="caret"/>
+        </button>
+        <ul class="dropdown-menu o_pad_object_list">
+            <li class="selected"><a href="#">frame</a></li>
+            <li><a href="#">mainMark</a></li>
+            <li><a href="#">subMark</a></li>
+            <li><a href="#">uninspectZone</a></li>
+            <li><a href="#">inspectZone</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Save</a></li>
+        </ul>
+    </div>
+    <div class="btn-group btn-group-md" role="group">
+		<button class="btn btn-default fa fa-save o_hidden" title="Save" data-mode="select"/>
+    </div>
+    <div class="btn-group btn-group-md glassmap-mode" role="group">
+		<button class="btn btn-default fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
+        <button class="btn btn-default fa  fa-search-plus" title="Zoom In" data-mode="zoom-in" accesskey="i"/>
+		<button class="btn btn-default fa fa-search-minus" title="Zoom Out" data-mode="zoom-out" accesskey="o"/>
+    </div>
+    
+    
+	<div class="btn-group btn-group-md"  role="group">
+        <button class="btn btn-default fa fa-trash" title="Delete Object" data-mode="zoom_in"/>
+	</div>
+	<div class="btn-group btn-group-md"  role="group">
+		<button class="btn btn-default fa fa-refresh" title="Refresh" data-mode="refresh"/>
+		<button class="btn btn-default fa fa-undo" title="Undo" data-mode="select"/>
+		<button class="btn btn-default fa fa-repeat" title="Redo" data-mode="select"/>
+	</div>
+	
+	<div class="btn-group btn-group-md"  role="group">
+        <button class="btn btn-default fa fa-eye" title="Hawkeye" data-mode="Hawkeye"/>
+	</div>
+	
+	<div class="btn-group btn-group-md checkbox submask-checkbox"  role="group">
+  		<label class="submask-checkbox-label"><input type="checkbox" /> Polygon mode</label>
+	</div>
+</t>
+
+<t t-name="Hawkmap">
+	<div class="panel panel-default panel-hawk">
+  		<div class="panel-heading">
+  			<div class="btn-group btn-group-sm" role="group">
+				<button class="btn btn-default fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
+        		<button class="btn btn-default fa  fa-search-plus" title="Zoom In" data-mode="zoom-in" accesskey="i"/>
+				<button class="btn btn-default fa fa-search-minus" title="Zoom Out" data-mode="zoom-out" accesskey="o"/>
+				<button class="btn btn-default fa fa-edit" title="Draw" data-mode="crosshair"/>
+				<button class="btn btn-default fa fa-copy o_hidden" title="Copy" data-mode="copy"/>
+    		</div>
+			<div class="btn-group btn-group-sm"  role="group">
+        		<button class="btn btn-default fa fa-cut o_hidden" title="Delete Point" data-mode="cut"/>
+			</div>
+  			<a class="close" data-dismiss="alert" href="#" aria-hidden="true">x</a>
+  		</div>
+  		<div  class="canvas-map panel-body">
+  			<canvas id="hawk" width="600" height="600">
+                Your browser does not support the HTML5 canvas tag.
+			</canvas>
+  		</div>
+    	
+	</div>
+</t>
+
+<t  t-name="GoaDialog">
+<div>
+
+	<form class="form-inline">
+	<div class="form-group">
+    	<label for="zone" class=" control-label">Zone     :</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_zone_input" id="zone" />
+    	</div>
+  	</div>
+  	<div class="form-group">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="o_set_d1g1_input" /> D1G1
+        </label>
+      </div>
+	</div>
+	</form>
+	
+	<form class="form-inline" style="margin-top:10px;">
+	<div class="form-group">
+    	<label for="periodx" class=" control-label">Period:</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_periodx_input" id="periodx" placeholder="Amount" />
+    	</div>
+  	</div>
+
+	<div class="form-group">
+    	<label for="periody" class="control-label">,</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_periody_input" id="periody" placeholder="Amount" />
+      		<div class="input-group-addon">um</div>
+    	</div>
+  	</div>
+  	
+  	<div class="form-group">
+    	<label for="tolerancex" class="control-label">Tolerance:</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_tolerancex_input" id="tolerancex"/>
+    	</div>
+  	</div>
+  	<div class="form-group">
+    	<label for="tolerancey" class="control-label">,</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_tolerancey_input" id="tolerancey"/>
+      		<div class="input-group-addon">pix</div>
+    	</div>
+  	</div>
+	</form>
+	
+
+	<div>
+      <img class="img-responsive" src=""/>
+	</div>
+</div>
+	
+
+</t>
+
+<t  t-name="SetHawkeyeDialog">
+<div>
+	<form class="form-inline">
+	<div class="form-group">
+    	<label for="periodx" class=" control-label">Customer Coordinate:</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_customerx_input" id="customerx"  />
+    	</div>
+  	</div>
+
+	<div class="form-group">
+    	<label for="periody" class="control-label">,</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_customery_input" id="customery"  />
+    	</div>
+  	</div>
+	</form>
+</div>
+</t>
+
+</templates>    

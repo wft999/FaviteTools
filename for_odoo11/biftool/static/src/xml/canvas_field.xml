@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+<t t-name="ShowCanvasObjects">
+
+<div class="container">
+<div class="row">
+      <div class="col-md-6">
+        <div style="width:100%; height:400px; overflow:auto">
+            <canvas id="myCanvas1" width="800" height="500"  style="border:1px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+        <input type="range" id="Range1" min="0.001" max="1.0" value="1.0" step="0.01" style="display: block;margin: 20px auto;"/>
+      </div>
+      <div class="col-md-6">
+        <div style="width:100%; height:400px; overflow:auto">
+            <canvas id="myCanvas2" width="800" height="500"  style="border:1px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+        <input type="range" id="Range2" min="0.001" max="1.0" value="1.0" step="0.0001" style="display: block;margin: 20px auto;" />
+        
+	</div>      
+   </div>
+	</div>
+
+</t>
+
+
+
+</templates>

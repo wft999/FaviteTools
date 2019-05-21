@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_biftool_bif,biftool.bif,model_biftool_bif,group_bif_user,1,1,1,1
+access_biftool_directory,padtool.directory,padtool.model_padtool_directory,group_bif_user,1,1,1,1

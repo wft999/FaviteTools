@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<template id="assets_backend" name="account assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/favite_import_module/static/src/js/field_zip_file.js"></script>
+        </xpath>
+    </template>
+
+	<data>
+        <record id="module_view_form" model="ir.ui.view">
+            <field name="name">base.module_form.inherit.favite</field>
+            <field name="model">ir.module.module</field>
+            <field name="inherit_id" ref="base.module_form" />
+            <field name="arch" type="xml">
+            	<xpath expr="//div[@class='oe_title']/div" position="inside">
+            		<button name="button_favite_update_wizard" states="installed" string="Update from file" type="object" class="btn btn-default"/>
+        		</xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
+

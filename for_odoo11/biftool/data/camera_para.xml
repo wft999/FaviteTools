@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">auops.config</field>
+            <field name="name">scan_dir</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">selection</field>
+            <field name="required">true</field>
+            <field name="selection">[("SCANDIR_NORMAL", "NORMAL"), ("SCANDIR_REVERSE", "REVERSE")]</field>
+            <field name="default">SCANDIR_NORMAL</field>
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">auops.config</field>
+            <field name="name">position</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0.000000,0.000000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">auops.config</field>
+            <field name="name">x_start_no_overlap</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    
+    
+	<record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">cellneighbor.check.greyregion</field>
+            <field name="name">top_left</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">cellneighbor.check.greyregion</field>
+            <field name="name">bottom_right</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">cellneighbor.check.greyregion</field>
+            <field name="name">averagegrey</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera_scan" />
+            
+            <field name="scope">cellneighbor.check.greyregion</field>
+            <field name="name">tolerance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="10" />
+    </record>
+
+
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_camera" />
+            
+            <field name="name">resolution</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[3.999440,4.000150]" />
+    </record>
+    
+    
+ 
+
+</odoo>

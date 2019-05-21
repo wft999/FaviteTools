@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.padtool</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="30"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form" />
+            <field name="arch" type="xml">
+            	<xpath expr="//div[hasclass('settings_tab')]" position="attributes" >
+            		<attribute name="class">settings_tab o_hidden</attribute>
+            	</xpath>
+            	<xpath expr="//div[hasclass('o_setting_search')]" position="attributes" >
+            		<attribute name="class">o_setting_search o_hidden</attribute>
+            	</xpath>
+                <xpath expr="//div[hasclass('settings')]" position="inside" >
+                    <div class="app_settings_block" data-string="Padtool" string="Padtool" data-key="padtool" groups="padtool.group_pad_manager">
+                        <div class="row mt16 o_settings_container">
+                       
+                        
+                        	<div class="col-xs-12 col-md-6 o_setting_box">
+                                    <div class="o_setting_right_pane">
+                                        <label string="Region"/>
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label  string="height(um):" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="region_height" class="oe_inline" required="1"/>
+                                            </div>
+                                            <div class="mt16 row">
+                                                <label  string="overlap(um):" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="region_overlap" class="oe_inline" required="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+							</div>
+							
+                        	<div class="col-xs-12 col-md-6 o_setting_box" attrs="{'invisible': 0}">
+                                    <div class="o_setting_right_pane">
+                                        <label string="polygon submark"/>
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label  string="offsetX(um):" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="submark_offsetX" class="oe_inline" required="1" />  
+                                            </div>
+                                            <div class="mt16 row">
+                                                <label  string="offsetY(um):" class="col-xs-3 col-md-3 o_light_label"/>
+                                                <field name="submark_offsetY" class="oe_inline" required="1" />
+                                            </div>
+                                        </div>
+                                    </div>
+							</div>
+                                
+							
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="padtool_directory_view_tree" model="ir.ui.view">
+        	<field name="name">padtool.directory.view.tree</field>
+        	<field name="model">padtool.directory</field>
+        	<field name="arch" type="xml">
+            <tree string="Publish Settings" editable="top"  create="1">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        	</field>
+    	</record>
+    	<record id="pad_publish_view_search" model="ir.ui.view">
+        	<field name="name">padtool.directory.view.search</field>
+        	<field name="model">padtool.directory</field>
+        	<field name="arch" type="xml">
+            <search string="Directory">
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="unactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        	</field>
+    	</record>
+
+       	<record id="action_pad_config_settings" model="ir.actions.act_window">
+            <field name="name">General Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'padtool'}</field>
+    	</record>
+    	
+    	<record id="action_pad_publish_settings" model="ir.actions.act_window">
+        	<field name="name">Publish Settings</field>
+        	<field name="res_model">padtool.directory</field>
+        	<field name="view_type">form</field>
+        	<field name='view_mode'>tree</field>
+        	<field name="view_id" ref="padtool_directory_view_tree"/>
+        	<field name="target">current</field>
+        	<field name="context">{'default_model':'padtool.pad'}</field>
+        	<field name="domain">[('model','=', 'padtool.pad')]</field>
+    	</record>
+
+        <menuitem id="padtool.menu_setting" name="Configuration" parent="padtool.menu_root"
+            sequence="101" groups="group_pad_manager"/>
+        <menuitem id="menu_pad_general_settings" name="General" parent="padtool.menu_setting"
+            sequence="0" action="action_pad_config_settings"/>
+        <menuitem id="menu_pad_publish_settings" name="Publish" parent="padtool.menu_setting"
+            sequence="1" action="action_pad_publish_settings"/>
+    </data>
+</odoo>

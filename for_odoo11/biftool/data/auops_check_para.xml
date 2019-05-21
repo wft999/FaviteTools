@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.glasssize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[2600000,2250000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.tolerace</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[2600000,2250000]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.searchtol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="20" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.searchhalfsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="500" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.insprange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="400" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.filtersize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[7,7]" />
+    </record>
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.needcheck</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="False" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.skipwidth</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="600" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.glassbrimcheck.</field>
+            <field name="name">auops.glassbrimcheck.skipheight</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="600" />
+    </record>
+    
+    
+    
+    
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.defectsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[200, 200]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.defectnumber</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1000" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.panelpatternmatchmode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.zonecheck</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="2" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.zonetoldark</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[70,70,8,8,10,10,15,15,15,15,15,15,15,15,15,15]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.zonetolbright</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[70,70,12,12,12,15,15,15,15,15,15,15,15,15,15,15]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.zonewidthlimit</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.zoneheightlimit</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.bottomleft</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.topright</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.matchmode</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.cellrect</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[762,731,1017,986]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.darkno</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.brightno</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.domaintol</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.domainratio</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.0" />
+    </record>
+    
+    
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.zonetoldark1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[70,70,8,8,10,10,15,15,15,15,15,15,15,15,15,15]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.zonetolbright1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[70,70,12,12,12,15,15,15,15,15,15,15,15,15,15,15]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.zonewidthlimit1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.zoneheightlimit1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.bottomleft1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.topright1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.matchmode1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.cellrect1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[762,731,1017,986]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.darkno1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.brightno1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.domaintol1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc1</field>
+            <field name="name">auops.check.adc.domainratio1</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">float</field>
+            <field name="required">true</field>
+            <field name="default" eval="0.0" />
+    </record>
+    
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.adc</field>
+            <field name="name">auops.check.adc.rtdcrcp</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">char</field>
+            <field name="required">true</field>
+            <field name="default">default.rcp</field>
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.</field>
+            <field name="name">auops.check.gla</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">char</field>
+            <field name="required">true</field>
+            <field name="default">4302.gla</field>
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_bif" />
+            
+            <field name="scope">auops.check.</field>
+            <field name="name">auops.check.lut</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">char</field>
+            <field name="required">true</field>
+            <field name="default">385043GDL.lut</field>
+    </record>
+ 
+
+</odoo>

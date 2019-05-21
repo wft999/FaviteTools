@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.cellsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.tolerance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[8,8]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.dynamictolerance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0.1,0.1]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.checkps</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0"/>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.ps_step</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.ps_step_135degree</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.clusterradius</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0"/>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.tollargerange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[30,30]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.dynamictollargerange</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0.2,0.2]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.switchgrey</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="255"/>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.preinsp_tolerance</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="10"/>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.cellsizeum</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[763.5,763.5]" />
+    </record>
+    
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.cellsizeumlocate</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[127.25,381.75]" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.basicpixelsize</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[127.25,381.75]" />
+    </record>
+    
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.panelpolygon</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">selection</field>
+            <field name="required">true</field>
+            <field name="selection">[("nopolygon", "nopolygon"), ("nopolygon2", "nopolygon2")]</field>
+            <field name="default">nopolygon</field>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.basiccomparedir</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0"/>
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.ptopareapixel</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.cellsizeumconnector</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0]" />
+    </record>
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.cellsizeumlongperiod</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[1527.000000,1527.000000]" />
+    </record>
+    
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.enablelargeperiod_horizontal</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.enablelargeperiod_vertical</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.enablehorzperiodadjust</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="True" />
+    </record>
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.enablefilternoise</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">boolean</field>
+            <field name="required">true</field>
+            <field name="default" eval="False" />
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.zonenumber</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="1"/>
+    </record>
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_gsp" />
+            
+            <field name="name">cellneighbor.check.zone1index</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="required">true</field>
+            <field name="default" eval="0"/>
+    </record>
+ 
+
+</odoo>

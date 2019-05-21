@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="0">
+
+    <record id="group_bif_user" model="res.groups">
+        <field name="name">BifUser</field>
+        <field name="category_id" ref="padtool.module_category_favite_tools"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="group_bif_manager" model="res.groups">
+        <field name="name">BifManager</field>
+        <field name="category_id" ref="padtool.module_category_favite_tools"/>
+        <field name="implied_ids" eval="[(4, ref('group_bif_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root'))]"/>
+    </record>
+
+</data>
+</odoo>

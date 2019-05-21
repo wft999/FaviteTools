@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_save_region" />
+            
+            
+            <field name="name">name</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">char</field>
+            <field name="required">true</field>
+            <field name="default">GLASSID</field>
+    </record>
+
+
+    
+    <record  model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_save_region" />
+            
+            <field name="name">rect</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[0,0,0,0]" />
+    </record>
+    
+    <record model="ir.model.fields">
+            <field name="model_id" ref="biftool.model_biftool_review_region" />
+            
+            <field name="name">rect</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">arraynumeric</field>
+            <field name="required">true</field>
+            <field name="default" eval="[6167.136480,9120.342000,2606870.399560,2259678.721350]" />
+    </record>
+ 
+
+</odoo>

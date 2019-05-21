@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+        <record id="bif_publish_wizard_form" model="ir.ui.view">
+            <field name='name'>biftool.bif.publish.wizard.form</field>
+            <field name='model'>biftool.bif.publish.wizard</field>
+            <field name='arch' type='xml'>
+                <form string='Publish Bif'  class="bif_publish_form">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="bif_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                            	<field name="directory_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        
+                    </sheet>
+                    <footer>
+                        <button name='publish' string='Publish' class='oe_highlight' type='object'/>
+                        <button special="cancel" string="Cancel" type="object" class="btn btn-default oe_inline"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window
+            id="bif_actions_act_window_publish_bif"
+            res_model="biftool.bif.publish.wizard"
+            src_model="biftool.bif"
+            target="new"
+            key2="client_action_multi"
+            view_type="form" view_mode="form"
+            name="Publish"/>
+</odoo>

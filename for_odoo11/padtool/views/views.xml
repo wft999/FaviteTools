@@ -1,0 +1,142 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!-- Top menu item -->
+    <menuitem name="Pad" id="padtool.menu_root"/>
+    <!-- menu categories -->
+    <menuitem name="Glass Data" id="padtool.menu_glass_root" parent="padtool.menu_root" groups="group_pad_user" sequence="102" />
+    <!-- actions -->
+    
+    <record model="ir.actions.client" id="padtool.action_glassmap">
+      <field name="name">Glass Map</field>
+      <field name="tag">padtool.glassmap</field>
+      <field name="target">current</field>
+    </record>
+    <record model="ir.actions.client" id="padtool.action_panelmap">
+      <field name="name">Panel Map</field>
+      <field name="tag">padtool.panelmap</field>
+      <field name="target">current</field>
+    </record>
+    
+    <record model="ir.ui.view" id="pad_view_form">
+      <field name="name">Pad Parameter</field>
+      <field name="model">padtool.pad</field>
+      <field name="arch" type="xml">
+        <form  string="Module" title="Pad Parameter" duplicate="true" create="true">
+        	<sheet>
+            	<div class="oe_title">
+                	<h1><field name="name" placeholder="Pad name..."/></h1>
+                	<div>
+                		<field name="summary" placeholder="Pad summary..."/>
+                	</div>
+                </div>
+                <div class="oe_clear"/>
+                <group>
+                	<group>
+                		<field name="glassName"/>
+                	</group>
+                	<group>
+                		<field name="panelName"/>
+                	</group>
+                </group>
+        	</sheet>
+      	</form>
+      </field>
+    </record>
+    
+    <record id="pad_view_kanban" model="ir.ui.view">
+		<field name="name">padtool.pad.kanban</field>
+		<field name="model">padtool.pad</field>
+		<field name="arch" type="xml">
+		<kanban on_create="padtool.open_create_pad" class="oe_background_grey o_kanban_dashboard o_pad_kanban  o_emphasize_colors">
+			<field name="name"/>
+			<field name="summary"/>
+			<field name="write_uid"/>
+			<field name="write_date"/>
+				<templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_global_click o_has_icon">
+                                <div class="o_project_kanban_main">
+                                    <div class="o_kanban_card_content">
+                                        <div class="o_kanban_primary_left">
+                                            <div class="o_primary">
+                                                <span><t t-esc="record.name.value"/></span>
+                                                <span t-if="record.summary.value">
+                                                    <strong><t t-esc="record.summary.value"/></strong>
+                                                </span>
+                                                <br/>
+                                                <span>
+                            						<b>Modified by : </b><br/>
+                            						<t t-esc="record.write_uid.value"/>  <t t-esc="record.write_date.value"/>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                	<a class="o_kanban_manage_toggle_button o_left" href="#" ><i class="fa fa-ellipsis-v" /></a>
+                                </div>
+
+                                <div class="o_pad_kanban_boxes">
+                                    <a class="o_pad_kanban_box" name="%(padtool.action_panelmap)d" type="action">
+                                        <div>
+                                            <span class="o_label">Panel map</span>
+                                        </div>
+                                    </a>
+                                    <a class="o_pad_kanban_box" name="%(padtool.action_glassmap)d" type="action">
+                                        <div>
+                                            <span class="o_label">Glass map</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+		</kanban>
+		</field>
+	</record>
+        
+   <record id="pad_view_form_simplified" model="ir.ui.view">
+            <field name="name">pad.view.form.simplified</field>
+            <field name="model">padtool.pad</field>
+            <field name="arch" type="xml">
+                <form string="Pad">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" string="Pad Name"/>
+                                <label for="summary" string="Summary"/>
+                                <div name="summary_def">
+                                    <field name="summary"/>
+                                </div>
+                            </group>
+                        </group>
+                        <footer>
+                            <button string="Create" name="close_dialog" type="object" class="btn-primary"/>
+                            <button string="Create &amp; Edit" name="edit_dialog" type="object" class="btn-primary"/>
+                            <button string="Discard" class="btn-default" special="cancel"/>
+                        </footer>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>     
+
+
+    <!-- actions opening views on models -->
+    <record id="open_create_pad" model="ir.actions.act_window">
+            <field name="name">Create a Pad</field>
+            <field name="res_model">padtool.pad</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="pad_view_form_simplified"/>
+            <field name="target">new</field>
+   	</record>
+    
+    <record id="ir_actions_server_pad" model="ir.actions.server">
+            <field name="name">Pads for panel</field>
+            <field name="model_id" ref="padtool.model_padtool_pad"/>
+            <field name="state">code</field>
+            <field name="code">action = model.open_kanban()</field>
+        </record>
+    
+  </data>
+</odoo>

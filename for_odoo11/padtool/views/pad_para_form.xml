@@ -1,0 +1,32 @@
+<odoo>
+  <data>    
+  	<record id="pad_view_form1" model="ir.ui.view">
+        <field name="name">Pad Parameter</field>
+      	<field name="model">padtool.pad</field>
+        <field name="inherit_id" ref="padtool.pad_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+            	 <notebook colspan="4">
+                 	<page string="Gereral parameter">
+						<group>
+							<group>
+                				<field name="x_GlassToGlassMode" />
+                        		<field name="x_GolbalToleranceRegular" groups="padtool.group_pad_manager" />
+                    			<field name="x_GolbalToleranceUnregular"/>
+                    			<field name="x_GolbalToleranceRegularDynamic"/>
+                			</group>
+                			<group>
+                				<field name="x_BMMode" />
+                    			<field name="x_BMPeriodX0"/>
+                    			<field name="x_BMPeriodY0"/>
+                    			<field name="x_BMPeriodX1"/>
+                    			<field name="x_BMPeriodY1"/>
+          					</group>
+						</group>
+                     </page>
+                 </notebook>
+            </xpath>
+        </field>
+    </record>  
+  </data>
+</odoo>

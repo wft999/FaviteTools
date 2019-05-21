@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="web_demo_padtool" model="web_demo.tour">
+		<field name="name">GlassMap</field>
+		<field name="summary">glass map opator</field>
+		<field name="module_id" ref="base.module_padtool"></field>
+	</record>
+
+	<record  id="web_demo_padtool1"  model="web_demo.step">
+		<field name="tour_id" ref="web_demo_padtool"></field>
+		<field name="sequence">1</field>
+		<field name="trigger">.oe_menu_toggler[data-menu-xmlid="padtool.menu_root"]</field>
+		<field name="extra_trigger"></field>
+		<field name="content">点这里，进入程序</field>
+		<field name="position">bottom</field>
+		<field name="width"></field>
+		<field name="run"></field>
+	</record>
+	
+	<record  id="web_demo_padtool2"  model="web_demo.step">
+		<field name="tour_id" ref="web_demo_padtool"></field>
+		<field name="sequence">2</field>
+		<field name="trigger">.oe_secondary_menu_section[data-menu-xmlid="padtool.menu_glass_root"] ~ .oe_secondary_submenu>li:eq(0)>a>span</field>
+		<field name="extra_trigger"></field>
+		<field name="content">选择glass</field>
+		<field name="position">bottom</field>
+		<field name="width"></field>
+		<field name="run">
+        		if(!actions.tip_widget.$anchor.parent().hasClass('oe_menu_opened'))
+        			actions.auto();
+    		
+    	</field>
+	</record>
+	
+	<record  id="web_demo_padtool3"  model="web_demo.step">
+		<field name="tour_id" ref="web_demo_padtool"></field>
+		<field name="sequence">3</field>
+		<field name="trigger">.oe_secondary_menu_section[data-menu-xmlid="padtool.menu_glass_root"] ~ .oe_secondary_submenu>li:eq(0)>ul>li:eq(1)>a>span</field>
+		<field name="extra_trigger"></field>
+		<field name="content">选择panel</field>
+		<field name="position">bottom</field>
+		<field name="width"></field>
+		<field name="run">
+        		if(!actions.tip_widget.$anchor.parent().hasClass('oe_menu_opened'))
+        			actions.auto();
+    		
+    	</field>
+	</record>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_padtool_pad,padtool.pad,model_padtool_pad,group_pad_user,1,1,1,1
+access_padtool_directory,padtool.directory,model_padtool_directory,group_pad_user,1,1,1,1

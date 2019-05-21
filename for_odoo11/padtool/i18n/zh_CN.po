@@ -1,0 +1,565 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* padtool
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0-20180523\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-07-28 02:14+0000\n"
+"PO-Revision-Date: 2018-07-28 02:14+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:86
+#: code:addons/padtool/static/src/xml/map.xml:96
+#, python-format
+msgid "Amount"
+msgstr "Amount"
+
+#. module: padtool
+#: model:ir.ui.menu,name:padtool.menu_setting
+msgid "Configuration"
+msgstr "配置"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:354
+#, python-format
+msgid "Confirm"
+msgstr "Confirm"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:56
+#, python-format
+msgid "Copy"
+msgstr "Copy"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_create_uid
+msgid "Created by"
+msgstr "创建人"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_create_date
+msgid "Created on"
+msgstr "创建时间"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:106
+#, python-format
+msgid "D1G1"
+msgstr "D1G1"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:58
+#, python-format
+msgid "Delete Object"
+msgstr "Delete Object"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:57
+#, python-format
+msgid "Delete Point"
+msgstr "Delete Point"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:362
+#, python-format
+msgid "Discard"
+msgstr "Discard"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_display_name
+msgid "Display Name"
+msgstr "显示名称"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:50
+#, python-format
+msgid "Draw"
+msgstr "Draw"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:39
+#, python-format
+msgid "Export"
+msgstr "Export"
+
+#. module: padtool
+#: model:ir.module.category,name:padtool.module_category_favite_tools
+msgid "Favite"
+msgstr "Favite"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:61
+#, python-format
+msgid "GOA"
+msgstr "GOA"
+
+#. module: padtool
+#: model:ir.model.fields,help:padtool.field_res_config_settings_hawk_height
+#: model:ir.model.fields,help:padtool.field_res_config_settings_hawk_width
+#: model:ir.model.fields,help:padtool.field_res_config_settings_region_height
+#: model:ir.model.fields,help:padtool.field_res_config_settings_region_overlap
+#: model:ir.model.fields,help:padtool.field_res_config_settings_region_width
+msgid "Gives the sequence of this line when displaying the invoice."
+msgstr "Gives the sequence of this line when displaying the invoice."
+
+#. module: padtool
+#: model:ir.ui.menu,name:padtool.menu_glass_root
+msgid "Glass Data"
+msgstr "玻璃数据"
+
+#. module: padtool
+#: model:ir.actions.client,name:padtool.action_glassmap
+msgid "Glass Map"
+msgstr "Glass Map"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GlassToGlassMode
+msgid "GlassToGlassMode"
+msgstr "GlassToGlassMode"
+
+#. module: padtool
+#: model:ir.model,name:padtool.model_ir_http
+msgid "HTTP routing"
+msgstr "HTTP 路由"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:43
+#: code:addons/padtool/static/src/xml/map.xml:70
+#, python-format
+msgid "Hawkeye"
+msgstr "Hawkeye"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/map.js:206
+#, python-format
+msgid "Hawkeye is too high!"
+msgstr "Hawkeye is too high!"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/map.js:208
+#, python-format
+msgid "Hawkeye is too wide!"
+msgstr "Hawkeye is too wide!"
+
+#. module: padtool
+#: model:ir.module.category,description:padtool.module_category_favite_tools
+msgid "Helps you manage your projects and tasks by tracking them, generating plannings, etc..."
+msgstr "帮助你管理你的项目和任务，通过跟踪它们，生成规划等。"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_res_config_settings_hawk_height
+msgid "Hwakeye window height"
+msgstr "Hwakeye window height"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_res_config_settings_hawk_width
+msgid "Hwakeye window width"
+msgstr "Hwakeye window width"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_id
+msgid "ID"
+msgstr "ID"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/hawkmap.js:79
+#, python-format
+msgid "Image is not exsit!"
+msgstr "Image is not exsit!"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/hawkmap.js:68
+#: code:addons/padtool/static/src/js/hawkmap.js:79
+#: code:addons/padtool/static/src/js/hawkmap.js:257
+#: code:addons/padtool/static/src/js/hawkmap.js:405
+#: code:addons/padtool/static/src/js/hawkmap.js:428
+#: code:addons/padtool/static/src/js/map.js:206
+#: code:addons/padtool/static/src/js/map.js:208
+#: code:addons/padtool/static/src/js/panelmap.js:274
+#: code:addons/padtool/static/src/js/panelmap.js:306
+#: code:addons/padtool/static/src/js/panelmap.js:332
+#, python-format
+msgid "Incorrect Operation"
+msgstr "Incorrect Operation"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalIndentRegularX
+msgid "IndentRegularX(um)"
+msgstr "IndentRegularX(um)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalIndentRegularY
+msgid "IndentRegularY(um)"
+msgstr "IndentRegularY(um)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalIndentUnregularX
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalIndentUnregularY
+msgid "IndentUnregularX(um)"
+msgstr "IndentUnregularX(um)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad___last_update
+msgid "Last Modified on"
+msgstr "最后修改时间"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_write_uid
+msgid "Last Updated by"
+msgstr "最后更新者"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_write_date
+msgid "Last Updated on"
+msgstr "最后更新时间"
+
+#. module: padtool
+#: model:res.groups,name:padtool.group_pad_manager
+msgid "Manager"
+msgstr "Manager"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/hawkmap.js:257
+#: code:addons/padtool/static/src/js/hawkmap.js:405
+#, python-format
+msgid "Mark is across multiple IPs!"
+msgstr "Mark is across multiple IPs!"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.pad_parameter_view
+msgid "Module"
+msgstr "模块"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_name
+msgid "Name"
+msgstr "名称"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_NeglectInspIfNoMarkResult
+msgid "NeglectInspIfNoMarkResult"
+msgstr "NeglectInspIfNoMarkResult"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:29
+#, python-format
+msgid "Objects"
+msgstr "Objects"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:263
+#, python-format
+msgid "Operation Result"
+msgstr "Operation Result"
+
+#. module: padtool
+#: model:ir.ui.menu,name:padtool.menu_root
+msgid "Pad"
+msgstr "Pad"
+
+#. module: padtool
+#: model:ir.actions.act_window,name:padtool.action_pad_parameter_window
+#: model:ir.ui.view,arch_db:padtool.pad_parameter_view
+msgid "Pad Parameter"
+msgstr "Pad全局参数"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:263
+#, python-format
+msgid "Pad was succesfully saved!"
+msgstr "Pad was succesfully saved!"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "Padtool"
+msgstr "Padtool"
+
+#. module: padtool
+#: model:ir.actions.client,name:padtool.action_panelmap
+msgid "Panel Map"
+msgstr "Panel Map"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:51
+#, python-format
+msgid "Paste"
+msgstr "Paste"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/hawkmap.js:428
+#, python-format
+msgid "Please enter valid point!"
+msgstr "Please enter valid point!"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:274
+#: code:addons/padtool/static/src/js/panelmap.js:306
+#: code:addons/padtool/static/src/js/panelmap.js:332
+#, python-format
+msgid "Please select one object!"
+msgstr "Please select one object!"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.layout2
+msgid "Powered by <span>Favite</span>"
+msgstr "Powered by <span>Favite</span>"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:62
+#, python-format
+msgid "Redo"
+msgstr "Redo"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "Region Setting"
+msgstr "Region设定"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_res_config_settings_region_height
+msgid "Region height"
+msgstr "Region height"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_res_config_settings_region_overlap
+msgid "Region overlap"
+msgstr "Region overlap"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_res_config_settings_region_width
+msgid "Region width"
+msgstr "Region width"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:44
+#, python-format
+msgid "Save"
+msgstr "Save"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:15
+#: code:addons/padtool/static/src/xml/map.xml:47
+#, python-format
+msgid "Select"
+msgstr "Select"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:352
+#, python-format
+msgid "Set Goa"
+msgstr "Set Goa"
+
+#. module: padtool
+#: model:ir.actions.act_window,name:padtool.action_pad_config_settings
+#: model:ir.ui.menu,name:padtool.menu_stock_general_settings
+msgid "Settings"
+msgstr "设置"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/panelmap.js:72
+#, python-format
+msgid "The current pad was modified. Save changes?"
+msgstr "The current pad was modified. Save changes?"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalToleranceRegularX
+msgid "ToleranceRegularX(px)"
+msgstr "ToleranceRegularX(px)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalToleranceRegularY
+msgid "ToleranceRegularY(px)"
+msgstr "ToleranceRegularY(px)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalToleranceUnregularX
+msgid "ToleranceUnregularX(px)"
+msgstr "ToleranceUnregularX(px)"
+
+#. module: padtool
+#: model:ir.model.fields,field_description:padtool.field_padtool_pad_GolbalToleranceUnregularY
+msgid "ToleranceUnregularY(px)"
+msgstr "ToleranceUnregularY(px)"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:63
+#, python-format
+msgid "Undo"
+msgstr "Undo"
+
+#. module: padtool
+#: model:res.groups,name:padtool.group_pad_user
+msgid "User"
+msgstr "User"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/js/hawkmap.js:68
+#, python-format
+msgid "Width  or height is 0!"
+msgstr "Width  or height is 0!"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:83
+#, python-format
+msgid "X Period"
+msgstr "X Period"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:93
+#, python-format
+msgid "Y Period"
+msgstr "Y Period"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/canvas_field.xml:10
+#: code:addons/padtool/static/src/xml/canvas_field.xml:18
+#: code:addons/padtool/static/src/xml/map.xml:6
+#: code:addons/padtool/static/src/xml/map.xml:73
+#, python-format
+msgid "Your browser does not support the HTML5 canvas tag."
+msgstr "Your browser does not support the HTML5 canvas tag."
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:16
+#: code:addons/padtool/static/src/xml/map.xml:48
+#, python-format
+msgid "Zoom In"
+msgstr "Zoom In"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:17
+#: code:addons/padtool/static/src/xml/map.xml:49
+#, python-format
+msgid "Zoom Out"
+msgstr "放大"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:33
+#, python-format
+msgid "frame"
+msgstr "frame"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "hawkeye Setting"
+msgstr "鹰眼设定"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "height(px):"
+msgstr "高度(像素):"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "height(um):"
+msgstr "高度(微米):"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:37
+#, python-format
+msgid "inspectZone"
+msgstr "inspectZone"
+
+#. module: padtool
+#: model:ir.model,name:padtool.model_ir_ui_menu
+msgid "ir.ui.menu"
+msgstr "ir.ui.menu"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:34
+#, python-format
+msgid "mainMark"
+msgstr "mainMark"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "overlap(um):"
+msgstr "层叠区(微米):"
+
+#. module: padtool
+#: model:ir.model,name:padtool.model_padtool_bif
+msgid "padtool.bif"
+msgstr "padtool.bif"
+
+#. module: padtool
+#: model:ir.model,name:padtool.model_padtool_pad
+msgid "padtool.pad"
+msgstr "padtool.pad"
+
+#. module: padtool
+#: model:ir.model,name:padtool.model_res_config_settings
+msgid "res.config.settings"
+msgstr "res.config.settings"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:35
+#, python-format
+msgid "subMark"
+msgstr "subMark"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:87
+#: code:addons/padtool/static/src/xml/map.xml:97
+#, python-format
+msgid "um"
+msgstr "um"
+
+#. module: padtool
+#. openerp-web
+#: code:addons/padtool/static/src/xml/map.xml:36
+#, python-format
+msgid "uninspectZone"
+msgstr "uninspectZone"
+
+#. module: padtool
+#: model:ir.ui.view,arch_db:padtool.res_config_settings_view_form
+msgid "width(px):"
+msgstr "宽度(像素):"
+

@@ -1,0 +1,49 @@
+<odoo>
+    <template id="assets_backend" name="account assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+        	<link rel="stylesheet" type="text/css" href="/padtool/static/src/css/padtool.css"/>
+        	<link rel="stylesheet" href="/padtool/static/src/less/pad_dashboard.less"/>
+        	
+        	<script type="text/javascript" src="/padtool/static/lib/fabric/fabric.js"></script>
+
+			<script type="text/javascript" src="/padtool/static/src/js/cfields.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/patching.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/coordinate.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/submark.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/canvas.js"></script>
+			
+			<script type="text/javascript" src="/padtool/static/src/js/map.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/hawkmap.js"></script>
+            <script type="text/javascript" src="/padtool/static/src/js/panelmap.js"></script>
+            <script type="text/javascript" src="/padtool/static/src/js/glassmap.js"></script>
+            <script type="text/javascript" src="/padtool/static/src/js/import_buttons.js"></script>
+            <script type="text/javascript" src="/padtool/static/src/js/import_action.js"></script>
+            
+            
+            <link rel="stylesheet" type="text/css" href="/padtool/static/lib/jquery-contextmenu/jquery.contextMenu.min.css"/>
+			<script src="/padtool/static/lib/jquery-contextmenu/jquery.contextMenu.min.js"></script>
+			<script src="/padtool/static/lib/jquery-contextmenu/jquery.ui.position.js"></script>
+            
+        </xpath>
+    </template>
+    
+    <template id="menu_secondary" name="menu_secondary" inherit_id="web.menu_secondary">
+        <xpath expr="//div[@class='o_sub_menu_footer']" position="replace">
+            
+        </xpath>
+    </template>
+    
+   <template id="layout" name="layout" inherit_id="web.layout">
+        <xpath expr="//title" position="replace">
+            <title>Favite Tools</title>
+        </xpath>
+    </template>
+    
+    <template id="layout2" name="layout2" inherit_id="web.login_layout">
+        <xpath expr="//a[@href='https://www.odoo.com']" position="replace">
+        	<a href="/padtool/static/demo/story.html" target="_blank">Demo</a> |
+            <a href="http://www.favite.com" target="_blank">Powered by <span>Favite</span></a>
+        </xpath>
+    </template>
+    
+</odoo>
