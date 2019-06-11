@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_web_guide_guide,web_guide.guide,model_web_guide_guide,,1,1,1,1
+access_web_guide_step,web_guide.step,model_web_guide_step,,1,1,1,1

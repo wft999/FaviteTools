@@ -884,7 +884,7 @@ var PadField = AbstractField.extend(ControlPanelMixin,{
  	}
 });
 
-//core.action_registry.add('padtool.panelmap', Panelmap);
+
 field_registry.add('pad_field', PadField);
 
 return PadField;

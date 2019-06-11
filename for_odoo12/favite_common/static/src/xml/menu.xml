@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+<t t-extend="UserMenu.Actions">
+    <t t-jquery="a[data-menu='documentation']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='support']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
+</t>
+
+<t t-name="systray.FullScreenMenu">
+        <li>
+            <a title="Activities" href="#" role="button">
+                <i class="fa fa-clock-o" role="img" aria-label="Full"/> <span class="o_notification_counter badge badge-pill"/>
+            </a>
+        </li>
+    </t>
+
+</templates>

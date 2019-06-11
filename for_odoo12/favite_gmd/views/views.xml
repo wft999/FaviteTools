@@ -1,0 +1,140 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <!--
+    <record model="ir.ui.view" id="gmd.list">
+      <field name="name">gmd list</field>
+      <field name="model">gmd.gmd</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="value"/>
+          <field name="value2"/>
+        </tree>
+      </field>
+    </record>
+    -->
+
+	<!-- gmd -->
+	<record id="edit_gmd" model="ir.ui.view">
+		<field name="name">favite_gmd.gmd.form</field>
+		<field name="model">favite_gmd.gmd</field>
+		<field name="arch" type="xml">
+			<form string="Module" title="Gmd Parameter" duplicate="true"
+				create="true">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" placeholder="Gmd name..." />
+						</h1>
+						<div>
+							<field name="description" placeholder="Gmd summary..." />
+						</div>
+					</div>
+					<notebook></notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="gmd_view_kanban" model="ir.ui.view">
+		<field name="name">favite_gmd.gmd.kanban</field>
+		<field name="model">favite_gmd.gmd</field>
+		<field name="arch" type="xml">
+			<kanban create="false" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
+				<field name="name" />
+				<field name="description" />
+				<field name="write_uid"/>
+				<field name="write_date"/>
+				<templates>
+					<t t-name="kanban-box">
+						<div class="oe_kanban_global_click o_has_icon">
+							<div class="o_project_kanban_main">
+								<div class="o_kanban_card_content">
+									<div class="o_kanban_primary_left">
+										<div class="o_primary">
+											<span>
+												<t t-esc="record.name.value" />
+											</span>
+											<span t-if="record.description.value">
+												<strong>
+													<t t-esc="record.description.value" />
+												</strong>
+											</span>
+											<br />
+											<span>
+												<b>Modified by : </b>
+												<br />
+												<t t-esc="record.write_uid.value" />
+												<t t-esc="record.write_date.value" />
+											</span>
+										</div>
+									</div>
+								</div>
+								<a class="o_kanban_manage_toggle_button o_left" name="open_details" type="object">
+									<i class="fa fa-ellipsis-v" />
+								</a>
+							</div>
+						</div>
+					</t>
+				</templates>
+			</kanban>
+		</field>
+	</record>
+	
+	<record id="favite_gmd_obj_tree" model="ir.ui.view">
+		<field name="model">favite_gmd.gmd.obj</field>
+		<field name="arch" type="xml">
+			<tree string="Fields" editable="bottom" duplicate="false"  js_class="favite_common_tree">
+				<field name="type" />
+				<field name="value" />
+				<field name="gmd_id" />
+			</tree>
+		</field>
+	</record>
+
+    <!-- actions opening views on models -->
+    
+    <!-- <record model="ir.actions.act_window" id="gmd.action_window">
+      <field name="name">gmd window</field>
+      <field name="res_model">gmd.gmd</field>
+      <field name="view_mode">tree,form</field>
+    </record> -->
+   
+
+    <!-- server action to the one above -->
+    
+    <record model="ir.actions.server" id="favite_gmd.action_server_kanban">
+      <field name="name">gmd server</field>
+      <field name="model_id" ref="model_favite_gmd_gmd"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = model.open_kanban()
+      </field>
+    </record>
+    <record model="ir.actions.server" id="favite_gmd.action_server_update">
+      <field name="name">gmd server</field>
+      <field name="model_id" ref="model_favite_gmd_gmd"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = model.update_module()
+      </field>
+    </record>
+   
+
+    <!-- Top menu item -->
+    
+    <menuitem name="gmd" id="favite_gmd.menu_root"/>
+   
+    <!-- menu categories -->
+    
+    <menuitem name="Data" id="favite_gmd.data" parent="favite_gmd.menu_root"/>
+    <menuitem name="Config" id="favite_gmd.menu_config" parent="favite_gmd.menu_root"/>
+   
+    <!-- actions -->
+    
+    <menuitem name="gmd" id="gmd" parent="favite_gmd.data" sequence="11"
+              action="favite_gmd.action_server_kanban"/>
+   
+  </data>
+</odoo>

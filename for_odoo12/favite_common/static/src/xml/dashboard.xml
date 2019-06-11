@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="favite_common.ControlPanel.SwitchButton">
+    <button type="button" t-att-accesskey="button.accessKey"
+        t-attf-class="btn btn-secondary fa fa-lg #{button.icon} o_cp_switch_#{button.type}"
+        t-attf-aria-label="#{button.type}"
+        t-att-data-button-type="button.type" t-attf-title="#{button.type}" tabindex="-1"/>
+</t>
+
+<t t-name="favite_common.ControlPanel.SwitchButtons">
+    <t t-foreach="buttons" t-as="group">
+    	<div t-foreach="group" t-as="button" class="btn-group btn-group-md" role="group">
+        	<t t-call="favite_common.ControlPanel.SwitchButton"/>
+    	</div>
+    </t>
+</t>
+    
+<t t-name="favite_common.DashBoard">
+    <table t-att-data-layout="layout" t-attf-class="oe_dashboard oe_dashboard_layout_#{layout}" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td id="column_0" class="oe_dashboard_column index_0" />
+		<td id="column_1" class="oe_dashboard_column index_1" />
+		<td id="column_2" class="oe_dashboard_column index_2" />
+    </tr>
+    </table>
+</t>
+<t t-name="favite_common.DashBoard.subview">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span t-if="widget.id == 'info'" class="oe_header_txt"> <t t-esc="widget.string"/> </span>
+            <div t-if="widget.id != 'info'" class="btn-group" role="group">
+				<button class="btn btn-secondary btn-sm fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
+				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="h"/>
+		    </div>
+            <div t-if="widget.id == 'thumb'" class="btn-group" role="group">
+				<button class="btn btn-secondary btn-sm fa fa-hand-o-right" title="Hand" data-command="move" accesskey="h"/>
+		    </div>
+		    <div t-if="widget.id == 'raw'" class="btn-group" role="group">
+
+		    </div>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<canvas t-if="widget.id != 'info'"></canvas>
+        </div>
+    </div>
+</t>
+
+<t t-name="favite_common.DashBoard.layouts">
+    <div class="oe_dashboard_layout_selector">
+<!--         <p>
+            <strong>Choose dashboard layout</strong>
+        </p> -->
+        <ul>
+            <li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout">
+                <img t-attf-src="/board/static/src/img/layout_#{layout}.png" alt=""/>
+                <i t-if="layout == currentLayout" class="oe_dashboard_selected_layout fa fa-check fa-lg text-success" aria-label='Layout' role="img" title="Layout"/>
+            </li>
+        </ul>
+    </div>
+</t>
+
+<t t-name="Map.info">
+	<li class="o_planner_systray">
+		<a><span class="map-info" align="right"></span></a>
+    </li>
+</t>
+
+</templates>
