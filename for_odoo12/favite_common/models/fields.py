@@ -15,6 +15,7 @@ class Jsonb(fields.Field):
 
     def convert_to_cache(self, value, record, validate=True):
         value = value or {}
+#         return value if isinstance(value, pycompat.text_type) else json.dumps(value)
         return value if isinstance(value, dict) else json.loads(value)
 
     def convert_to_column(self, value, record, values=None):

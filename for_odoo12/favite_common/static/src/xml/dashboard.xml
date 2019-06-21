@@ -31,14 +31,17 @@
             <span t-if="widget.id == 'info'" class="oe_header_txt"> <t t-esc="widget.string"/> </span>
             <div t-if="widget.id != 'info'" class="btn-group" role="group">
 				<button class="btn btn-secondary btn-sm fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
-				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="h"/>
+				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="m"/>
+				<button class="btn btn-secondary btn-sm fa fa-edit" title="Edit" data-mode="crosshair" accesskey="e"/>
 		    </div>
-            <div t-if="widget.id == 'thumb'" class="btn-group" role="group">
-				<button class="btn btn-secondary btn-sm fa fa-hand-o-right" title="Hand" data-command="move" accesskey="h"/>
-		    </div>
-		    <div t-if="widget.id == 'raw'" class="btn-group" role="group">
-
-		    </div>
+		    <div t-if="widget.id != 'info'"  class="btn-group btn-group-md"  role="group">
+        		<button class="o_hidden btn btn-secondary btn-sm fa fa-trash" title="Delete" data-command="Delete" accesskey="d"/>
+			</div>
+			<div t-if="widget.id != 'info'"  class="btn-group btn-group-md"  role="group">
+        		<button class="o_hidden btn btn-secondary btn-sm fa fa-copy" title="Copy" data-command="Copy" accesskey="c"/>
+			</div>
+		    
+		    <span t-if="widget.id != 'info'" class="map-info" align="right"></span>
 			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
@@ -53,9 +56,6 @@
 
 <t t-name="favite_common.DashBoard.layouts">
     <div class="oe_dashboard_layout_selector">
-<!--         <p>
-            <strong>Choose dashboard layout</strong>
-        </p> -->
         <ul>
             <li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout">
                 <img t-attf-src="/board/static/src/img/layout_#{layout}.png" alt=""/>
@@ -65,10 +65,5 @@
     </div>
 </t>
 
-<t t-name="Map.info">
-	<li class="o_planner_systray">
-		<a><span class="map-info" align="right"></span></a>
-    </li>
-</t>
 
 </templates>

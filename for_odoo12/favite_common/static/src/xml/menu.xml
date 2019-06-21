@@ -11,9 +11,57 @@
 <t t-name="systray.FullScreenMenu">
         <li>
             <a title="Activities" href="#" role="button">
-                <i class="fa fa-clock-o" role="img" aria-label="Full"/> <span class="o_notification_counter badge badge-pill"/>
+                <i class="fa fa-clock-o" role="img" aria-label="Full" /> <span
+	class="o_notification_counter badge badge-pill" />
             </a>
         </li>
     </t>
+ 
+    
+    
+<t t-name="MapView.buttons">
+    <div class="o_form_buttons_edit" role="toolbar" aria-label="Main actions">
+        <button type="button"
+                class="btn btn-primary o_form_button_save" accesskey="s">
+            Save
+        </button>
+        <button type="button"
+                class="btn btn-secondary o_form_button_cancel" accesskey="j">
+            Discard
+        </button>
+        
+        <button  type="button"
+                class="btn btn-secondary o_form_button_undo" accesskey="c">
+            Undo
+        </button>
+        <button  type="button"
+                class="btn btn-secondary o_form_button_redo" accesskey="a">
+            Redo
+        </button>
+    </div>
+    
+</t>    
+
+<t t-name="colorpicker">
+    <div class="o_colorpicker dropdown-menu tagcolor_dropdown_menu" role="menu">
+        <ul>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_red" data-color="red" title="Red" aria-label="Red"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_orange" data-color="orange" title="Orange" aria-label="Orange"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_yellow" data-color="yellow" title="Yellow" aria-label="Yellow"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_aqua" data-color="aqua" title="aqua" aria-label="aqua"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_slateBlue" data-color="slateBlue" title="SlateBlue" aria-label="SlateBlue"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_fuchsia" data-color="fuchsia" title="fuchsia" aria-label="fuchsia"/></li>
+            
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_salmon" data-color="salmon" title="Salmon" aria-label="Salmon"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_lime" data-color="lime" title="Lime" aria-label="Lime"/></li>
+            <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_blue" data-color="blue" title="Blue" aria-label="Blue"/></li>
+            <li> 
+				<button  type="button"  class="btn btn-secondary" accesskey="n">
+            			New Object
+				</button>
+            </li>
+        </ul>
+    </div>
+</t>
 
 </templates>

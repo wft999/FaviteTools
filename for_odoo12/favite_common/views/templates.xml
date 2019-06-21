@@ -8,15 +8,16 @@
         		<script type="text/javascript" src="/favite_common/static/src/js/fabric.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/common.js"></script>
                 <!-- <script type="text/javascript" src="/favite_common/static/src/js/board_model.js"></script> -->
-                <script type="text/javascript" src="/favite_common/static/src/js/tree_render.js"></script>
-                <script type="text/javascript" src="/favite_common/static/src/js/tree_controller.js"></script>
-                <script type="text/javascript" src="/favite_common/static/src/js/tree_view.js"></script>
+                <script type="text/javascript" src="/favite_common/static/src/js/map_render.js"></script>
+                <script type="text/javascript" src="/favite_common/static/src/js/map_controller.js"></script>
+                <script type="text/javascript" src="/favite_common/static/src/js/map_view.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/field_array.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/mixin.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_info.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map_raw.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map_thumb.js"></script>
+                <script type="text/javascript" src="/favite_common/static/src/js/canvas.js"></script>
             </xpath>
         </template>
         

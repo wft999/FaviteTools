@@ -21,3 +21,48 @@
     margin: 2px auto;
     background: white;
 }
+
+.o_field_widget.o_field_many2manytags .o_tag_color_red, .o_field_widget.o_field_many2manytags .o_tag_color_red::after {
+  background-color: #FF0000;
+  color: #fff;
+}
+
+.o_field_widget.o_field_many2manytags .o_tag_color_orange, .o_field_widget.o_field_many2manytags .o_tag_color_orange::after {
+  background-color: #F4A460;
+  color: #fff;
+}
+
+.o_field_widget.o_field_many2manytags .o_tag_color_yellow, .o_field_widget.o_field_many2manytags .o_tag_color_yellow::after {
+  background-color: #F7CD1F;
+  color: #fff;
+}
+
+
+
+.o_field_widget.o_field_many2manytags .o_tag_color_aqua, .o_field_widget.o_field_many2manytags .o_tag_color_aqua::after {
+  background-color: #00FFFF;
+  color: #fff;
+}
+
+.o_field_widget.o_field_many2manytags .o_tag_color_slateBlue, .o_field_widget.o_field_many2manytags .o_tag_color_slateBlue::after {
+  background-color: #6A5ACD;
+  color: #fff;
+}
+
+.o_field_widget.o_field_many2manytags .o_tag_color_fuchsia, .o_field_widget.o_field_many2manytags .o_tag_color_fuchsia::after {
+  background-color: #FF00FF;
+  color: #fff;
+}
+
+.o_field_widget.o_field_many2manytags .o_tag_color_salmon, .o_field_widget.o_field_many2manytags .o_tag_color_salmon::after {
+  background-color: #FA8072;
+  color: #fff;
+}
+.o_field_widget.o_field_many2manytags .o_tag_color_lime, .o_field_widget.o_field_many2manytags .o_tag_color_lime::after {
+  background-color: #00FF00;
+  color: #fff;
+}
+.o_field_widget.o_field_many2manytags .o_tag_color_blue, .o_field_widget.o_field_many2manytags .o_tag_color_blue::after {
+  background-color: #0000FF;
+  color: #fff;
+}

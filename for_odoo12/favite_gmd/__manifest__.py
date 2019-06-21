@@ -37,5 +37,5 @@
     'auto_install': False,
     'application': True,
     
-    'post_load':'start_watchdog'
+#     'post_load':'start_watchdog'
 }

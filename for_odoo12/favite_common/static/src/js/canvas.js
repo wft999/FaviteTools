@@ -1,9 +1,7 @@
-odoo.define('padtool.Canvas', function (require) {
+odoo.define('favite_common.Canvas', function (require) {
 "use strict";
 
 var Class = require('web.Class');
-//fabric.perfLimitSizeTotal = 1024*1024*4;
-//fabric.maxCacheSideLimit = 10000;
 var Line = fabric.util.createClass(fabric.Line, {
     selectable: false,
     originX:"left",
@@ -16,12 +14,9 @@ var Line = fabric.util.createClass(fabric.Line, {
 	hasBorders:false,
     initialize: function(points,options) {
     	this.callSuper('initialize',points, options);
-    	this.pad = options.pad || null;
-    	if(this.pad && this.pad.padType == "uninspectZone"){
+/*    	if(options.strokeDash){
     		this.strokeDashArray = [100,20];
-    		this.fill = 'Cyan';
-    	    this.stroke = 'Cyan';
-    	}
+    	}*/
     },
 
 	_render: function(ctx) {
@@ -29,84 +24,6 @@ var Line = fabric.util.createClass(fabric.Line, {
 		this.callSuper('_render', ctx);
     }
   });
-
-var Rect = fabric.util.createClass(fabric.Rect, {
-	hasBorders:false,
-	hasControls:false,
-	hasRotatingPoint:false,
-	transparentCorners: false,
-	fill: false,
-    stroke: 'yellow',
-    //strokeWidth:1,
-    initialize: function(options) {
-    	this.callSuper('initialize',options);
-    	this.pad = options.pad || null;
-    	this.points = options.points || null;
-    	
-    	this.lockMovementX = this.pad.map.isPanel;
-    	this.lockMovementY = this.pad.map.isPanel;
-    	this.hoverCursor = this.pad.map.isPanel?"":"move"
-    },
-
-	_render: function(ctx) {
-		//this.strokeWidth = Math.round(1/this.canvas.getZoom());
-		ctx.lineWidth= 1/(this.canvas.getZoom());
-		this.callSuper('_render', ctx);
-		
-		/*ctx.beginPath();
-		ctx.moveTo(this.points[0].x,this.points[0].y);
-		ctx.lineTo(this.points[0].x,this.points[1].y);
-		ctx.lineTo(this.points[1].x,this.points[1].y);
-		ctx.lineTo(this.points[1].x,this.points[0].y);
-		ctx.lineTo(this.points[0].x,this.points[0].y);
-		ctx.stroke();*/
-    }
-  });
-
-var Polygon = fabric.util.createClass(fabric.Polygon, {
-	hasBorders:false,
-	hasRotatingPoint:false,
-	transparentCorners: false,
-	fill: false,
-    stroke: 'red',
-	hasControls: false,
-    initialize: function(points,options) {
-    	this.callSuper('initialize',points,options);
-    	
-    	this.pad = options.pad || null;
-    	this.lockMovementX = this.pad.map.isPanel;
-    	this.lockMovementY = this.pad.map.isPanel;
-    	this.hoverCursor = this.pad.map.isPanel?"":"move";
-    },
-
-      _render: function(ctx) {	
-		//this.strokeWidth = 1;
-    	//ctx.lineWidth= 1/this.canvas.getZoom();
-		//this.callSuper('_render', ctx);
-    	  
-    	  ctx.lineWidth = Math.round(1/this.canvas.getZoom());
-    	  
-    	  ctx.beginPath();
-    	  ctx.moveTo(100, 100);
-          ctx.lineTo(1000, 1000);
-
-          var origStrokeStyle = ctx.strokeStyle;
-          ctx.strokeStyle = this.stroke;
-          //this.stroke && this._renderStroke(ctx);
-          
-          this._removeShadow(ctx);
-
-            ctx.save();
-            this._setLineDash(ctx, this.strokeDashArray, this._renderDashedStroke);
-            this._applyPatternGradientTransform(ctx, this.stroke);
-            ctx.stroke();
-            ctx.restore();
-            
-          ctx.strokeStyle = origStrokeStyle;
-    },
-    
-  });
-
 
 var Goa = fabric.util.createClass(fabric.Object, {
 	type:'goa',
@@ -175,12 +92,12 @@ var Cross = fabric.util.createClass(fabric.Object, {
 	hoverCursor:"move",
 	//lockMovementX:true,
 	//lockMovementY:true,
-	visible:false,
+	visible:true,
 	stroke:"yellow",
 	objectCaching:true,
     initialize: function(options) {
     	this.callSuper('initialize', options);
-    	this.pad = options.pad || null;
+    	this.polyline = options.polyline || null;
     	this.id = options.id;
     	
     	this.animDirection = 'up';
@@ -231,8 +148,8 @@ var Cross = fabric.util.createClass(fabric.Object, {
     				(this.top>= this.inner[1].top && this.top<= this.inner[0].top) ||
     				this.left < 10 || this.left > (this.canvas.width - 10)/this.canvas.getZoom() ||
     				this.top < 10 || this.top > (this.canvas.height - 10)/this.canvas.getZoom()){
-    			this.left = this.pad.points[this.id].x;
-    			this.top = this.pad.points[this.id].y;
+    			this.left = this.polyline.points[this.id].x;
+    			this.top = this.polyline.points[this.id].y;
     			this.setCoords();
     			return false;
     		}
@@ -241,8 +158,8 @@ var Cross = fabric.util.createClass(fabric.Object, {
     				this.left<= this.outer[0].left || 
     				this.top<= this.outer[1].top || 
     				this.top>= this.outer[0].top){
-    			this.left = this.pad.points[this.id].x;
-    			this.top = this.pad.points[this.id].y;
+    			this.left = this.polyline.points[this.id].x;
+    			this.top = this.polyline.points[this.id].y;
     			this.setCoords();
     			return false;
     		}
@@ -272,91 +189,69 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
     },
 
 	_render: function(ctx) {
-		//this.width = 50/this.canvas.getZoom(),
-		//this.height = 50/this.canvas.getZoom(),
-/*		
-		ctx.beginPath(); 
-		ctx.lineWidth=  1/(this.canvas.getZoom()*this.scaleY);
-		ctx.strokeStyle="yellow"; 
-		ctx.moveTo(-this.width/2,0);
-		ctx.lineTo(this.width/2,0);
-		ctx.stroke();
-
-		ctx.beginPath();
-		ctx.lineWidth=  1/(this.canvas.getZoom()*this.scaleX);
-		ctx.moveTo(0,-this.height/2);
-		ctx.lineTo(0,this.height/2); 
-		ctx.stroke(); */
-
 		ctx.fillStyle = '#4FC3F7';
 		ctx.globalAlpha = 0.3;
-		//ctx.beginPath();
 		ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height);
-		//ctx.arc(0,0,this.width/2,0,Math.PI * 2, false);
-		//ctx.fill();
     }
   });
 
-var MyRect = Class.extend({
-	init: function(map,padType,points){
-		if(points.length != 2)
-			return;
-		
-		var wh = 10/map.getZoom();
-
- 		var line1 = new Line([points[0].x,points[0].y,points[0].x,points[1].y],{padType});
- 		var line2 = new Line([points[0].x,points[0].y,points[1].x,points[0].y],{padType});
- 		var line3 = new Line([points[1].x,points[1].y,points[1].x,points[0].y],{padType});
- 		var line4 = new Line([points[1].x,points[1].y,points[0].x,points[1].y],{padType});
- 		
- 		this.cross1 = new Cross({ 
- 			top: points[0].y, 
- 			left: points[0].x,
- 			padType:padType,
- 			width:wh,
- 			height:wh,
- 			lockMovementX:false,
- 			lockMovementY:false,
- 			polyline:this,
- 			});
- 		this.cross2 = new Cross({ 
- 			top: points[1].y, 
- 			left: points[1].x,
- 			padType:padType,
- 			width:wh,
- 			height:wh,
- 			lockMovementX:false,
- 			lockMovementY:false,
- 			polyline:this,
- 			});
- 		
- 		this.cross1.line1 = line1;
- 		this.cross1.line2 = line2;
- 		this.cross1.line3 = line3;
- 		this.cross1.line4 = line4;
- 		
- 		this.cross2.line1 = line3;
- 		this.cross2.line2 = line4;
- 		this.cross2.line3 = line1;
- 		this.cross2.line4 = line2;
- 		map.add(line1,line2,line3,line4,this.cross1,this.cross2); 
-	},
-	
-	
-});
 
 var MyPolyline = Class.extend({
-	init: function(map,padType){
+	init: function(map,type,obj,color){
 		this.map = map;
-		this.padType = padType;
+		this.strokeDash = false;
+		
+		this.obj = obj;
+		this.type = type;
+		this.color = color || 'yellow';
+		this.visible = true,
+
 		this.points = new Array();
 		this.crosses = new Array();
 		this.lines = new Array();
-		this.map.pads.push(this);
+		this.map.polylines.push(this);
 		this.selected = false;
 	},
 	
-	update:function(){
+	focus: function(focused){
+		var self = this;
+		this.map.curPolyline = focused ? this : this.map.curPolyline;
+		_.each(this.crosses,function(c){
+			c.visible = focused && self.visible;
+		})
+	},
+	
+	select: function(selected){
+		this.selected = selected;
+		_.each(this.lines,function(l){
+			l.strokeDashArray = selected? [20,20] : [];
+			l.dirty=true
+		})
+	},
+	
+	update: function(visible,color){
+		var self = this;
+		this.visible = visible;
+		this.color = color;
+		_.each(this.crosses,function(c){
+			c.visible = visible && c.visible;
+		})
+		_.each(this.lines,function(l){
+			l.visible =  visible;
+			if(l.visible){
+				l.fill = color;
+				l.stroke = color;
+				l.dirty=true
+			}	
+		})
+	},
+	
+	render:function(){
+		var self = this;
+		this.points = new Array();
+		this.obj.points.forEach(function(p){
+				self.points.push({x:p.x,y:p.y})
+			})
 		this._render();
 		return true;
 	},
@@ -514,6 +409,8 @@ var MyPolyline = Class.extend({
 			var line = this.lines.pop()
 			this.map.remove(line);
 		}
+
+		//this.map.polylines = _.without(this.map.polylines,this);
 	},
 	
 	updateCross(show){
@@ -526,53 +423,53 @@ var MyPolyline = Class.extend({
 	},
 	
 	_render: function(){
-		this.clear();
+		while(this.crosses.length)
+		{
+			var cross = this.crosses.pop()
+			this.map.remove(cross);
+		}
+		while(this.lines.length)
+		{
+			var line = this.lines.pop()
+			this.map.remove(line);
+		}
 
 		var wh = 10/this.map.getZoom();
 		for(var i = 0; i < this.points.length; i++){
-			if(!(this.padType == 'region' || (this.padType == 'subMark' && this.points.length < 3))){//for check plygon submark
-				var cross = new Cross({ 
-					id:i,
-					top: this.points[i].y, 
-					left: this.points[i].x,
-					width:wh,
-					height:wh,
-					pad:this,
-					stroke:i==0?'aqua':'lime'
-					});
-				this.crosses.push(cross);
-				this.map.add(cross);
-			}
-			
-			if(this.padType == 'frame')
-				continue;
-			
 			if(i >= 1){
+				var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
 				if(this.points.length == 2){
-					var line1 = new Line([this.points[0].x,this.points[0].y,this.points[0].x,this.points[1].y],{pad:this});
-			 		var line2 = new Line([this.points[0].x,this.points[0].y,this.points[1].x,this.points[0].y],{pad:this});
-			 		var line3 = new Line([this.points[1].x,this.points[1].y,this.points[1].x,this.points[0].y],{pad:this});
-			 		var line4 = new Line([this.points[1].x,this.points[1].y,this.points[0].x,this.points[1].y],{pad:this});
+					var line1 = new Line([this.points[0].x,this.points[0].y,this.points[0].x,this.points[1].y],attr);
+			 		var line2 = new Line([this.points[0].x,this.points[0].y,this.points[1].x,this.points[0].y],attr);
+			 		var line3 = new Line([this.points[1].x,this.points[1].y,this.points[1].x,this.points[0].y],attr);
+			 		var line4 = new Line([this.points[1].x,this.points[1].y,this.points[0].x,this.points[1].y],attr);
 			 		this.lines.push(line1,line2,line3,line4);
 			 		this.map.add(line1,line2,line3,line4);
 				}else{
-					var line = new Line(
-							[this.points[i-1].x,this.points[i-1].y,this.points[i].x,this.points[i].y],
-							{pad:this}
-						);
+					var line = new Line([this.points[i-1].x,this.points[i-1].y,this.points[i].x,this.points[i].y],attr);
 					this.lines.push(line);
 					this.map.add(line);
 					
 					if(i == this.points.length -1){
-						var line = new Line(
-								[this.points[0].x,this.points[0].y,this.points[i].x,this.points[i].y],
-								{pad:this}
-								);
+						var line = new Line([this.points[0].x,this.points[0].y,this.points[i].x,this.points[i].y],attr);
 						this.lines.push(line);
 						this.map.add(line);
 					}
 				}
 			}
+			
+			var cross = new Cross({ 
+				id:i,
+				top: this.points[i].y, 
+				left: this.points[i].x,
+				width:wh,
+				height:wh,
+				polyline:this,
+				stroke:i==0?'aqua':'lime',
+				visible:false
+				});
+			this.crosses.push(cross);
+			this.map.add(cross);
 		}
 	}
 });
@@ -581,8 +478,6 @@ return {
 	Line,
 	Cross,
 	Hawkeye,
-	Rect,
-	MyRect,
 	MyPolyline,
 	Goa,
 };

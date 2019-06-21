@@ -67,18 +67,18 @@
     <record model="ir.model.fields">
             <field name="model_id" ref="padtool.model_padtool_pad" />
             
-            <field name="scope">Common..BMPeriod</field>
+<!--             <field name="scope">Common..BMPeriod</field> -->
             <field name="name">BMMode</field>
             <field name="help">it is a help</field>
             <field name="ttype">boolean</field>
             <field name="required">true</field>
-            <field name="default" eval="True" />
+            <field name="default" eval="False" />
     </record>
     
     <record model="ir.model.fields">
             <field name="model_id" ref="padtool.model_padtool_pad" />
             
-            <field name="scope">Common..BMPeriod</field>
+<!--             <field name="scope">Common..BMPeriod</field> -->
             <field name="name">BMPeriodX0</field>
             <field name="help">it is a help</field>
             <field name="ttype">float</field>
@@ -88,7 +88,7 @@
     <record  model="ir.model.fields">
             <field name="model_id" ref="padtool.model_padtool_pad" />
             
-            <field name="scope">Common..BMPeriod</field>
+<!--             <field name="scope">Common..BMPeriod</field> -->
             <field name="name">BMPeriodY0</field>
             <field name="help">it is a help</field>
             <field name="ttype">float</field>
@@ -98,7 +98,7 @@
     <record  model="ir.model.fields">
             <field name="model_id" ref="padtool.model_padtool_pad" />
             
-            <field name="scope">Common..BMPeriod</field>
+<!--             <field name="scope">Common..BMPeriod</field> -->
             <field name="name">BMPeriodX1</field>
             <field name="help">it is a help</field>
             <field name="ttype">float</field>
@@ -108,7 +108,7 @@
     <record  model="ir.model.fields">
             <field name="model_id" ref="padtool.model_padtool_pad" />
             
-            <field name="scope">Common..BMPeriod</field>
+<!--             <field name="scope">Common..BMPeriod</field> -->
             <field name="name">BMPeriodY1</field>
             <field name="help">it is a help</field>
             <field name="ttype">float</field>
@@ -177,7 +177,7 @@
             <field name="help">it is a help</field>
             <field name="ttype">arraynumeric</field>
             <field name="required">true</field>
-            <field name="default" eval="[500,500]" />
+            <field name="default" eval="[1000,1000]" />
     </record>
 
 </odoo>

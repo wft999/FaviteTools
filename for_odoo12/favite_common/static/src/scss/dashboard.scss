@@ -1,5 +1,4 @@
 .o_dashboard {
-
     // Dashboard layout
     .oe_dashboard_layout_1 .oe_dashboard_column {
         &.index_0 {
@@ -60,7 +59,7 @@
             border-color: #e5e5e5 #dbdbdb #d2d2d2;
             margin: 0 4px 4px 0;
            .oe_header {
-                font-size: 16px;
+                font-size: 14px;
                 vertical-align: middle;
                 margin: 0;
                 padding: 2px 12px;
@@ -112,7 +111,7 @@
                 height: 16px !important;
             }
             .oe_content {
-            	min-height: 450px;
+            	min-height: 480px;
                 padding: 2px 2px 2px 2px;
                 &.oe_folded {
                     display: none;

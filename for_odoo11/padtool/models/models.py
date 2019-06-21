@@ -140,34 +140,32 @@ class Pad(models.Model):
                 if not fname.startswith('x_'):
                     continue
                 
-                if 'x_scope' not in field or field['x_scope'] is None:
-                    names = ['Common','Unnamed','Others']
-                else:
+                if 'x_scope' in field and field['x_scope'] is not None:
                     names = field['x_scope'].split('.')
                     if len(names) == 1:
                         names = ['Common','Unnamed']+ names
                     elif len(names) == 2:
                         names = ['Common']+names
                         
-                key1 = names[0]
-                if key1 not in pages:
-                    p = E.page(string=names[0])
-                    pages[key1] = p
-                    notebook.append(p)
-                    
-                key2 = names[0] + '.' + names[1]
-                if key2 not in g1:
-                    g = E.group(string=names[1])
-                    g1[key2] = g
-                    pages[key1].append(g)
-                    
-                key3 = names[0] + '.' + names[1]  + '.' + names[2]
-                if key3 not in g2:
-                    g = E.group(string=names[2])
-                    g2[key3] = g
-                    g1[key2].append(g)
-                    
-                g2[key3].append(E.field(name=fname))
+                    key1 = names[0]
+                    if key1 not in pages:
+                        p = E.page(string=names[0])
+                        pages[key1] = p
+                        notebook.append(p)
+                        
+                    key2 = names[0] + '.' + names[1]
+                    if key2 not in g1:
+                        g = E.group(string=names[1])
+                        g1[key2] = g
+                        pages[key1].append(g)
+                        
+                    key3 = names[0] + '.' + names[1]  + '.' + names[2]
+                    if key3 not in g2:
+                        g = E.group(string=names[2])
+                        g2[key3] = g
+                        g1[key2].append(g)
+                        
+                    g2[key3].append(E.field(name=fname))
             
             root.append(notebook)
             src = etree.fromstring(result['fields_views']['form']['arch'])

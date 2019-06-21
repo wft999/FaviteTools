@@ -1,3 +1,2 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_favite_gmd_gmd,favite_gmd.gmd,model_favite_gmd_gmd,,1,1,1,1
-access_favite_gmd_gmd_obj,favite_gmd.gmd.obj,model_favite_gmd_gmd_obj,,1,1,1,1

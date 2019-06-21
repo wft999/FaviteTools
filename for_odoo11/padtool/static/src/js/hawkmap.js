@@ -917,7 +917,16 @@ var Hawkmap = Widget.extend({
 					}else if(obj.pad == self.map.curPad){
 						obj.pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'GreenYellow';line.fill='GreenYellow'})
 					}else{
-						obj.pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'yellow';line.fill='yellow'})
+						obj.pad.lines.forEach(function(line){
+							line.dirty=true;
+							if(obj.pad.padType == "uninspectZone"){
+								line.fill = 'Cyan';
+								line.stroke = 'Cyan';
+					    	}else{
+					    		line.stroke = 'yellow';
+								line.fill='yellow'
+					    	}
+						})
 					}
 				}else if(obj.type === 'goa'){
 					obj.hasControls = self.map.hoverCursor == 'default';	

@@ -711,7 +711,17 @@ var Map = Widget.extend({
 						first = false;
 					}
 				}else{
-					pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'yellow';line.fill='yellow'});
+					pad.lines.forEach(function(line){
+						line.dirty=true;
+						if(pad.padType == "uninspectZone"){
+							line.fill = 'Cyan';
+							line.stroke = 'Cyan';
+				    	}else{
+				    		line.stroke = 'yellow';
+							line.fill='yellow'
+				    	}
+						
+					});
 					//if(pad.crosses[0])
 						//pad.crosses[0].visible = false;
 				}
