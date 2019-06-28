@@ -32,8 +32,16 @@
             <div t-if="widget.id != 'info'" class="btn-group" role="group">
 				<button class="btn btn-secondary btn-sm fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
 				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="m"/>
-				<button class="btn btn-secondary btn-sm fa fa-edit" title="Edit" data-mode="crosshair" accesskey="e"/>
+				<button class="btn btn-secondary btn-sm fa fa-map-marker o_hidden" title="Point" data-mode="crosshair" accesskey="e"/>
 		    </div>
+
+            <a t-if="widget.id != 'info'"  class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="New" title="New">
+                <span class="fa fa-ellipsis-h"/>
+            </a>
+            <div t-if="widget.id != 'info'"  class="dropdown-menu obj-types" role="menu" aria-labelledby="dLabel">
+            </div>
+
+                        
 		    <div t-if="widget.id != 'info'"  class="btn-group btn-group-md"  role="group">
         		<button class="o_hidden btn btn-secondary btn-sm fa fa-trash" title="Delete" data-command="Delete" accesskey="d"/>
 			</div>

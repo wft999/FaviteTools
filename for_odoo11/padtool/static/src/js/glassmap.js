@@ -257,9 +257,7 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
     		var y = (top + bottom)/2;
     		var panel_center_x = x * Math.cos(-this.glass_angle) + y * Math.sin(-this.glass_angle) + this.glass_center_x;
     		var panel_center_y = -x * Math.sin(-this.glass_angle) + y * Math.cos(-this.glass_angle) + this.glass_center_y;
-    		
-    		var innerFrame = null;
-     		var outerFrame = null;
+
     		pads.objs && pads.objs.forEach(function(pad){
      			var obj = new Mycanvas.MyPolyline(self.map,pad.padType);
      			pad.points.forEach(function(p){
@@ -272,6 +270,7 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
     		});
 
     		id++;
+    		//break;
  		}
  	},
  	

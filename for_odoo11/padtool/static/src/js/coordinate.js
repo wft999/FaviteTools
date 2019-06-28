@@ -1086,6 +1086,7 @@ var COORDINATE_TRANSFER =  Class.extend({
     	return {};
     },
     
+    
     HawkmapCoordinateToUMCoordinate:function(iInputX,iInputY){
     	var dOutputX, dOutputY;
     	var iStartX = 0,iStartY = 0;

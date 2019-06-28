@@ -8,7 +8,7 @@ var config = require('web.config');
 var BasicView = require('web.BasicView');
 var MapRender = require('favite_common.MapRender');
 var MapController = require('favite_common.MapController');
-var BasicModel = require('web.BasicModel');
+var MapModel = require('favite_common.MapModel');
 
 var view_registry = require('web.view_registry');
 var _lt = core._lt;
@@ -17,7 +17,7 @@ var MapView = BasicView.extend({
 	display_name: _lt('Map'),
 	icon: 'fa-map',
     config: _.extend({}, BasicView.prototype.config, {
-    	Model: BasicModel,
+    	Model: MapModel,
     	Renderer: MapRender,
         Controller: MapController,
     }),

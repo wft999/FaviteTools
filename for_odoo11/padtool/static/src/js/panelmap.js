@@ -505,6 +505,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         		var x = parseFloat(this.$content.find('.o_set_customerx_input').val());
             	var y = parseFloat(this.$content.find('.o_set_customery_input').val());
             	let {dOutputX,dOutputY} = self.coordinate.CustomerCoordinateToUmCoordinate(x,y);
+            	
             	if(dOutputX !== undefined && dOutputY !== undefined){
             		if(self.hawkeye && self.map.hoverCursor == 'default'){
             			var out1 = self._getUmCoordinateForPanleMap(dOutputX,dOutputY);
@@ -528,6 +529,20 @@ var Panelmap = Map.extend(ControlPanelMixin,{
             	}
         	}},
         		{text: _t('Discard'), close: true}],
+        });
+        this.dialog.opened().then(function () {
+            var $input = self.dialog.$('input.form-control');
+            $input.val(0);
+            $input.on('change', function (event){
+            	var x = parseFloat(self.dialog.$content.find('.o_set_customerx_input').val());
+            	var y = parseFloat(self.dialog.$content.find('.o_set_customery_input').val());
+            	let {dOutputX,dOutputY} = self.coordinate.CustomerCoordinateToUmCoordinate(x,y);
+            	let {iIP,iScan} = self.coordinate.JudgeIPScanUM(dOutputX,dOutputY,0,0);
+            	iIP++;
+            	iScan++;
+            	var $span = self.dialog.$('span.ipscan');
+            	$span.html("ip:"+iIP+",scan:"+iScan);
+            });
         });
         this.dialog.open();
     },

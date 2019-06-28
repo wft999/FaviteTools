@@ -46,34 +46,40 @@ var MapMouseHandle = {
 	
 	_onMouseUp:function(opt){
 		this.map.isDragging = false;
+		var newPointer = this.map.getPointer(opt.e);
+		var isClick = _.isEqual(newPointer,this.map.lastPointer);
 		
 		if(this.map.hoverCursor == 'default'){
 			if(this._isSelectCross){
 				this._isSelectCross = false;
 				return;
 			}
-			
-			var newPointer = this.map.getPointer(opt.e);
-			var isClick = _.isEqual(newPointer,this.map.lastPointer);
-			
+			if(this._isObjectMoving){
+				this._isObjectMoving = false;
+				return;
+			}
+				
 			this.map.discardActiveObject();
-			this.map.curPolyline = null;
+			if(this.map.curPolyline){
+				this.map.curPolyline.focus(false);
+				this.map.curPolyline = null;
+			}
+			
 			
 			var selected = new Array();
 			for(var i = 0; i < this.map.polylines.length; i++){
+				this.map.polylines[i].focus(false);
 				if(!this.map.polylines[i].visible)
 					continue;
-				
-				this.map.polylines[i].focus(false);
+
 				if(isClick){
 					var sel = this.map.polylines[i].containsPoint(newPointer);
 					if(opt.e.ctrlKey){
 						if(sel){
-							this.map.polylines[i].select(!this.map.polylines[i].selected);
+							this.map.polylines[i].select(!this.map.polylines[i].obj.selected);
 						}
 					}else{
 						this.map.polylines[i].select(sel);
-						//if(this.map.curPolyline == null && sel)
 						this.map.polylines[i].focus(sel);
 					}
 				}else{
@@ -85,13 +91,13 @@ var MapMouseHandle = {
 					var sel = this.map.polylines[i].withinRect(left,right,top,bottom);
 					if(opt.e.ctrlKey){
 						if(sel){
-							this.map.polylines[i].select(!this.map.polylines[i].selected);
+							this.map.polylines[i].select(!this.map.polylines[i].obj.selected);
 						}
 					}else{
 						this.map.polylines[i].select(sel);
 					}
 				}
-				if(this.map.polylines[i].selected){
+				if(this.map.polylines[i].obj.selected){
 					//this.map.polylines[i].crosses.forEach(function(c){selected.push(c);})
 					this.map.polylines[i].lines.forEach(function(c){selected.push(c);})
 				}
@@ -101,11 +107,29 @@ var MapMouseHandle = {
 				this.map.setActiveObject(sel);
 			}
 			
-			this._toggleCommand('Delete',selected.length > 0 || this.map.curPolyline);
-			this._toggleCommand('Copy',selected.length > 0 || this.map.curPolyline);
+			this._showCommand('Delete',selected.length > 0 || this.map.curPolyline);
+			this._showCommand('Copy',selected.length > 0 || this.map.curPolyline);
+			this._showMode('crosshair',this.map.curPolyline);
+			this.$('a.dropdown-toggle').toggleClass('o_hidden',!!this.map.curPolyline);
+			
+			core.bus.trigger('map_select_change', this.map.curPolyline?{obj:this.map.curPolyline.obj,type:this.map.curPolyline.type} : null);
+		}else if(this.map.hoverCursor == this.CROSSHAIR && this.map.curPolyline){
+			if(this.map.curPolyline.checkPoint(newPointer)){
+				var obj = this.map.curPolyline.obj;
+				obj.points.push({x:newPointer.x,y:newPointer.y});
+
+				this.trigger_up('field_changed', {
+		            dataPointID: this.getParent().state.id,
+		            changes:{geo:this.geo},
+		        });
+			}else{
+				this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
+			}
+			
 		}
 
     	this.map.renderAll();
+    	
 	},
 
 };
@@ -113,13 +137,23 @@ var MapMouseHandle = {
 var MapEventHandle = {
 	_onObjectSelect: function(opt){
     	if(opt.target.type === 'cross'){
-    		this.curPolyline = opt.target.polyline;
+    		opt.target.polyline.focus(true);
     		this._isSelectCross = true;
-    		this._toggleCommand('Delete',true);
-    		this._toggleCommand('Copy',true);
+    		this._showCommand('Delete',true);
+    		this._showCommand('Copy',true);
     	}else{
     		this._isSelectCross = false;
     	}
+    },
+    
+    _onObjectMoving: function(opt){
+    	if(this.map.hoverCursor !== 'default')
+    		return;
+    	
+    	this._isObjectMoving = true;
+    	
+    	opt.e.stopPropagation();
+        opt.e.preventDefault();
     },
     _onObjectMoved: function(opt){
     	var self = this;
@@ -144,7 +178,7 @@ var MapEventHandle = {
     		var offsetX = this.map.lastPointer.x - opt.transform.lastX;
     		var offsetY = this.map.lastPointer.y - opt.transform.lastY;
     		this.map.polylines.forEach(function(p){
-    			if(!p.selected)
+    			if(!p.obj.selected)
     				return;
     			_.each(p.obj.points,o=>{
     				o.x += offsetX;
@@ -184,14 +218,16 @@ var MapCommandHandle = {
     	            dataPointID: self.getParent().state.id,
     	            changes:{geo:self.geo},
     	        });	
-            	self._toggleCommand('Delete');
-            	self._toggleCommand('Copy');
+            	self._showCommand('Delete',false);
+            	self._showCommand('Copy',false);
+            	self._showMode('crosshair',false);
+            	self.$('a.dropdown-toggle').toggleClass('o_hidden',!!self.map.curPolyline);
             }
 		}else{
 			if(this.map.curPolyline){
 				polylines.push(this.map.curPolyline);
 			}else{
-				polylines = _.filter(this.map.polylines,p => p.selected);
+				polylines = _.filter(this.map.polylines,p => p.obj.selected);
 			}
 			if(polylines.length == 0){
 	    		this.do_warn(_t('Incorrect Operation'),_t('Please select one object!'),false);
@@ -211,8 +247,10 @@ var MapCommandHandle = {
     	            changes:{geo:self.geo},
     	        });	
             	
-            	self._toggleCommand('Delete');
-            	self._toggleCommand('Copy');
+            	self._showCommand('Delete',false);
+            	self._showCommand('Copy',false);
+            	self._showMode('crosshair',false);
+            	self.$('a.dropdown-toggle').toggleClass('o_hidden',!!self.map.curPolyline);
             };
 		}
 
@@ -228,7 +266,7 @@ var MapCommandHandle = {
 		if(this.map.curPolyline){
 			polylines.push(this.map.curPolyline);
 		}else{
-			polylines = _.filter(this.map.polylines,p => p.selected);
+			polylines = _.filter(this.map.polylines,p => p.obj.selected);
 		}
 		if(polylines.length == 0){
     		this.do_warn(_t('Incorrect Operation'),_t('Please select one object!'),false);
@@ -240,9 +278,11 @@ var MapCommandHandle = {
 			$.extend(true,obj,p.obj);
 			_.each(obj.points,p=>{p.x+=100;p.y+=100;})
 			self.geo[p.type].objs.push(obj);
+			delete p.obj.selected;
     	});
     	
     	if(self.map.curPolyline){
+    		self.map.curPolyline.focus(false);
     		self.map.curPolyline = null;
 		}
     	

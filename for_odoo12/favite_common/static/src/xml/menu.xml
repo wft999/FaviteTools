@@ -55,11 +55,6 @@
             <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_salmon" data-color="salmon" title="Salmon" aria-label="Salmon"/></li>
             <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_lime" data-color="lime" title="Lime" aria-label="Lime"/></li>
             <li><a role="menuitem" href="#" t-att-data-id="tag_id" class="o_tag_color_blue" data-color="blue" title="Blue" aria-label="Blue"/></li>
-            <li> 
-				<button  type="button"  class="btn btn-secondary" accesskey="n">
-            			New Object
-				</button>
-            </li>
         </ul>
     </div>
 </t>

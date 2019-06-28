@@ -1,22 +1,19 @@
 <odoo>
     <data>
-        <!-- <template id="listing"> -->
-        <!--   <ul> -->
-        <!--     <li t-foreach="objects" t-as="object"> -->
-        <!--       <a t-attf-href="#{ root }/objects/#{ object.id }"> -->
-        <!--         <t t-esc="object.display_name"/> -->
-        <!--       </a> -->
-        <!--     </li> -->
-        <!--   </ul> -->
-        <!-- </template> -->
-        <!-- <template id="object"> -->
-        <!--   <h1><t t-esc="object.display_name"/></h1> -->
-        <!--   <dl> -->
-        <!--     <t t-foreach="object._fields" t-as="field"> -->
-        <!--       <dt><t t-esc="field"/></dt> -->
-        <!--       <dd><t t-esc="object[field]"/></dd> -->
-        <!--     </t> -->
-        <!--   </dl> -->
-        <!-- </template> -->
+        <template id="assets_common" name="favite assets" inherit_id="web.assets_common">
+        	<xpath expr="." position="inside">
+
+                <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_canvas.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map_raw.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map_thumb.js"></script>
+                
+                <script type="text/javascript" src="/favite_gmd/static/src/js/widget_global.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/widget_mark.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_info.js"></script>
+            </xpath>
+        </template>
+       
+	
     </data>
 </odoo>

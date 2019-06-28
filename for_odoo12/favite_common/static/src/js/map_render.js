@@ -55,7 +55,7 @@ return BasicRenderer.extend({
     
     saveBoard: function () {
         var self = this;
-        var baseKey = this.getParent().modelName + '_';
+        var baseKey = this.getParent().getBaseKey();
         local_storage.setItem(baseKey+'layout',this.$('.oe_dashboard').attr('data-layout'))
         
         var col_id = 0;
@@ -78,8 +78,8 @@ return BasicRenderer.extend({
      * @override
      */
     on_attach_callback: function () {
-        this._super.apply(this, arguments);
-        
+    	var self = this;
+        this._super.apply(this, arguments);        
     },
 
     _renderView: function () {
@@ -90,7 +90,7 @@ return BasicRenderer.extend({
         .empty();
         
 
-        var baseKey = this.getParent().modelName + '_' ;
+        var baseKey = this.getParent().getBaseKey();
         var layout = local_storage.getItem(baseKey+'layout') || "2-1";
         var $board = $(QWeb.render('favite_common.DashBoard', {layout}));
         this.$el.append($board);
@@ -134,9 +134,9 @@ return BasicRenderer.extend({
     
     _renderSubview: function (subview,parent) {
         var self = this;  
-        var baseKey = this.getParent().modelName + '_';
+        var baseKey = this.getParent().getBaseKey();
         
-        var Widget = widgetRegistry.get('subview_' + subview.id);
+        var Widget = widgetRegistry.get('subview_' + baseKey + subview.id) || widgetRegistry.get('subview_' + subview.id);
         var w = _.extend(new Widget(this),subview);
         w.fold = local_storage.getItem(baseKey + subview.id + '_fold') || "false";
     	w.fold = eval(w.fold.toLowerCase())

@@ -28,18 +28,12 @@ class Gmd(models.Model):
     @api.model
     def _default_geo(self):
         geo = {
-        "mark":{
-            "objs":[
-                {"points":[{"x":100,"y":100},{"x":500,"y":500},{"x":500,"y":100}]},
-                {"points":[{"x":600,"y":600},{"x":700,"y":700},{"x":700,"y":600}]},
-                ]
-            },
-        "submark":{
-            "objs":[
-                {"points":[{"x":400,"y":700},{"x":500,"y":800}]},
-                {"points":[{"x":600,"y":900},{"x":800,"y":1000}]},
-                ]
-            },
+        "lightRegion":{"objs":[]},
+        "markoffset":{"objs":[]},
+        "mark":{"objs":[]},
+        "pad":{"objs":[]},
+        "mask":{"objs":[]},
+        "block":{"objs":[]},
         }
         return geo
     

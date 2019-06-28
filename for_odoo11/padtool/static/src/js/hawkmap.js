@@ -546,6 +546,8 @@ var Hawkmap = Widget.extend({
 			var y = opt.e.offsetY;
 			var zoom = this.map.getZoom();
 			let {dOutputX:ux,dOutputY:uy} = this.parent.coordinate.HawkmapCoordinateToUMCoordinate(x/zoom,this.image.height-y/zoom);
+			//let {iIPIndex, iScanIndex} = this.parent.coordinate.HawkmapCoordinateToIpScan(x/zoom,this.image.height-y/zoom);
+			
 			$(".map-info").text("image(x:"+Math.round(x/zoom)+",y:"+Math.round(y/zoom)+") window(x:"+x+",y:"+y+") um(x:"+ux+',y:'+uy);
 		}
 		

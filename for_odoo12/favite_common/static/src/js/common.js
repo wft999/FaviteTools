@@ -49,28 +49,12 @@ var fullScreenMenu = Widget.extend({
 
 });
 
-//SystrayMenu.Items.push(fullScreenMenu);
+odoo.define('favite_common.canvas_registry', function (require) {
+    "use strict";
+    var Registry = require('web.Registry');
+    return new Registry();
+});
 
-
-/*KanbanRecord.include({
-    _openRecord: function () {
-        if (this.modelName === 'favite_gmd.gmd') {
-        	this.do_action({
-                name: this.recordData.name,
-                res_model: 'favite_gmd.gmd',
-                domain: [['gmd_id', '=', this.recordData.id]],
-                context: {default_gmd_id: this.recordData.id},
-                views: [[false, 'map'], [false, 'list']],
-                type: 'ir.actions.act_window',
-                view_type: "map",
-                view_mode: "map"
-            });
-        } else {
-            this._super.apply(this, arguments);
-        }
-    },
-
-});*/
 
 field_utils.format.jsonb = function(value, field, options){
 	if (value === false) {

@@ -32,6 +32,9 @@
     'demo': [
         'demo/demo.xml',
     ],
+    'qweb': [
+        "static/src/xml/info.xml",
+    ],
 
     'installable': True,
     'auto_install': False,

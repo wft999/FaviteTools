@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+<t t-extend="UserMenu.Actions">
+    <t t-jquery="a[data-menu='documentation']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='support']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
+</t>
+
+<t t-name="favite_gmd.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span t-if="widget.id == 'info'" class="oe_header_txt"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+       		<table class="o_group o_inner_group o_label_nowrap">
+       			<tr>
+           			<td class="o_td_label"><label for="galss_size_x" class="o_form_label">Glass size x(mm)</label></td>
+           			<td width="100%"><input type="number" class="o_field_widget o_input" name="galss_size_x" /></td>
+       			</tr>
+       			<tr>
+           			<td class="o_td_label"><label for="galss_size_y" class="o_form_label">Glass size y(mm)</label></td>
+           			<td width="100%"><input type="number" class="o_field_widget o_input" name="galss_size_y" /></td>
+       			</tr>
+   			</table>
+        			
+        	<div class="btn-group">
+        		<div>
+        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-lg" data-toggle="dropdown" href="#" role="button" aria-label="glass corner" title="glass corner">
+                		<img src="/favite_gmd/static/src/img/ico_GlassCorner1.ico" alt="Icon" />
+            		</a>
+       				<ul class="dropdown-menu">
+       					<li><a class="dropdown-item" data-type="1"><img src="/favite_gmd/static/src/img/ico_GlassCorner1.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="2"><img src="/favite_gmd/static/src/img/ico_GlassCorner2.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="3"><img src="/favite_gmd/static/src/img/ico_GlassCorner3.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="4"><img src="/favite_gmd/static/src/img/ico_GlassCorner4.ico" alt="Icon" /></a></li>
+       				</ul>
+        		</div>
+        		
+        		<div>
+        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-lg" data-toggle="dropdown" href="#" role="button" aria-label="coordinate system" title="coordinate system">
+                		<img src="/favite_gmd/static/src/img/icon.ico" alt="Icon" />
+            		</a>
+       				<ul class="dropdown-menu">
+       					<li><a class="dropdown-item" data-type="1"><img src="/favite_gmd/static/src/img/icon1.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="2"><img src="/favite_gmd/static/src/img/icon2.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="3"><img src="/favite_gmd/static/src/img/icon3.ico" alt="Icon" /></a></li>
+       					<li><a class="dropdown-item" data-type="4"><img src="/favite_gmd/static/src/img/icon4.ico" alt="Icon" /></a></li>
+       				</ul>
+        		</div>
+    		</div>
+    		<div class="gmd-object" />
+        </div>
+    </div>
+</t>
+
+<t t-name="favite_gmd.info_mark">
+    <div>
+                    <strong class="float-left" id="outstanding"><t t-esc="widget.type"></t></strong>
+                </div>
+    <div>
+                    <strong class="float-left" id="outstanding"><t t-esc="widget.obj_id"></t></strong>
+                </div>
+</t>
+
+
+</templates>

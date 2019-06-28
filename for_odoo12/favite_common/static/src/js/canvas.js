@@ -196,7 +196,7 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
   });
 
 
-var MyPolyline = Class.extend({
+var Polyline = Class.extend({
 	init: function(map,type,obj,color){
 		this.map = map;
 		this.strokeDash = false;
@@ -206,15 +206,16 @@ var MyPolyline = Class.extend({
 		this.color = color || 'yellow';
 		this.visible = true,
 
-		this.points = new Array();
+		this.points = obj.points;
 		this.crosses = new Array();
 		this.lines = new Array();
 		this.map.polylines.push(this);
-		this.selected = false;
+
 	},
 	
 	focus: function(focused){
 		var self = this;
+		this.obj.focused = focused;
 		this.map.curPolyline = focused ? this : this.map.curPolyline;
 		_.each(this.crosses,function(c){
 			c.visible = focused && self.visible;
@@ -222,7 +223,7 @@ var MyPolyline = Class.extend({
 	},
 	
 	select: function(selected){
-		this.selected = selected;
+		this.obj.selected = selected;
 		_.each(this.lines,function(l){
 			l.strokeDashArray = selected? [20,20] : [];
 			l.dirty=true
@@ -248,20 +249,20 @@ var MyPolyline = Class.extend({
 	
 	render:function(){
 		var self = this;
-		this.points = new Array();
+/*		this.points = new Array();
 		this.obj.points.forEach(function(p){
 				self.points.push({x:p.x,y:p.y})
-			})
+			})*/
 		this._render();
 		return true;
 	},
 	
-	addPoint:function(point){
+	checkPoint:function(point){
 		if(this.points.length >= 3 && this._checkIntersection(point)){
 			return false;
 		}
-		this.points.push(point);
-		this._render();
+		//this.points.push(point);
+		//this._render();
 		return true;
 	},
 	removePoint:function(id){
@@ -478,7 +479,7 @@ return {
 	Line,
 	Cross,
 	Hawkeye,
-	MyPolyline,
+	Polyline,
 	Goa,
 };
 

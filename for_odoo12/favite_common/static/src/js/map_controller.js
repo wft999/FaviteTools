@@ -43,13 +43,13 @@ return BasicController.extend({
         if (id === this.handle) {
             if (this.mode === 'readonly') {
                 return this.reload().then(function(){
-                	self.changeStack = [{geo:self.renderer.state.data.geo}];
-                	self.changeStackIndex = 0;
-            	
-                	self._updateButtons();
+                	
                 });
             } else {
-                return this._setMode('readonly');
+            	self.changeStack = [{geo:self.renderer.state.data.geo}];
+            	self.changeStackIndex = 0;
+            	self._updateButtons();
+                return this._setMode('edit');
             }
         } else {
             var record = this.model.get(this.handle);
@@ -112,14 +112,16 @@ return BasicController.extend({
     },
     
     _onSave: function (ev) {
+    	this.changeStack = [];
+    	this.changeStackIndex = -1;
+        
         ev.stopPropagation(); // Prevent x2m lines to be auto-saved
         var self = this;
         this._disableButtons();
         this.saveRecord().always(function () {
             self._enableButtons();
         }).done(function(){
-        	self.changeStack = [];
-            self.changeStackIndex = -1;
+        	
         });
     },
     
@@ -195,6 +197,10 @@ return BasicController.extend({
         return false;
     },
     
+    getBaseKey: function(){
+    	return this.modelName.replace('.','_') + '_' ;
+    },
+    
     _onUpdateColor: function (ev) {
         ev.preventDefault();
         var $target = $(ev.currentTarget);
@@ -208,7 +214,7 @@ return BasicController.extend({
         $tag.removeClass('o_tag_color_'+currentColor);
         $tag.addClass('o_tag_color_'+color);
         
-        var baseKey = this.modelName + '_' ;
+        var baseKey = this.getBaseKey();
         local_storage.setItem(baseKey+id,color);
         this._updateMap();
     },
@@ -217,7 +223,7 @@ return BasicController.extend({
     	var self = this;
     	var sel = {};
     	_.each(this.curSelect,function(item){
-        	var baseKey = self.modelName + '_' ;
+        	var baseKey = self.getBaseKey(); ;
         	sel[item] = local_storage.getItem(baseKey+item) || 'yellow';
         });
     	this.renderer.thumbWidget.updateMap(sel);
@@ -235,7 +241,7 @@ return BasicController.extend({
         this.$select.append(qweb.render("FieldMany2ManyTag", {
             colorField: 'color',
             elements: _.map(self.curSelect,function(item){
-            	var baseKey = self.modelName + '_' ;
+            	var baseKey = self.getBaseKey();
                 var color = local_storage.getItem(baseKey+item) || 'yellow';
             	return {id:item,color:color,display_name:item};
             }),
@@ -363,7 +369,7 @@ return BasicController.extend({
                 $searchview_buttons:$('<div>')
             };
 
-            this.renderButtons(elements.$sidebar);
+            this.renderButtons(elements.$searchview_buttons);
             //this.renderSidebar(elements.$sidebar);
             this.renderSelect(elements.$buttons);
             // remove the unnecessary outer div
@@ -380,7 +386,7 @@ return BasicController.extend({
         var self = this;
         var buttons =[
         	[
-        		{accessKey:'l',icon:'fa-window-maximize',type:'maximize'},
+        		//{accessKey:'l',icon:'fa-window-maximize',type:'maximize'},
         	],
         	[
         		{accessKey:'l',icon:'fa-th-large',type:'layout'},
