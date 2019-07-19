@@ -6,19 +6,22 @@ var Dialog = require('web.Dialog');
 var widgetRegistry = require('web.widget_registry');
 
 var GmdWidgetMap = require('favite_gmd.GmdWidgetMap');
+var Thumb = require('favite_common.WidgetMapThumb');
 var framework = require('web.framework');
 
 var QWeb = core.qweb;
 var _t = core._t;
 
 
-var WidgetMapThumb = GmdWidgetMap.extend({
+var WidgetMapThumb = Thumb.extend(GmdWidgetMap,{
     events: {
 //        'keydown.canvas-map': '_onKeydown'
     },
 
     init: function(){
+    	
     	this.map_type = "thumb";
+
         return this._super.apply(this, arguments);
     },
    
@@ -31,10 +34,14 @@ var WidgetMapThumb = GmdWidgetMap.extend({
     
     start: function () {
         var self = this;
+        var pos = self.cameraConf['image.dm.resizerate'].split(',');
+    	self.ratio.x = 1/parseFloat(pos[0]);
+    	self.ratio.y = 1/parseFloat(pos[1]);
         return this._super.apply(this, arguments).then(function () {
         	return $.when();
         });
     },
+    
     
     
 });

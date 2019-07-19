@@ -71,6 +71,8 @@ return BasicController.extend({
 		}else if(event.data.undo){
 			if(this.changeStackIndex > 0 && this.changeStack.length > this.changeStackIndex)
 				event.data.changes = this.changeStack[--this.changeStackIndex];
+		}else if(event.data.noundo){
+
 		}else{
 			this.changeStack.push(event.data.changes);
 			this.changeStackIndex++;
@@ -173,6 +175,7 @@ return BasicController.extend({
     
     _getSource: function (req, resp) {
     	var types = Object.keys(this.renderer.state.data.geo);
+    	types = _.filter(types,t=>_.has(this.renderer.state.data.geo[t],'objs'));
     	var source = _.map(_.difference(types,this.curSelect),function(item){
     		return {
     			label: item,
@@ -236,8 +239,11 @@ return BasicController.extend({
     	this.$select && this.$select.remove();
     	
         this.$select = $('<div class="o_field_many2manytags o_input o_field_widget"/>');
+        
+        var types = Object.keys(this.renderer.state.data.geo);
+    	types = _.filter(types,t=>_.has(this.renderer.state.data.geo[t],'objs'));
 
-    	this.curSelect = this.curSelect || Object.keys(this.renderer.state.data.geo);
+    	this.curSelect = this.curSelect || types;
         this.$select.append(qweb.render("FieldMany2ManyTag", {
             colorField: 'color',
             elements: _.map(self.curSelect,function(item){
@@ -389,14 +395,17 @@ return BasicController.extend({
         		//{accessKey:'l',icon:'fa-window-maximize',type:'maximize'},
         	],
         	[
-        		{accessKey:'l',icon:'fa-th-large',type:'layout'},
+        		//{accessKey:'l',icon:'fa-th-large',type:'layout'},
         		
         	]
         ];
 
-
+        
+        var baseKey = this.getBaseKey();
+        var layout = local_storage.getItem(baseKey+'layout') || "2-1";
         var $switchButtons = $(qweb.render('favite_common.ControlPanel.SwitchButtons', {
         	buttons: buttons,
+        	currentLayout:layout
         }));
         // create bootstrap tooltips
         _.each(buttons, function (button) {
@@ -407,6 +416,16 @@ return BasicController.extend({
         $switchButtonsFiltered.click(_.debounce(function (event) {
             var buttonType = $(event.target).data('button-type');
             self.trigger_up('switch_botton_click', {button_type: buttonType});
+        }, 200, true));
+        
+        $switchButtons.find('li').click(_.debounce(function (event) {
+        	var layout = $(this).attr('data-layout');
+            self.renderer.changeLayout(layout);
+            self.renderer.saveBoard();
+            
+            $switchButtons.find('li i').addClass('o_hidden');
+            $(this).find('i').removeClass('o_hidden');
+
         }, 200, true));
 
         if (config.device.isMobile) {

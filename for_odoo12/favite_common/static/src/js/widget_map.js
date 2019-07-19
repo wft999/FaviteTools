@@ -11,6 +11,7 @@ var Canvas = require('favite_common.Canvas');
 var canvas_registry = require('favite_common.canvas_registry');
 
 var Mixin = require('favite_common.Mixin');
+var Coordinate = require('favite_common.coordinate');
 
 var QWeb = core.qweb;
 var _t = core._t;
@@ -23,22 +24,25 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     CROSSHAIR: "url(/favite_common/static/src/img/crosshair.png) 8 8,crosshair",
 
     init: function(){
+    	
+    	this.offset = {x:0,y:0};
+    	this.ratio = {x:1,y:1};
 		this.fold = false;
 		this.mouseMode = 'select';
+		
         return this._super.apply(this, arguments);
     },
    
     willStart: function () {
     	var self = this;
         return this._super.apply(this, arguments).then(function () {
-        	self.image = new fabric.Image();
-        	var src = 'http://localhost/BaiduNetdiskDownload/385G4914CA2U/Glass.bmp';
-        	var def = $.Deferred();
-        	self.image.setSrc(src, function(img){
-        		img.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false });
-        		def.resolve();
-        	});
-            return $.when(def);
+        	var l = window.location;
+        	var parts = self.getParent().state.data.camera_path.split('\\');
+        	
+        	self.image_path = l.protocol + "//" + l.host + '/' + parts[parts.length-2] + '/' + parts[parts.length-1];
+        	
+        	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
+            return $.when();
         });
     },
     
@@ -78,7 +82,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 		if(canvas_registry.get(baseKey+key))
 			objClass = canvas_registry.get(baseKey+key);
 		
-		self.map.curPolyline = new objClass(self.map,key,obj,color);
+		self.map.curPolyline = new objClass(self,key,obj,color);
 		self.map.curPolyline.focus(true);
 		
 		self.$('a.dropdown-toggle').toggleClass('o_hidden',true);
@@ -91,38 +95,54 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     	var $types = this.$('div.obj-types');
     	$types.empty();
     	for(var key in sel){
-    		var $it = $('<a class="dropdown-item" data-type="'+key+'">'+key+'</a>');
-    		$types.append($it);
-    		$it.click(self._onTypeButtonClick.bind(self));
+    		if(_.isString(sel[key]) || _.has(sel[key],'objs')){
+    			var $it = $('<a class="dropdown-item" data-type="'+key+'">'+key+'</a>');
+        		$types.append($it);
+        		$it.click(self._onTypeButtonClick.bind(self));
+    		}
+    		
     	}
     },
     
     start: function () {
         var self = this;
+        
+        
+    	var dMapRatioX = self.ratio.x;
+    	var dMapRatioY = self.ratio.y;
+    	var dMapLeft = self.offset.x;
+    	var dMapBottom = self.offset.y;
+    	self.coord = new Coordinate(self.cameraConf,dMapRatioX,dMapRatioY,dMapLeft,dMapBottom);
+    	
         return this._super.apply(this, arguments).then(function () {
         	self.$el.on('click', 'button.btn',self._onButtonClick.bind(self));
         	self._showObjsList(self.getParent().state.data.geo);
         	
-        	self.showMap();
         
         	return $.when();
         });
     },
     
+    resetMap(){
+    	var self = this;
+    	var dim = {width:self.$('.oe_content').width(),height:self.$('.oe_content').height()};
+		var zoom = Math.min(dim.width/self.image.width,dim.height/self.image.height);
+		
+		self.map.setDimensions(dim);
+		self.map.setZoom(zoom);
+		
+/*		var left = (dim.width - zoom * self.image.width)/2;
+		var top = (dim.height - zoom * self.image.height)/2;
+		self.map.viewportTransform[4] = left;
+	    self.map.viewportTransform[5] = top;*/
+    },
+    
     showMap: function(){
     	var self = this;
     	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true});
-		self.map.add(self.image);
-		
-		var dim = {width:self.$('.oe_content').width()-4,height:self.$('.oe_content').height()-4};
-		self.map.setDimensions(dim);
-		//console.log(self.$('.oe_content').width()+"-"+self.$('.oe_content').height())
-		
-		//var zoom = Math.max(self.map.getWidth()/self.image.width,self.map.getHeight()/self.image.height);
-		var zoom = Math.max(dim.width/self.image.width,dim.height/self.image.height);
-		zoom = Math.floor(zoom*100)/100;
-		self.minZoom = zoom;
-		self.map.setZoom(zoom);
+    	self.map.add(self.image);
+    	
+		self.resetMap();
 		
 		self.map.on('mouse:move',self._onMouseMove.bind(self));    		
 		self.map.on('mouse:out', self._onMouseOut.bind(self));  
@@ -141,7 +161,8 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     updateState: function(state){
     	var self = this;
-    	this._drawObjects();
+    	if(!this.getParent().state.data.geo.no_render_map)
+    		this._drawObjects();
     },
     
     _drawObjects:function(){
@@ -158,7 +179,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     		var selected = new Array();
         	
         	for(var key in this.geo){
-        		this.geo[key].objs.forEach(function(obj){
+        		this.geo[key].objs && this.geo[key].objs.forEach(function(obj){
         			var baseKey = self.getParent().getParent().getBaseKey();
         			var color = local_storage.getItem(baseKey+key) || 'yellow';
         			
@@ -166,8 +187,9 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         			if(canvas_registry.get(baseKey+key))
         				objClass = canvas_registry.get(baseKey+key);
         			
-         			var p = new objClass(self.map,key,obj,color);
-         			p.render();
+         			var p = new objClass(self,key,obj,color);
+         			if(p.intersectsWithRect(0,self.image.width,0,self.image.height))
+         				p.render();
          			
          			if(obj.selected){
          				p.select(true);
@@ -242,6 +264,17 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 	},
 	_showMode: function(mode,visible=false){
 		this.$('button[data-mode="' + mode + '"]').toggleClass('o_hidden',!visible);
+	},
+	
+	_geo2map: function(point){
+		var {dOutputX:x, dOutputY:y} = this.coord.UMCoordinateToMapCoordinate(point.x,point.y);
+		return {x,y:this.image.height-y};
+		//return {x: (point.x - this.offset.x) * this.ratio.x, y: this.image.height-(point.y - this.offset.y) * this.ratio.y};
+	},
+	_map2geo: function(point){
+		var {dOutputX:x, dOutputY:y} = this.coord.MapCoordinateToUMCoordinate(point.x,this.image.height-point.y);
+		return {x,y};
+		//return {x: (point.x + this.offset.x) / this.ratio.x, y: (this.image.height-point.y) / this.ratio.y + this.offset.y};
 	},
 	
 });

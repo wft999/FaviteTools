@@ -4,7 +4,7 @@ odoo.define('favite_gmd.GmdWidgetMap', function (require) {
 var core = require('web.core');
 var Dialog = require('web.Dialog');
 
-var WidgetMap = require('favite_common.WidgetMap');
+
 var framework = require('web.framework');
 var widgetRegistry = require('web.widget_registry');
 
@@ -12,29 +12,7 @@ var QWeb = core.qweb;
 var _t = core._t;
 
 
-var GmdWidgetMap = WidgetMap.extend({
-    events: {
-//        'keydown.canvas-map': '_onKeydown'
-    },
-
-    init: function(){
-
-        return this._super.apply(this, arguments);
-    },
-   
-    willStart: function () {
-    	var self = this;
-        return this._super.apply(this, arguments).then(function () {
-            return $.when();
-        });
-    },
-    
-    start: function () {
-        var self = this;
-        return this._super.apply(this, arguments).then(function () {
-        	return $.when();
-        });
-    },
+var GmdWidgetMap = {
     
     _onTypeButtonClick: function(ev){
     	var key = $(ev.currentTarget).data('type');
@@ -49,9 +27,10 @@ var GmdWidgetMap = WidgetMap.extend({
 		
 		return this._super.apply(this, arguments);
 	},
+
     
     
-});
+};
 
 return GmdWidgetMap;
 

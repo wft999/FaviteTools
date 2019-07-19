@@ -14,9 +14,6 @@ var Line = fabric.util.createClass(fabric.Line, {
 	hasBorders:false,
     initialize: function(points,options) {
     	this.callSuper('initialize',points, options);
-/*    	if(options.strokeDash){
-    		this.strokeDashArray = [100,20];
-    	}*/
     },
 
 	_render: function(ctx) {
@@ -24,63 +21,6 @@ var Line = fabric.util.createClass(fabric.Line, {
 		this.callSuper('_render', ctx);
     }
   });
-
-var Goa = fabric.util.createClass(fabric.Object, {
-	type:'goa',
-    fill:false,
-    hasBorders:false,
-    transparentCorners: false,
-    cornerSize:5,
-	originX:"center",
-	originY:"center",
-	hoverCursor:"move",
-
-	D1G1:0,
-	period:20,
-	number:5,
-	width:100,
-	height:100,
-    initialize: function(options) {
-    	this.callSuper('initialize', options);
-    	this.pad = options.pad || null;
-    	this.period = options.period || 20;
-    	this.height = this.period * 5;
-    },
-
-	_render: function(ctx) {	
-		//this.strokeWidth = Math.round(1/this.canvas.getZoom()*this.scaleX*this.scaleY);
-		ctx.strokeStyle="red"; 
-		
-		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleY);
-
-		ctx.beginPath(); 
-		ctx.moveTo(-this.width/2,-this.height/2);
-		ctx.lineTo(this.width/2,-this.height/2);
-		ctx.stroke();
-		
-		var i;
-		ctx.strokeStyle="yellow";
-		for(i =1; i < this.number; i++){
-			ctx.beginPath(); 
-			ctx.moveTo(-this.width/2,-this.height/2+i*this.period);
-			ctx.lineTo(this.width/2,-this.height/2+i*this.period);
-			ctx.stroke();
-		}
-		
-		ctx.strokeStyle="red";
-		ctx.beginPath(); 
-		ctx.moveTo(-this.width/2,-this.height/2+i*this.period);
-		ctx.lineTo(this.width/2,-this.height/2+i*this.period);
-		ctx.stroke();
-		
-		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleX);
-		ctx.beginPath(); 
-		ctx.moveTo(-this.width/2,-this.height/2);
-		ctx.lineTo(-this.width/2,-this.height/2+i*this.period);
-		ctx.stroke();
-		
-    },
-});
 
 var Cross = fabric.util.createClass(fabric.Object, {
 	type:'cross',
@@ -174,31 +114,49 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 	hasRotatingPoint:false,
 	transparentCorners: false,
     objectCaching: true,
-	//hasControls: false,
+	hasControls: false,
 	hasBorders:false,
-	visible:false,
+	visible:true,
 	originX:"center",
 	originY:"center",
 	cornerSize:5,
 	hoverCursor:'move',
+	stroke:"yellow",
+	fill:false,
 	
     initialize: function(options) {
     	this.callSuper('initialize', options);
-    	this.width = options&&options.width||50;
-    	this.height = options&&options.height||50;
+    	this.w=30;
     },
 
-	_render: function(ctx) {
+	/*_render: function(ctx) {
 		ctx.fillStyle = '#4FC3F7';
 		ctx.globalAlpha = 0.3;
 		ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height);
-    }
+    }*/
+    
+    _render: function(ctx) {
+		this.width = this.w/this.canvas.getZoom(),
+		this.height = this.w/this.canvas.getZoom(),
+		
+		ctx.beginPath(); 
+		ctx.lineWidth= Math.round(2/this.canvas.getZoom());
+		ctx.moveTo(-this.width/2,0);
+		ctx.lineTo(this.width/2,0);
+		ctx.stroke();
+
+		ctx.beginPath();
+		ctx.moveTo(0,-this.height/2);
+		ctx.lineTo(0,this.height/2); 
+		ctx.stroke(); 
+		
+    },
   });
 
 
 var Polyline = Class.extend({
-	init: function(map,type,obj,color){
-		this.map = map;
+	init: function(widget,type,obj,color){
+		this.widget = widget;
 		this.strokeDash = false;
 		
 		this.obj = obj;
@@ -206,17 +164,20 @@ var Polyline = Class.extend({
 		this.color = color || 'yellow';
 		this.visible = true,
 
-		this.points = obj.points;
+		this.points = _.map(obj.points,widget._geo2map.bind(widget));
 		this.crosses = new Array();
 		this.lines = new Array();
-		this.map.polylines.push(this);
-
+		this.widget.map.polylines.push(this);
+	},
+	
+	specialHandle: function(){
+		
 	},
 	
 	focus: function(focused){
 		var self = this;
 		this.obj.focused = focused;
-		this.map.curPolyline = focused ? this : this.map.curPolyline;
+		this.widget.map.curPolyline = focused ? this : this.widget.map.curPolyline;
 		_.each(this.crosses,function(c){
 			c.visible = focused && self.visible;
 		})
@@ -245,14 +206,12 @@ var Polyline = Class.extend({
 				l.dirty=true
 			}	
 		})
+		
+		if(this.text) this.text.visible = visible;
 	},
 	
 	render:function(){
 		var self = this;
-/*		this.points = new Array();
-		this.obj.points.forEach(function(p){
-				self.points.push({x:p.x,y:p.y})
-			})*/
 		this._render();
 		return true;
 	},
@@ -261,8 +220,6 @@ var Polyline = Class.extend({
 		if(this.points.length >= 3 && this._checkIntersection(point)){
 			return false;
 		}
-		//this.points.push(point);
-		//this._render();
 		return true;
 	},
 	removePoint:function(id){
@@ -325,11 +282,9 @@ var Polyline = Class.extend({
 			var right = Math.max(this.points[0].x,this.points[1].x);
 			var top = Math.min(this.points[0].y,this.points[1].y);
 			var bottom = Math.max(this.points[0].y,this.points[1].y);
-			//return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
 			poly = new fabric.Polygon([{x:left,y:top},{x:right,y:top},{x:right,y:bottom},{x:left,y:bottom}]);
 			return  poly.containsPoint(point,null,true,true);
 		}else{
-			//poly = new fabric.Polygon(this.points);
 			return this.containsPolygonPoint(point);
 		}
 	},
@@ -403,15 +358,15 @@ var Polyline = Class.extend({
 		while(this.crosses.length)
 		{
 			var cross = this.crosses.pop()
-			this.map.remove(cross);
+			this.widget.map.remove(cross);
 		}
 		while(this.lines.length)
 		{
 			var line = this.lines.pop()
-			this.map.remove(line);
+			this.widget.map.remove(line);
 		}
-
-		//this.map.polylines = _.without(this.map.polylines,this);
+		if(this.text)
+			this.widget.map.remove(this.text);
 	},
 	
 	updateCross(show){
@@ -427,15 +382,17 @@ var Polyline = Class.extend({
 		while(this.crosses.length)
 		{
 			var cross = this.crosses.pop()
-			this.map.remove(cross);
+			this.widget.map.remove(cross);
 		}
 		while(this.lines.length)
 		{
 			var line = this.lines.pop()
-			this.map.remove(line);
+			this.widget.map.remove(line);
 		}
+		if(this.text)
+			this.widget.map.remove(this.text);
 
-		var wh = 10/this.map.getZoom();
+		var wh = 10/this.widget.map.getZoom();
 		for(var i = 0; i < this.points.length; i++){
 			if(i >= 1){
 				var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
@@ -445,16 +402,16 @@ var Polyline = Class.extend({
 			 		var line3 = new Line([this.points[1].x,this.points[1].y,this.points[1].x,this.points[0].y],attr);
 			 		var line4 = new Line([this.points[1].x,this.points[1].y,this.points[0].x,this.points[1].y],attr);
 			 		this.lines.push(line1,line2,line3,line4);
-			 		this.map.add(line1,line2,line3,line4);
+			 		this.widget.map.add(line1,line2,line3,line4);
 				}else{
 					var line = new Line([this.points[i-1].x,this.points[i-1].y,this.points[i].x,this.points[i].y],attr);
 					this.lines.push(line);
-					this.map.add(line);
+					this.widget.map.add(line);
 					
 					if(i == this.points.length -1){
 						var line = new Line([this.points[0].x,this.points[0].y,this.points[i].x,this.points[i].y],attr);
 						this.lines.push(line);
-						this.map.add(line);
+						this.widget.map.add(line);
 					}
 				}
 			}
@@ -470,7 +427,13 @@ var Polyline = Class.extend({
 				visible:false
 				});
 			this.crosses.push(cross);
-			this.map.add(cross);
+			this.widget.map.add(cross);
+		}
+		
+		if(this.obj.label && this.points.length == 2){
+			this.text = new fabric.Text(this.obj.label, { left: (this.points[0].x + this.points[1].x)/2, 
+				top: (this.points[0].y + this.points[1].y)/2, fill: this.color });
+			this.widget.map.add(this.text);
 		}
 	}
 });
@@ -480,7 +443,6 @@ return {
 	Cross,
 	Hawkeye,
 	Polyline,
-	Goa,
 };
 
 });

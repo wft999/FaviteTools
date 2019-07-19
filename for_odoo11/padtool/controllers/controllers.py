@@ -23,9 +23,9 @@ class Padtool(http.Controller):
         root = odoo.tools.config['glass_root_path']
         blocks = json.loads(strBlocks)
          
-        dest = Image.new('L', (width,height))   
+        dest = Image.new('L', (width,height))
         left = 0
-        top = 0 
+        top = 0
         for x in range(len(blocks)):
             for y in range(len(blocks[x])-1,-1,-1):
                 b = blocks[x][y]    

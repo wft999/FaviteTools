@@ -36,7 +36,10 @@ var MapMouseHandle = {
 		    this.map.lastPosY = e.clientY;
 		}else{
 			var pointer = this.map.getPointer(opt.e);
-			this.$(".map-info").text("x:"+Math.round(pointer.x)+",y:"+Math.round(pointer.y));
+			pointer = _.mapObject(pointer,(v,k) => Math.round(v));
+			var geo = this._map2geo(pointer);
+			geo = _.mapObject(geo,(v,k) => Math.round(v));
+			this.$(".map-info").text("img:"+pointer.x+","+pointer.y + ";um:" +geo.x+","+geo.y);
 		}
 	},
 	
@@ -112,12 +115,13 @@ var MapMouseHandle = {
 			this._showMode('crosshair',this.map.curPolyline);
 			this.$('a.dropdown-toggle').toggleClass('o_hidden',!!this.map.curPolyline);
 			
-			core.bus.trigger('map_select_change', this.map.curPolyline?{obj:this.map.curPolyline.obj,type:this.map.curPolyline.type} : null);
+			core.bus.trigger('map_select_change', this.map.curPolyline?this.map.curPolyline : null);
 		}else if(this.map.hoverCursor == this.CROSSHAIR && this.map.curPolyline){
 			if(this.map.curPolyline.checkPoint(newPointer)){
 				var obj = this.map.curPolyline.obj;
-				obj.points.push({x:newPointer.x,y:newPointer.y});
-
+				obj.points.push(this._map2geo(newPointer));
+				this.map.curPolyline.specialHandle();
+				
 				this.trigger_up('field_changed', {
 		            dataPointID: this.getParent().state.id,
 		            changes:{geo:this.geo},
@@ -158,13 +162,13 @@ var MapEventHandle = {
     _onObjectMoved: function(opt){
     	var self = this;
    	 	if(opt.target.type == "hawkeye"){
-    		//this.hawkmap.showImage();
-
+   	 		var p = self._map2geo({x:opt.target.left,y:opt.target.top});
+   	 		core.bus.trigger('hawkeye_change', p);
     	}else if(opt.target.type == "cross"){
     		if(opt.target.mouseMove()){
     			var obj = opt.target.polyline.obj;
-    			obj.points[opt.target.id].x = opt.target.left;
-    			obj.points[opt.target.id].y = opt.target.top;
+    			obj.points[opt.target.id] = this._map2geo({x:opt.target.left, y:opt.target.top});
+    			opt.target.polyline.specialHandle();
 
     			this.trigger_up('field_changed', {
     	            dataPointID: this.getParent().state.id,
@@ -175,15 +179,21 @@ var MapEventHandle = {
     		}
     	}else if(opt.target.type == "activeSelection"){
     		this.map.lastPointer = this.map.getPointer(opt.e);
-    		var offsetX = this.map.lastPointer.x - opt.transform.lastX;
-    		var offsetY = this.map.lastPointer.y - opt.transform.lastY;
+    		
+    		var offset1 = this._map2geo(this.map.lastPointer);
+    		var offset2 = this._map2geo({
+    			x:opt.transform.lastX, 
+    			y:opt.transform.lastY});
+    		
     		this.map.polylines.forEach(function(p){
     			if(!p.obj.selected)
     				return;
     			_.each(p.obj.points,o=>{
-    				o.x += offsetX;
-        			o.y += offsetY;
+    				o.x += offset1.x - offset2.x;
+        			o.y += offset1.y - offset2.y;
     			});
+    			
+    			p.specialHandle();
     		});
     		
     		this.trigger_up('field_changed', {
@@ -213,6 +223,8 @@ var MapCommandHandle = {
 				}else{
 					p.obj.points.splice(cross[0].id,1);
 				}
+				
+				p.specialHandle();
             	
             	self.trigger_up('field_changed', {
     	            dataPointID: self.getParent().state.id,
@@ -276,10 +288,12 @@ var MapCommandHandle = {
 		_.each(polylines,p=>{
 			var obj = {};
 			$.extend(true,obj,p.obj);
-			_.each(obj.points,p=>{p.x+=100;p.y+=100;})
+			_.each(obj.points,p=>{p.x+=100/self.ratio.x;p.y+=100/self.ratio.y;})
 			self.geo[p.type].objs.push(obj);
 			delete p.obj.selected;
     	});
+		
+		//Polyline.specialHandle();
     	
     	if(self.map.curPolyline){
     		self.map.curPolyline.focus(false);

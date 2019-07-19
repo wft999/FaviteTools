@@ -7,6 +7,17 @@ var field_utils = require('web.field_utils');
 
 var client = require('web.web_client');
 
+var KanbanRecord = require('web.KanbanRecord');
+KanbanRecord.include({
+	_openRecord: function (event) {
+        if (this.modelName === 'favite_gmd.gmd') {
+        	this.$('.dropdown-menu a').first().click();
+        } else {
+            this._super.apply(this, arguments);
+        }
+    },
+});
+
 
 client.set_title_part('zopenerp','FaviteTools');
 
@@ -49,13 +60,6 @@ var fullScreenMenu = Widget.extend({
 
 });
 
-odoo.define('favite_common.canvas_registry', function (require) {
-    "use strict";
-    var Registry = require('web.Registry');
-    return new Registry();
-});
-
-
 field_utils.format.jsonb = function(value, field, options){
 	if (value === false) {
         return "";
@@ -67,3 +71,8 @@ field_utils.format.jsonb = function(value, field, options){
 
 });
 
+odoo.define('favite_common.canvas_registry', function (require) {
+    "use strict";
+    var Registry = require('web.Registry');
+    return new Registry();
+});

@@ -14,6 +14,18 @@
         	<t t-call="favite_common.ControlPanel.SwitchButton"/>
     	</div>
     </t>
+    <div class="btn-group btn-group-md" role="group">
+    	<button type="button" class="btn btn-secondary fa fa-lg fa-th-large" title="Layout" tabindex="-1" data-toggle="dropdown" aria-expanded="false"/>
+        <ul class="dropdown-menu dropdown-menu-right">
+        	<li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout" class="width_long">
+        		<a class="dropdown-item">
+                	<img t-attf-src="/board/static/src/img/layout_#{layout}.png" alt=""/>
+                	<i t-attf-class="#{layout == currentLayout?'':'o_hidden'}  oe_dashboard_selected_layout fa fa-check fa-lg text-success" aria-label='Layout' role="img" title="Layout" style="margin-left: -50px"/>
+                </a>
+            </li>
+			       					
+		</ul>
+    </div>
 </t>
     
 <t t-name="favite_common.DashBoard">
@@ -28,7 +40,7 @@
 <t t-name="favite_common.DashBoard.subview">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span t-if="widget.id == 'info'" class="oe_header_txt"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
             <div t-if="widget.id != 'info'" class="btn-group" role="group">
 				<button class="btn btn-secondary btn-sm fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
 				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="m"/>
@@ -59,7 +71,9 @@
         <div t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
         	<canvas t-if="widget.id != 'info'"></canvas>
         </div>
+        
     </div>
+    
 </t>
 
 <t t-name="favite_common.DashBoard.layouts">

@@ -32,6 +32,9 @@ return BasicRenderer.extend({
      * @param {string} layout
      */
     changeLayout: function (layout) {
+    	this.rawWidget && this.rawWidget.map.setDimensions({width:1,height:1});
+        this.thumbWidget && this.thumbWidget.map.setDimensions({width:1,height:1});
+        
         var $dashboard = this.$('.oe_dashboard');
         var current_layout = $dashboard.attr('data-layout');
         if (current_layout !== layout) {
@@ -51,6 +54,8 @@ return BasicRenderer.extend({
             $dashboard.toggleClass('oe_dashboard_layout_' + current_layout + ' oe_dashboard_layout_' + layout);
             $dashboard.attr('data-layout', layout);
         }
+        this.thumbWidget && this.thumbWidget.resetMap();
+        this.rawWidget && this.rawWidget.resetMap();
     },
     
     saveBoard: function () {
@@ -72,6 +77,8 @@ return BasicRenderer.extend({
             local_storage.setItem(baseKey + col_id, actions.join(','))
             col_id++;
         });
+        
+        
     },
 
     /**
@@ -96,7 +103,7 @@ return BasicRenderer.extend({
         this.$el.append($board);
         
         var defs = [];
-        var subviews = [{id:'thumb'},{id:'raw'},{id:'info',string:'Info'}];
+        var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:'Detail'}];
         _.each([0,1,2],function(col_id){
         	var str = local_storage.getItem(baseKey + col_id) || "";
         	_.each(str.split(','),function(subview_id){

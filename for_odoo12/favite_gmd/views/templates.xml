@@ -2,15 +2,19 @@
     <data>
         <template id="assets_common" name="favite assets" inherit_id="web.assets_common">
         	<xpath expr="." position="inside">
+        		<script type="text/javascript" src="/favite_gmd/static/src/js/info_mask.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/info_mark.js"></script>
+                <script type="text/javascript" src="/favite_gmd/static/src/js/info_block.js"></script>
 
+				<script type="text/javascript" src="/favite_gmd/static/src/js/panel_resort.js"></script>
                 <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_canvas.js"></script>
                 <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map.js"></script>
                 <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map_raw.js"></script>
                 <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_map_thumb.js"></script>
-                
-                <script type="text/javascript" src="/favite_gmd/static/src/js/widget_global.js"></script>
-                <script type="text/javascript" src="/favite_gmd/static/src/js/widget_mark.js"></script>
                 <script type="text/javascript" src="/favite_gmd/static/src/js/gmd_widget_info.js"></script>
+                
+                
+                
             </xpath>
         </template>
        
