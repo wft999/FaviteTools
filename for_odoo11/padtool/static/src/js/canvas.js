@@ -21,6 +21,9 @@ var Line = fabric.util.createClass(fabric.Line, {
     		this.strokeDashArray = [100,20];
     		this.fill = 'Cyan';
     	    this.stroke = 'Cyan';
+    	}else if(this.pad && this.pad.padType == "unregularInspectZone"){
+    		this.fill = 'fuchsia';
+    	    this.stroke = 'fuchsia';
     	}
     },
 

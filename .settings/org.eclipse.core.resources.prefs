@@ -1,7 +1,10 @@
 eclipse.preferences.version=1
+encoding//for_odoo11/biftool/controllers/controllers.py=utf-8
 encoding//for_odoo11/biftool/models/models.py=utf-8
 encoding//for_odoo11/padtool/__init__.py=utf-8
 encoding//for_odoo11/padtool/__manifest__.py=utf-8
+encoding//for_odoo11/padtool/controllers/controllers.py=utf-8
+encoding//for_odoo11/padtool/models/__init__.py=utf-8
 encoding//for_odoo11/padtool/models/ir_http.py=utf-8
 encoding//for_odoo11/padtool/models/ir_model_fields.py=utf-8
 encoding//for_odoo11/padtool/models/models.py=utf-8

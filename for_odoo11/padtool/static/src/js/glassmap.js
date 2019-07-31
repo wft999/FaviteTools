@@ -8,10 +8,13 @@ var framework = require('web.framework');
 
 var Coordinate = require('padtool.coordinate');
 var Mycanvas = require('padtool.Canvas');
+var Map = require('padtool.Map');
+var Hawkmap = require('padtool.Hawkmap2');
+
 var QWeb = core.qweb;
 var _t = core._t;
 
-var Glassmap = Widget.extend(ControlPanelMixin,{
+var Glassmap = Map.extend(ControlPanelMixin,{
     template: 'Map',
 /*    
     events: {
@@ -19,17 +22,10 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
     },
 */
     init: function(parent,action){
-    	this.action_manager = parent;
-    	if(action){
-    		this.menu_id = action.context.params.menu_id;
-    		this.active_id = action.context.active_id;
-    	}else{
-    		var queryString = document.location.hash.slice(1);
-        	var params = this._parseQueryString(queryString);
-        	if ('menu_id' in params) {
-        		this.menu_id = params.menu_id;
-        	}
-    	}
+    	this.pad = {
+        		curType: 'curl',
+        		isModified:false,
+        	};
         return this._super.apply(this, arguments);
     },
     
@@ -40,6 +36,8 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
             	if(res){
             		_.extend(self,res);
                 	self.coordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
+                	self.tmpCoordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
+                	self.src = '/glassdata/'+self.glassName +'/' + self.padConf.GLASS_INFORMATION.glass_map;
             	}
             });
     },
@@ -50,91 +48,233 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
     	
     	if(this.glassName === undefined)
     		return;
-    	
-    	framework.blockUI();
-    	this.defImage = new $.Deferred();
-    	this.image = new fabric.Image();
-    	var src = '/glassdata/'+this.glassName +'/' + this.padConf.GLASS_INFORMATION.glass_map;
-    	this.image.setSrc(src, function(img){
-    		self.coordinate.gmpGlassMapPara.iGlassMapWidth = self.image.width;
-    		self.coordinate.gmpGlassMapPara.iGlassMapHeight = self.image.height;
-    		
-    		img.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false });
-    		self.map  = new fabric.Canvas('map',{hoverCursor:'default',stopContextMenu:true});
-    		self.map.pads = new Array();
-    		var zoom = Math.max(self.map.getWidth()/img.width,self.map.getHeight()/img.height);
-    		zoom = Math.floor(zoom*100)/100;
-    		self.minZoom = zoom;
-    		self.map.setZoom(zoom);
-    		self.map.setDimensions({width:img.width*zoom,height:img.height*zoom});
-    		self.map.wrapperEl.style['width'] = '';
-       	 	self.map.wrapperEl.style['height'] = '';
-    		//this.map.setBackgroundImage(img);
-    		self.map.add(img);
 
-    		self.map.on('mouse:move',self._onMouseMove.bind(self));    		
-    		self.map.on('mouse:out', self._onMouseOut.bind(self));  
-    		self.map.on('mouse:up', self._onMouseUp.bind(self));
-    		self.map.on('mouse:down',self._onMouseDown.bind(self));
+    	$.when(self.defImage).then(function ( ) { 	
+    		
+    		self._loadPad();
+    		self._drawHawk();
     		
     		self._renderButtons();
     		self._updateControlPanel();
+    		self._showToolbar();
     		
-    		self._loadPad();
-    		framework.unblockUI();
+    		$('.breadcrumb').append('<li>curl</li>');
     	});
+    	
     },
     
-    destroy: function(){	
-    	
-    	if(this.map){
-    		this.map.off('mouse:move');    		
-        	this.map.off('mouse:out');  
-        	this.map.off('mouse:up');
-        	this.map.off('mouse:down');
-    		while(this.map.pads.length){
-    			var pad = this.map.pads.pop()
-    			pad.clear();
-    			delete pad.points;
-    		}
-
-    		this.map.clear();
-    		delete this.image;
-    		delete this.map;
-    	}
-    	this._super.apply(this, arguments);
-    },
-
-
-    do_show: function () {
-        this._super.apply(this, arguments);
-        this._updateControlPanel();
-        
-    },
     //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
-    _onMouseDown:function(opt){
-    	this.map._isMousedown = true;
-    	this.map.startPointer = opt.pointer;
+    _showToolbar(){
+    	if(this.pad.curType === undefined)
+    		this.pad.curType = 'curl';
     },
-	_onMouseMove:function(opt){
-		if(this.map){
-			var zoom = this.map.getZoom();
-			var x = opt.e.offsetX;
-			var y = opt.e.offsetY;
-			$(".map-info").text("image(x:"+Math.round(x/zoom)+",y:"+Math.round(y/zoom)+") window(x:"+x+",y:"+y+")");
+    
+    showObj:function(obj){
+		if(obj.pad){
+			obj.visible = obj.pad.padType == this.pad.curType;
+			if(obj.type == 'cross'){
+				obj.visible = false;
+			}
 		}
 		
-    	opt.e.stopPropagation();
-        opt.e.preventDefault();
+	},
+    _onButtonSave:function(){
+    	var self = this;
+    	var pad = new Object();
+    	//pad.dPanelCenterX = parseFloat(this.padConf[this.panelName]['PANEL_CENTER_X'.toLowerCase()]);
+    	//pad.dPanelCenterY = parseFloat(this.padConf[this.panelName]['PANEL_CENTER_Y'.toLowerCase()]);
+    	
+    	pad.objs = new Array();
+    	this.map.pads.forEach(function(obj){
+    		if(obj.points.length < 2)
+    			return;
+    		if(_.some(obj.points,function(p){return p.ux == undefined || p.uy == undefined})){
+    			self.do_warn(_t('Operation Result'),_t('Point is not correct !'),false);
+    			return;
+    		}
     		
-	},
-	_onMouseOut:function(opt){
-		$(".map-info").text("");
-	},
+    		var o = {
+    			padType: obj.padType,
+    			points:obj.points,
+    		};    		
+    		pad.objs.push(o);
+    	});
+    	
+    	return this._rpc({model: 'padtool.pad',method: 'write',args: [this.active_id,{curl:JSON.stringify(pad)}],}).then(function(values){
+    		self.do_notify(_t('Operation Result'),_t('Curling Pad was succesfully saved!'),false);
+    		self.pad.isModified = false;
+        });
+    },
+    _onButtonTrash:function(){
+    	var self = this;
+    	var objs = _.filter(this.map.pads,function(pad){return pad.selected && pad.padType == self.pad.curType});
+    	if(objs.length == 0){
+    		this.do_warn(_t('Incorrect Operation'),_t('Please select one object!'),false);
+    		return;
+    	}
+
+		Dialog.confirm(this, (_t("Are you sure you want to remove these items?")), {
+            confirm_callback: function () {
+            	self.register(objs,'delete');
+            	for(var i = 0; i< objs.length;i++){
+            		objs[i].clear();
+            		objs[i].points = [];
+            	}
+            	
+            	self.pad.isModified = true;
+            	if(self.pad.isModified && self.hawkeye.visible)
+            		self.hawkmap.drawPad();
+            },
+        });
+    	
+    	
+    },
+    _renderButtons: function () {
+    	this.$buttons = $(QWeb.render('Glassmap.Buttons'));
+    	//this.$switch_buttons = $(QWeb.render('Glassmap.info'));
+    	this.$buttons.on('click', '.fa-mouse-pointer',this._onButtonSelectMode.bind(this) );
+    	this.$buttons.on('click', '.fa-search-plus',this._onButtonSelectMode.bind(this) );
+    	this.$buttons.on('click', '.fa-search-minus',this._onButtonSelectMode.bind(this) );
+
+    	this.$buttons.on('click', '.fa-trash',this._onButtonTrash.bind(this) );
+
+    	this.$buttons.on('click', '.fa-undo',this.undo.bind(this) );
+    	this.$buttons.on('click', '.fa-repeat',this.redo.bind(this) );
+
+    	this.$buttons.on('click', '.o_pad_object_list>li',this._onButtonSelectObject.bind(this) );
+    	
+     },
+     
+     _loadPad: function(){
+  		var pos = this.cameraConf.general.glass_center.split(',');
+ 		this.glass_center_x = parseFloat(pos[0]);
+ 		this.glass_center_y = parseFloat(pos[1]);
+ 		this.glass_angle = parseFloat(this.cameraConf.general.angle);
+ 		
+  		var self = this;
+  		this._rpc({
+             model: 'padtool.pad',
+             method: 'read',
+             args: [this.active_id, ['content','curl','glassName','panelName']]
+         })
+         .then(function (data) {
+         	if(data.length && data[0].content){
+         		var json_data = JSON.parse(data[0].content);
+
+         		var panelNames = _.keys(self.padConf);
+             	panelNames = _.filter(panelNames,function(name){
+             		return self.padConf[name].panel_map != undefined;
+             	});
+             	
+             	_.each(panelNames,function(panelName){
+             		if(panelName == data[0].panelName){
+             			self._drawPad(panelName,json_data);
+             		}
+             	})
+         	}
+         	
+         	if(data.length && data[0].curl){
+        		self.jsonpad = JSON.parse(data[0].curl);
+        	}
+        	else{
+        		self.jsonpad = new Array();
+        	}
+        		
+        	self._drawCurlPad();
+         },function(){
+        	self.jsonpad = new Array();
+        	self._drawPad();
+        });
+      },
+
+      ///wft
+      _onObjectScaled: function(opt){
+      	 if(opt.target.type == "hawkeye"){
+      		if(((opt.target.height * opt.target.scaleY) / this.coordinate.pmpPanelMapPara.dRatioY) > this.globalConf.hawk_height){
+      			opt.target.scaleY = this.globalConf.hawk_height * this.coordinate.pmpPanelMapPara.dRatioY / opt.target.height ;
+      			this.map.renderAll();
+      		}
+      		if(((opt.target.width *  opt.target.scaleX) / this.coordinate.pmpPanelMapPara.dRatioX) > this.globalConf.hawk_width){
+      			opt.target.scaleX = this.globalConf.hawk_width * this.coordinate.pmpPanelMapPara.dRatioX / opt.target.width;
+      			this.map.renderAll();
+      		}
+      		$('.panel-hawk').toggleClass('o_hidden');
+      		$('.panel-hawk').toggleClass('o_hidden');
+      		
+       		this.hawkmap.showImage();
+       		this.isObjectScaled = true;
+       	}
+       },
+       
+       ///wft
+       _onObjectMoved: function(opt){
+      	 if(opt.target.type == "hawkeye"){
+       		this.hawkmap.showImage();
+       		this.isObjectMoved = true;
+       	}else if(opt.target.type == "cross"){
+       		this.isObjectMoved = true;
+       		if(opt.target.mouseMove()){
+       			opt.target.pad.points[opt.target.id].x = opt.target.left;
+       			opt.target.pad.points[opt.target.id].y = opt.target.top;
+      
+       			//let {dOutputX:ux, dOutputY:uy} = this.coordinate.PanelMapCoordinateToUMCoordinate(opt.target.left,this.image.height-opt.target.top);
+       			opt.target.pad.points[opt.target.id].ux = ux;
+  				opt.target.pad.points[opt.target.id].uy = uy;
+  				
+  				if(this.hawkmap){
+  					this.hawkmap.drawPad();
+  				}
+       		}
+       	}
+       },   
+    
+    _onMouseMove:function(opt){
+   		if(this.map){
+   			var zoom = this.map.getZoom();
+   			var x = opt.e.offsetX;
+   			var y = opt.e.offsetY;
+   			
+   			let {dOutputX:ux, dOutputY:uy} = this.coordinate.GlassMapCoordinateToUMCoordinate(x/zoom,this.image.height- y/zoom);
+   			let {iIP, iScan} = this.coordinate.JudgeIPScan_UM(ux,uy);
+   			//let {dCustomerPointX:cx, dCustomerPointY:cy} = this.coordinate.UmCoordinateToCustomerCoordinate(ux,uy);
+   			
+   			$(".map-info").text("IP("+iIP+") Scan("+iScan+") image("+Math.round(x/zoom)+","+Math.round(y/zoom)+") window("+x+","+y+") um("+Math.round(ux)+','+Math.round(uy) + ")");
+
+   		}
+   		
+   		
+       	opt.e.stopPropagation();
+           opt.e.preventDefault();	
+   	},   
+    
+    _onMouseDblclick:function(opt){
+   	 if(this.hawkeye && this.map.hoverCursor == 'default'){
+   		 var zoom = this.map.getZoom();
+	 	    this.hawkeye.set({ 
+	     			top: opt.pointer.y/zoom, 
+	     			left: opt.pointer.x/zoom,
+	     			visible:true,
+	     		});
+	 	    this.hawkeye.setCoords();
+	     	this.hawkeye.bringToFront();
+			
+			
+			if(!this.hawkmap){
+				//this.hawkmap.destroy();
+	    		//delete this.hawkmap;
+				this.hawkmap = new Hawkmap(this);
+		        this.hawkmap.pad = this.pad;
+		        this.hawkmap.appendTo('body');
+	    	}
+			this.hawkmap.do_show();
+	        this.hawkmap.showImage();
+
+		}
+    },   	
 	
-	_onMouseUp:function(opt){
+/*	_onMouseUp:function(opt){
 		
 		if(this.map.startPointer.x != opt.pointer.x ||this.map.startPointer.y != opt.pointer.y){
     		return;
@@ -199,44 +339,56 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
 			div.scrollTop(y);
 			div.scrollLeft(x);
 		}
-	},
-    
-    _parseQueryString: function(query) {
-        var parts = query.split('&');
-        var params = {};
-        for (var i = 0, ii = parts.length; i < ii; ++i) {
-          var param = parts[i].split('=');
-          var key = param[0].toLowerCase();
-          var value = param.length > 1 ? param[1] : null;
-          params[decodeURIComponent(key)] = decodeURIComponent(value);
-        }
-        return params;
-      },
-      
-    _onButtonSelectMode:function(e){
-    	this.map.hoverCursor = e.currentTarget.dataset.mode;
-    	$('.glassmap-mode button').removeClass('active');
-    	$(e.currentTarget).addClass('active');
-    	
-    },
-    _renderButtons: function () {
-    	this.$buttons = $(QWeb.render('Glassmap.Buttons'));
-    	//this.$switch_buttons = $(QWeb.render('Glassmap.info'));
-    	this.$buttons.on('click', '.fa-mouse-pointer',this._onButtonSelectMode.bind(this) );
-    	this.$buttons.on('click', '.fa-search-plus',this._onButtonSelectMode.bind(this) );
-    	this.$buttons.on('click', '.fa-search-minus',this._onButtonSelectMode.bind(this) );
-     },
-     _updateControlPanel: function () {    			
-     	this.update_control_panel({
-               breadcrumbs: this.action_manager.get_breadcrumbs(),
-               cp_content: {
-             	  $searchview: this.$buttons,
-             	  //$buttons: this.$buttons,
-             	  //$switch_buttons:this.$switch_buttons,
-             },
-     	});
+	},*/
+   	
+   	updateForSelect:function(){
+    	var self = this; 
+    	var first = true;
+    	this.map.pads.forEach(function(pad){
+			if(pad.padType == self.pad.curType && pad.points.length){
+				if(pad.selected){
+					pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'red';line.fill='red'});
+					if(first){
+						first = false;
+					}
+				}else{
+					pad.lines.forEach(function(line){
+						line.dirty=true;
+						
+					});
+				}
+			}
+		});
+    	this.map.renderAll();
  	},
  	
+ 	_drawCurlPad:function(){ 
+ 		var self = this;
+ 		this.jsonpad.objs && this.jsonpad.objs.forEach(function(pad){
+ 			var obj = new Mycanvas.MyPolyline(self.map,pad.padType);
+ 			obj = _.extend(obj, pad);
+ 			for(var i = 0; i < obj.points.length; i++){
+ 				if(obj.points[i].x === undefined && obj.points[i].ux !== undefined){
+ 					var out = self.coordinate.UMCoordinateToGlassMapCoordinate(obj.points[i].ux,obj.points[i].uy);
+ 					obj.points[i].x = out.dOutputX;
+ 					obj.points[i].y = self.image.height - out.dOutputY;
+ 				}else if(obj.points[i].x !== undefined && obj.points[i].ux === undefined){
+ 					var out = self.coordinate.GlassMapCoordinateToUMCoordinate(obj.points[i].x,self.image.height-obj.points[i].y);
+ 					obj.points[i].ux = out.dOutputX;
+ 					obj.points[i].uy = out.dOutputY;
+ 				}
+ 			}
+ 			obj.update();
+ 		})
+
+    	this.map.forEachObject(this.showObj.bind(this));
+
+		this.map.discardActiveObject();
+		this.map.renderAll();
+
+     }, 	
+    
+
  	_drawPad: function(panelName,pads){
  		var self = this;
  		var id = 1;
@@ -275,35 +427,7 @@ var Glassmap = Widget.extend(ControlPanelMixin,{
  	},
  	
  
- 	_loadPad: function(){
- 		var pos = this.cameraConf.general.glass_center.split(',');
-		this.glass_center_x = parseFloat(pos[0]);
-		this.glass_center_y = parseFloat(pos[1]);
-		this.glass_angle = parseFloat(this.cameraConf.general.angle);
-		
- 		var self = this;
- 		this._rpc({
-            model: 'padtool.pad',
-            method: 'read',
-            args: [this.active_id, ['content','glassName','panelName']]
-        })
-        .then(function (data) {
-        	if(data.length && data[0].content){
-        		var json_data = JSON.parse(data[0].content);
-
-        		var panelNames = _.keys(self.padConf);
-            	panelNames = _.filter(panelNames,function(name){
-            		return self.padConf[name].panel_map != undefined;
-            	});
-            	
-            	_.each(panelNames,function(panelName){
-            		if(panelName == data[0].panelName){
-            			self._drawPad(panelName,json_data);
-            		}
-            	})
-        	}
-        });
-     },
+ 	
 
 });
 

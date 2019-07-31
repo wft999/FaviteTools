@@ -62,6 +62,9 @@ class PadPublishWizard(models.TransientModel):
  
         strPad_Inspect = ''
         Pad_Inspect_Number = 0
+        
+        strPad_UnRegularInspect = ''
+        Pad_UnRegularInspect_Number = 0
    
         innerFrame = None
         outrtFrame = None   
@@ -122,6 +125,18 @@ class PadPublishWizard(models.TransientModel):
                 strPad_Inspect += 'Pad.Inspect%d.zone = %d\n' % (Pad_Inspect_Number,obj['zone'])
                        
                 Pad_Inspect_Number += 1
+            elif obj['padType'] == 'unregularInspectZone' and len(obj['points'])>1:
+                if len(obj['points']) == 2:
+                    obj['points'].append(obj['points'][1])
+                    obj['points'].append({'ux':obj['points'][2]['ux'],'uy':obj['points'][0]['uy']})
+                    obj['points'][1]={'ux':obj['points'][0]['ux'],'uy':obj['points'][2]['uy']}
+                    
+                strPad_UnRegularInspect += 'Pad.UnRegularInspect'+str(Pad_UnRegularInspect_Number)+' = '
+                for p in obj['points']:
+                    strPad_UnRegularInspect += str(p['ux']-content['dPanelCenterX'])+','+str(p['uy']-content['dPanelCenterY'])+';'
+                strPad_UnRegularInspect += '\n' 
+                       
+                Pad_UnRegularInspect_Number += 1
             elif obj['padType'] == 'mainMark':
                 if not 'blocks' in obj:
                     raise UserError("Please perform the save operation(panel map) first!")
@@ -251,6 +266,8 @@ class PadPublishWizard(models.TransientModel):
             strPad_Filter = 'Pad_Filter_Number = '+str(Pad_Filter_Number) +'\n'+ strPad_Filter 
         if Pad_Inspect_Number > 0:
             strPad_Inspect = 'Pad_Inspect_Number = '+str(Pad_Inspect_Number) +'\n'+ strPad_Inspect     
+        if Pad_UnRegularInspect_Number > 0:
+            strPad_UnRegularInspect = 'Pad_UnRegularInspect_Number = '+str(Pad_UnRegularInspect_Number) +'\n'+ strPad_UnRegularInspect 
         if region_id > 0:
             strRegion = 'TotalRegionNumber = '+str(region_id) +'\n'+ strRegion 
         
@@ -264,3 +281,4 @@ class PadPublishWizard(models.TransientModel):
                 f.write( strPad_Filterpos )
                 f.write( strPad_Filter )
                 f.write( strPad_Inspect )
+                f.write( strPad_UnRegularInspect )

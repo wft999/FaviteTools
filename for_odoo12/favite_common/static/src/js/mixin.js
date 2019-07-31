@@ -11,7 +11,7 @@ var MapMouseHandle = {
     	var delta = opt.e.deltaY;
     	
     	var zoom = this.map.getZoom();
-    	zoom = zoom + delta/300;
+    	zoom = zoom + delta/2000;
     	if (zoom > 20) zoom = 20;
     	if (zoom < 0.01) zoom = 0.01;
     	this.map.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
@@ -163,7 +163,13 @@ var MapEventHandle = {
     	var self = this;
    	 	if(opt.target.type == "hawkeye"){
    	 		var p = self._map2geo({x:opt.target.left,y:opt.target.top});
-   	 		core.bus.trigger('hawkeye_change', p);
+	   	 	var range = 10000;
+	    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(p.x - range,p.y - range,p.x + range,p.y + range,true);
+	    	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
+	    		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
+	    	}	
+	    	
+   	 		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
     	}else if(opt.target.type == "cross"){
     		if(opt.target.mouseMove()){
     			var obj = opt.target.polyline.obj;

@@ -30,10 +30,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     		isModified:false,
     		isSubMarkModified:false,
     	};
-    	
-    	this.undoStack = [];
-        this.redoStack = [];
-    	
+
         return this._super.apply(this, arguments);
     },
     
@@ -45,6 +42,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
             		_.extend(self,res);
                 	self.coordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName,res.gmdConf);
                 	self.tmpCoordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
+                	self.src = '/glassdata/'+ self.glassName +'/'+ self.panelName +'/' + self.padConf[self.panelName].panel_map
             	}	
             });
     },
@@ -74,137 +72,12 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	});
     },
     
-    deleteMap:function(){
-    	while(this.map.pads.length){
-			var pad = this.map.pads.pop();
-			pad.clear();
-			delete pad.points;
-		}
 
-    	this.map.clear();
-		delete this.image;
-		delete this.map;	
-    },
-    
-    destroy: function(){	
-    	if(this.pad.isModified){
-    		var self = this;
-    		var su = self._super;
-    		Dialog.confirm(this, (_t("The current pad was modified. Save changes?")), {
-                confirm_callback: function () {
-                    self._onButtonSave().then(function(){
-                    	self.map && self.deleteMap.call(self);
-                    	su.apply(self, arguments);
-                    });
-                },
-                cancel_callback:function(){
-                	self.deleteMap.call(self);
-                	su.apply(self, arguments);
-                }
-            });
-    	}else{
-    		this._super.apply(this, arguments);
-    		if(this.map){
-        		this.deleteMap();
-        	}
-    	}
-    	
-    	this.hawkmap&&this.hawkmap.destroy();
-    },
 
-    do_show: function () {
-        this._super.apply(this, arguments);
-        this._updateControlPanel();
-        
-    },
-    
-    register:function(pad,action) {
-    	var pads = [];
-    	if(Array.isArray(pad)){
-    		pads = pad;
-    	}else{
-    		pads.push(pad);
-    	}
-    	
-    	var points = [];
-    	pads.forEach(function(item){
-    		var tmp = [];
-    		
-    		item.points.forEach(function(p){
-    			if(action !== 'copy')
-    				tmp.push({x:p.x,y:p.y,ux:p.ux,uy:p.uy});
-        	});
-
-    		points.push(tmp);
-    	})
-    	
-        this.undoStack.push({pads,points,action});
-        this.redoStack.length = 0;
-    },
-    
-    undo:function() {
-        var c = this.undoStack.pop();
-        if (c) {
-        	var points = [];
-        	for(var i = 0; i< c.pads.length; i++){
-        		if(c.action == 'delete')
-        			points.push([]);
-        		else
-        			points.push(c.pads[i].points);
-        		
-        		c.pads[i].points = c.points[i];
-                c.pads[i].update();
-        	}
-            this.redoStack.push({pads:c.pads,points,action:c.action});
-            this.hawkmap && this.hawkmap.showImage();
-        }
-    },
-    
-    redo:function() {
-        var c = this.redoStack.pop();
-        if (c) {
-        	var points = [];
-        	for(var i = 0; i< c.pads.length; i++){
-        		points.push(c.pads[i].points);
-        		
-        		c.pads[i].points = c.points[i];
-                c.pads[i].update();
-        	}
-        	
-            this.undoStack.push({pads:c.pads,points,action:c.action});
-            this.hawkmap && this.hawkmap.showImage();
-        }
-    },
 
   //--------------------------------------------------------------------------
     // Private
     //--------------------------------------------------------------------------
-    _drawHawk:function(){
-    	this.hawkeye = new Mycanvas.Hawkeye({ 
- 			left: this.image.width/2, 
- 			top: this.image.height/2,
- 			width:100,
- 			height:100,
- 			});
-    	this.map.add(this.hawkeye);
-    	this.hawkeye.bringToFront();
-    },
-    
-    _onButtonSelectMode:function(e){
-    	var self = this;
-    	this.map.hoverCursor = e.currentTarget.dataset.mode;
-
-    	$('.glassmap-mode button').removeClass('active');
-    	$(e.currentTarget).addClass('active');
-    	
-    	if(this.map.hoverCursor == 'default'){
-    		this.map.discardActiveObject();
-    	}
-    	this.map.forEachObject(this.showObj.bind(this));
-    	this.map.requestRenderAll();
-    	this._showToolbar();
-    },
-    
     _showToolbar(){
     	if(this.pad.curType === undefined)
     		this.pad.curType = 'frame';
@@ -224,8 +97,9 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 		if(obj.pad){
 			obj.visible = obj.pad.padType == this.pad.curType 
 			|| (obj.pad.padType == 'region' && this.pad.curType == 'frame') 
-			|| (obj.pad.padType == 'inspectZone' && this.pad.curType == 'uninspectZone')
-			|| (obj.pad.padType == 'uninspectZone' && this.pad.curType == 'inspectZone');
+			|| ((obj.pad.padType == 'inspectZone'||obj.pad.padType == 'unregularInspectZone') && this.pad.curType == 'uninspectZone')
+			|| ((obj.pad.padType == 'uninspectZone'||obj.pad.padType == 'unregularInspectZone') && this.pad.curType == 'inspectZone')
+			|| ((obj.pad.padType == 'uninspectZone'||obj.pad.padType == 'inspectZone') && this.pad.curType == 'unregularInspectZone');
 			if(obj.type == 'cross'){
 				obj.visible = this.pad.curType == 'frame' && obj.pad.padType == 'frame' && this.map.hoverCursor == 'default';
 			}
@@ -234,63 +108,25 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 	},
     
     _onButtonSelectObject:function(e){
-    	if(e.currentTarget.children[0].text == 'Save'){
-    		this._onButtonSave();
-    		return;
-    	}
-    	
-    	
     	var self = this;
-    	this.pad.curType = e.currentTarget.children[0].text;
     	
-    	this._showToolbar();
-    	
-    	var objectList = this.$buttons.find('.o_pad_object_list');
-    	objectList.find('li').each(function (index, li) {
-    		var addOrRemove  = li === e.currentTarget;
-            $(li).toggleClass('selected',addOrRemove);
-            if(addOrRemove){
-            	if($('.breadcrumb')[0].children[2])
-            		$('.breadcrumb')[0].removeChild($('.breadcrumb')[0].children[2]);
-            	$('.breadcrumb').append('<li>'+self.pad.curType+'</li>')
-            }
-        });
-    	
-    	if(this.pad.curType == 'subMark'){
-    		if(this.isPolygonSubMark == false && _.some(this.map.pads,function(obj){return obj.padType == 'subMark'}) == false){
-    			this._drawSubMark();
-    		}
-    			
-    	}else{
-    		if(this.markShow){
-    			this.markShow.forEach(function(obj){
-        			self.map.remove(obj);
-         		});
-    			this.markShow = null;
-    		}
+    	if(e.currentTarget.children[0].text != 'Save'){
+    		if(this.pad.curType == 'subMark'){
+        		if(this.isPolygonSubMark == false && _.some(this.map.pads,function(obj){return obj.padType == 'subMark'}) == false){
+        			this._drawSubMark();
+        		}
+        			
+        	}else{
+        		if(this.markShow){
+        			this.markShow.forEach(function(obj){
+            			self.map.remove(obj);
+             		});
+        			this.markShow = null;
+        		}
+        	}
     	}
     	
-    	this.map.forEachObject(this.showObj.bind(this));
-    	this.map.discardActiveObject();
-    	this.map.renderAll();
-    	
-    	if(this.hawkmap){
-    		this.hawkmap.map.curPad = null;
-    		this.hawkmap.map.forEachObject(this.showObj.bind(this));
-    		this.hawkmap.map.discardActiveObject();
-    		this.hawkmap.map.renderAll();
-    		
-    		this.hawkmap.$el.find('button.fa-mouse-pointer').click();
-    		var hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.isPolygonSubMark==false);
-        	this.hawkmap.$el.find('.fa-edit').toggleClass('o_hidden',hidden);
-         	this.hawkmap.$el.find('.fa-copy').toggleClass('o_hidden',hidden);
-    	}
-    	
-    	this.$buttons.find('.fa-mouse-pointer').click();
-    	
-    	e.preventDefault();
-		e.stopPropagation();
-
+    	this._super.apply(this, arguments);
     },
     
     _getMarkImage:function(data){
@@ -540,7 +376,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
             	let {iIP,iScan} = self.coordinate.JudgeIPScanUM(dOutputX,dOutputY,0,0);
             	iIP++;
             	iScan++;
-            	var $span = self.dialog.$('span.ipscan');
+            	var $span = self.getParent().getParent().$('span.ipscan');
             	$span.html("ip:"+iIP+",scan:"+iScan);
             });
         });
@@ -633,16 +469,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	}.bind(this) );
      },
      
-     _updateControlPanel: function () {    			
-      	this.update_control_panel({
-                breadcrumbs: this.action_manager.get_breadcrumbs(),
-                cp_content: {
-              	  $searchview: this.$buttons,
-              	  //$buttons: this.$buttons,
-              	  //$switch_buttons:this.$switch_buttons,
-              },
-      	});
-  	},
+     
      
      _loadPad: function(){
     	var pos = this.cameraConf.general.glass_center.split(',');
@@ -673,6 +500,448 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         	self._drawPad();
         });
      },
+     
+     
+     
+     _onObjectScaled: function(opt){
+     	 if(opt.target.type == "hawkeye"){
+     		if(((opt.target.height * opt.target.scaleY) / this.coordinate.pmpPanelMapPara.dRatioY) > this.globalConf.hawk_height){
+     			opt.target.scaleY = this.globalConf.hawk_height * this.coordinate.pmpPanelMapPara.dRatioY / opt.target.height ;
+     			this.map.renderAll();
+     		}
+     		if(((opt.target.width *  opt.target.scaleX) / this.coordinate.pmpPanelMapPara.dRatioX) > this.globalConf.hawk_width){
+     			opt.target.scaleX = this.globalConf.hawk_width * this.coordinate.pmpPanelMapPara.dRatioX / opt.target.width;
+     			this.map.renderAll();
+     		}
+     		$('.panel-hawk').toggleClass('o_hidden');
+     		$('.panel-hawk').toggleClass('o_hidden');
+     		
+      		this.hawkmap.showImage();
+      		this.isObjectScaled = true;
+      	}
+      },
+      
+	_onObjectMoved: function(opt){
+    	 if(opt.target.type == "hawkeye"){
+     		this.hawkmap.showImage();
+     		this.isObjectMoved = true;
+     	}else if(opt.target.type == "cross"){
+     		this.isObjectMoved = true;
+     		if(opt.target.mouseMove()){
+     			opt.target.pad.points[opt.target.id].x = opt.target.left;
+     			opt.target.pad.points[opt.target.id].y = opt.target.top;
+    
+     			let {dOutputX:ux, dOutputY:uy} = this.coordinate.PanelMapCoordinateToUMCoordinate(opt.target.left,this.image.height-opt.target.top);
+     			opt.target.pad.points[opt.target.id].ux = ux;
+				opt.target.pad.points[opt.target.id].uy = uy;
+
+				this._drawRegion();
+				
+				if(this.hawkmap){
+					this.hawkmap.drawPad();
+				}
+     		}
+     	}
+     },
+     
+     _onMouseMove:function(opt){
+ 		if(this.map){
+ 			var zoom = this.map.getZoom();
+ 			var x = opt.e.offsetX;
+ 			var y = opt.e.offsetY;
+ 			
+ 			let {dOutputX:ux, dOutputY:uy} = this.coordinate.PanelMapCoordinateToUMCoordinate(x/zoom,this.image.height- y/zoom);
+ 			let {iIP, iScan} = this.coordinate.JudgeIPScan_UM(ux,uy);
+ 			let {dCustomerPointX:cx, dCustomerPointY:cy} = this.coordinate.UmCoordinateToCustomerCoordinate(ux,uy);
+ 			
+ 			$(".map-info").text("IP("+iIP+") Scan("+iScan+") image("+Math.round(x/zoom)+","+Math.round(y/zoom)+") window("+x+","+y+") um("+Math.round(ux)+','+Math.round(uy) + ") Customer("+Math.round(cx)+","+Math.round(cy)+")");
+
+ 		}
+ 		
+ 		
+     	opt.e.stopPropagation();
+         opt.e.preventDefault();	
+ 	},
+ 	
+    _drawSubMark:function(){
+ 		var res = _.partition(this.map.pads, function(obj){
+ 			return obj.padType == 'subMark' && obj.points.length <= 2;
+ 		});
+ 		this.map.pads = res[1];
+ 		res[0].forEach(function(obj){
+ 			obj.clear();
+ 		});
+ 		
+ 		var dMarkWidth = this.submarkSize[0] ,dMarkHeight = this.submarkSize[1];
+ 		
+ 		var submark = new Submark(this);
+ 		var {dPanelLeft,dPanelBottom,dPanelRight,dPanelTop} = submark.getPanelPara();
+ 		if(this.isPolygonSubMark){
+ 			_.each(this.map.pads,function(obj){submark.getPlygonSubMark(obj,dMarkWidth,dMarkHeight);});
+ 		}
+ 		else
+ 			submark.pMarkRegionArray = submark.getNormalSubMark(dPanelLeft,dPanelBottom,dPanelRight,dPanelTop,dMarkWidth,dMarkHeight);
+ 		
+ 		for(var i = 0; i < submark.pMarkRegionArray.length; i++){
+ 			var width = submark.pMarkRegionArray[i].dMarkWidth ;
+ 			var height = submark.pMarkRegionArray[i].dMarkHeight;
+ 			
+ 			var rect = new Mycanvas.MyPolyline(this.map,'subMark');
+ 			
+ 			var ux = submark.pMarkRegionArray[i].dPositionX- width/2;
+			var uy = submark.pMarkRegionArray[i].dPositionY+ height/2;
+ 			var tmp = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+    		rect.points.push({
+    			x:tmp.dOutputX, 
+    			y:this.image.height - tmp.dOutputY,
+    			ux,
+    			uy
+    		});
+    		
+    		ux = submark.pMarkRegionArray[i].dPositionX+ width/2;
+			uy = submark.pMarkRegionArray[i].dPositionY- height/2;
+    		tmp = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+			rect.points.push({
+				x:tmp.dOutputX, 
+				y:this.image.height - tmp.dOutputY,
+				ux,
+				uy
+			});
+			rect.update();
+			
+			rect.iMarkDirectionType = submark.pMarkRegionArray[i].iMarkDirectionType;
+
+ 			var uLeft = submark.pMarkRegionArray[i].dPositionX - submark.pMarkRegionArray[i].dMarkWidth/2;
+ 			var uRight = submark.pMarkRegionArray[i].dPositionX + submark.pMarkRegionArray[i].dMarkWidth/2;
+ 			var uTop = submark.pMarkRegionArray[i].dPositionY + submark.pMarkRegionArray[i].dMarkHeight/2;
+ 			var uBottom = submark.pMarkRegionArray[i].dPositionY - submark.pMarkRegionArray[i].dMarkHeight/2;
+ 			
+ 			this.tmpCoordinate.GetRectIntersectionInfoInBlockMapMatrix(uLeft,uBottom,uRight,uTop,true);
+ 			rect.blocks = _.map(this.tmpCoordinate.bmpBlockMapPara.m_BlockMap[0],function(item){
+	    		return {
+	    			iIPIndex:item.iIPIndex,
+	    			iScanIndex:item.iScanIndex,
+	    			iBlockIndex:item.iBlockIndex,
+	    			iInterSectionStartX:item.iInterSectionStartX,
+	    			iInterSectionStartY:item.iInterSectionStartY,
+	    			iInterSectionWidth:item.iInterSectionWidth,
+	    			iInterSectionHeight:item.iInterSectionHeight,
+	    			iBlockMapHeight:item.iBlockMapHeight
+	    			};
+	    		});
+ 		}
+ 		this.pad.isModified = true;
+ 		this.pad.isSubMarkModified = true;
+ 		this.do_notify(_t('Operation Result'),_t('SubMark has refreshed!'),false);
+ 	},
+ 	
+ 	
+ 	_drawPad:function(){ 
+ 		var self = this;
+ 		this.isPolygonSubMark = false;
+ 		this.innerFrame = null;
+ 		this.outerFrame = null;
+ 		var hasRegion = false;
+ 			
+ 		this.jsonpad.objs && this.jsonpad.objs.forEach(function(pad){
+ 			var obj = new Mycanvas.MyPolyline(self.map,pad.padType);
+ 			obj = _.extend(obj, pad);
+ 			for(var i = 0; i < obj.points.length; i++){
+ 				if(obj.points[i].x === undefined && obj.points[i].ux !== undefined){
+ 					var out = self.coordinate.UMCoordinateToPanelMapCoordinate(obj.points[i].ux,obj.points[i].uy);
+ 					obj.points[i].x = out.dOutputX;
+ 					obj.points[i].y = self.image.height - out.dOutputY;
+ 				}else if(obj.points[i].x !== undefined && obj.points[i].ux === undefined){
+ 					var out = self.coordinate.PanelMapCoordinateToUMCoordinate(obj.points[i].x,self.image.height-obj.points[i].y);
+ 					obj.points[i].ux = out.dOutputX;
+ 					obj.points[i].uy = out.dOutputY;
+ 				}
+ 			}
+ 			obj.update();
+ 			
+ 			if(pad.padType == 'frame'){
+ 		 		if(self.innerFrame == null)
+ 		 			self.innerFrame = obj;
+ 		 		else if(self.outerFrame == null)
+ 		 			self.outerFrame = obj;
+ 			}else if(pad.padType == 'region'){
+ 				hasRegion = true;
+ 			}else if(pad.padType == 'subMark'){
+ 				if(obj.points.length == 2 && pad.blocks === undefined){
+ 					var ux1 = obj.points[0].ux;
+ 					var uy1 = obj.points[0].uy;
+ 					var ux2 = obj.points[1].ux;
+ 					var uy2 = obj.points[1].uy;
+ 					self.tmpCoordinate.GetRectIntersectionInfoInBlockMapMatrix(Math.min(ux1,ux2),Math.min(uy1,uy2),Math.max(ux1,ux2),Math.max(uy1,uy2),true);
+ 					if(self.tmpCoordinate.bmpBlockMapPara.m_BlockMap.length == 1){
+ 						obj.blocks = _.map(self.tmpCoordinate.bmpBlockMapPara.m_BlockMap[0],function(item){
+ 		    	    		return {
+ 		    	    			iIPIndex:item.iIPIndex,
+ 		    	    			iScanIndex:item.iScanIndex,
+ 		    	    			iBlockIndex:item.iBlockIndex,
+ 		    	    			iInterSectionStartX:item.iInterSectionStartX,
+ 		    	    			iInterSectionStartY:item.iInterSectionStartY,
+ 		    	    			iInterSectionWidth:item.iInterSectionWidth,
+ 		    	    			iInterSectionHeight:item.iInterSectionHeight,
+ 		    	    			iBlockMapHeight:item.iBlockMapHeight
+ 		    	    			};
+ 		    	    		});
+ 		    			
+ 		    			self.pad.isModified = true;
+ 		    			self.pad.isSubMarkModified = true;
+ 					}
+ 				}else if(obj.points.length > 2){
+ 					self.isPolygonSubMark = true;
+ 					self.$buttons.find('.submask-checkbox-label > input')[0].checked = true;
+ 				}
+ 			}else if(pad.padType == 'mainMark'){
+ 				if(pad.blocks === undefined){
+ 					var ux1 = obj.points[0].ux;
+ 					var uy1 = obj.points[0].uy;
+ 					var ux2 = obj.points[1].ux;
+ 					var uy2 = obj.points[1].uy;
+ 					self.tmpCoordinate.GetRectIntersectionInfoInBlockMapMatrix(Math.min(ux1,ux2),Math.min(uy1,uy2),Math.max(ux1,ux2),Math.max(uy1,uy2),true);
+ 					if(self.tmpCoordinate.bmpBlockMapPara.m_BlockMap.length == 1){
+ 						obj.blocks = _.map(self.tmpCoordinate.bmpBlockMapPara.m_BlockMap[0],function(item){
+ 		    	    		return {
+ 		    	    			iIPIndex:item.iIPIndex,
+ 		    	    			iScanIndex:item.iScanIndex,
+ 		    	    			iBlockIndex:item.iBlockIndex,
+ 		    	    			iInterSectionStartX:item.iInterSectionStartX,
+ 		    	    			iInterSectionStartY:item.iInterSectionStartY,
+ 		    	    			iInterSectionWidth:item.iInterSectionWidth,
+ 		    	    			iInterSectionHeight:item.iInterSectionHeight,
+ 		    	    			iBlockMapHeight:item.iBlockMapHeight
+ 		    	    			};
+ 		    	    		});
+ 		    			
+ 		    			self.pad.isModified = true;
+ 		    			self.pad.isMainMarkModified = true;
+ 					}
+ 				}
+ 			}
+ 				
+ 		})
+ 		
+ 		if(this.innerFrame == null || this.outerFrame == null){
+ 			this.innerFrame = new Mycanvas.MyPolyline(this.map,'frame');
+ 			let {dOutputX:ux,dOutputY:uy} = this.coordinate.PanelMapCoordinateToUMCoordinate(500,500);
+ 			this.innerFrame.points.push({x:500,y:this.image.height-500,ux,uy});
+ 			let {dOutputX:ux2,dOutputY:uy2} = this.coordinate.PanelMapCoordinateToUMCoordinate(this.image.width-500,this.image.height-500);
+ 			this.innerFrame.points.push({x:this.image.width-500,y:500,ux:ux2,uy:uy2});
+ 			this.innerFrame.update();
+
+ 			this.outerFrame = new Mycanvas.MyPolyline(this.map,this.pad.curType);
+			let {dOutputX:ux3,dOutputY:uy3} = this.coordinate.PanelMapCoordinateToUMCoordinate(300,300);
+			this.outerFrame.points.push({x:300,y:this.image.height-300,ux:ux3,uy:uy3});
+			let {dOutputX:ux4,dOutputY:uy4} = this.coordinate.PanelMapCoordinateToUMCoordinate(this.image.width-300,this.image.height-300);
+			this.outerFrame.points.push({x:this.image.width-300,y:300,ux:ux4,uy:uy4});
+			this.outerFrame.update();
+			
+			this._drawRegion();
+			hasRegion = true;
+		}
+ 		
+ 		if(!hasRegion)
+ 			this._drawRegion();
+ 		
+ 		this._drawInspectZone();
+
+ 		this.innerFrame.crosses[0].bringToFront();
+ 		this.innerFrame.crosses[1].bringToFront();
+ 		this.outerFrame.crosses[0].bringToFront();
+ 		this.outerFrame.crosses[1].bringToFront();
+ 		
+ 		this.innerFrame.crosses[0].outer = [this.outerFrame.crosses[0],this.outerFrame.crosses[1]];
+ 		this.innerFrame.crosses[1].outer = [this.outerFrame.crosses[0],this.outerFrame.crosses[1]];
+ 		
+ 		this.outerFrame.crosses[0].inner = [this.innerFrame.crosses[0],this.innerFrame.crosses[1]];
+ 		this.outerFrame.crosses[1].inner = [this.innerFrame.crosses[0],this.innerFrame.crosses[1]];
+
+    	this.map.forEachObject(this.showObj.bind(this));
+
+		this.map.discardActiveObject();
+		this.map.renderAll();
+
+     },
+
+ 	 _drawRegion: function(){
+ 		var x,y,ux,uy,obj; 
+ 		var innerFrame = this.innerFrame;
+ 		var outerFrame = this.outerFrame;
+ 		
+ 		var res = _.partition(this.map.pads, function(obj){
+ 			return obj.padType == 'region';
+ 		});
+ 		this.map.pads = res[1];
+ 		res[0].forEach(function(obj){
+ 			obj.clear();
+ 		})
+ 	    
+ 		 var top = innerFrame.points[1].uy + this.globalConf.region_overlap;
+ 		 while(true){
+ 			var bottom = top - this.globalConf.region_height;
+ 			var nextTop = bottom + this.globalConf.region_overlap;
+ 			if(bottom < innerFrame.points[0].uy - this.globalConf.region_overlap){
+ 				bottom = innerFrame.points[0].uy - this.globalConf.region_overlap;
+ 			}
+ 			else if((nextTop - this.globalConf.region_height)  < innerFrame.points[0].uy - this.globalConf.region_overlap ){
+ 				bottom = (top + innerFrame.points[0].uy)/2 - this.globalConf.region_overlap;
+ 				nextTop = bottom + this.globalConf.region_overlap;
+ 			}
+ 			
+ 			obj = new Mycanvas.MyPolyline(this.map,"region");
+ 			obj.iFrameNo = 0;
+ 			ux = outerFrame.points[0].ux;
+ 			uy = bottom;
+ 			let {dOutputX:x1, dOutputY:y1} = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+ 			obj.points.push({x:x1,y:this.image.height-y1,ux,uy});
+ 			
+ 			ux = innerFrame.points[0].ux;
+ 			uy = top;
+ 			let {dOutputX:x2, dOutputY:y2} = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+ 			obj.points.push({x:x2,y:this.image.height-y2,ux,uy});
+ 			obj.update();
+ 			
+ 			obj = new Mycanvas.MyPolyline(this.map,"region");
+ 			obj.iFrameNo = 2;
+ 			ux = innerFrame.points[1].ux;
+ 			uy = bottom;
+ 			let {dOutputX:x3, dOutputY:y3} = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+ 			obj.points.push({x:x3,y:this.image.height-y3,ux,uy});
+ 			
+ 			ux = outerFrame.points[1].ux;
+ 			uy = top;
+ 			let {dOutputX:x4, dOutputY:y4} = this.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+ 			obj.points.push({x:x4,y:this.image.height-y4,ux,uy});
+ 			obj.update();
+ 			
+ 			top = nextTop;
+ 			if(top <= innerFrame.points[0].uy)
+ 				break;
+ 		 }
+ 		 
+ 		obj = new Mycanvas.MyPolyline(this.map,"region");
+		obj.iFrameNo = 1;
+ 		x = outerFrame.points[0].x;
+ 		ux = outerFrame.points[0].ux;
+		y = outerFrame.points[0].y;
+		uy = outerFrame.points[0].uy;
+		obj.points.push({x,y,ux,uy});
+		
+		x = outerFrame.points[1].x;
+		ux = outerFrame.points[1].ux;
+		y = innerFrame.points[0].y;
+		uy = innerFrame.points[0].uy;
+		obj.points.push({x,y,ux,uy});
+		obj.update();
+ 		 
+ 		obj = new Mycanvas.MyPolyline(this.map,"region");
+ 		obj.iFrameNo = 3;
+ 		x = outerFrame.points[0].x;
+ 		ux = outerFrame.points[0].ux;
+		y = innerFrame.points[1].y;
+		uy = innerFrame.points[1].uy;
+		obj.points.push({x,y,ux,uy});
+		
+		x = outerFrame.points[1].x;
+		ux = outerFrame.points[1].ux;
+		y = outerFrame.points[1].y;
+		uy = outerFrame.points[1].uy;
+		obj.points.push({x,y,ux,uy});
+		obj.update();
+ 		 
+		this.pad.isModified = true;
+ 	 },
+ 	
+ 	_drawInspectZone: function(){
+ 		var id = 1;
+ 		while(this.bifConf['auops.subpanel.subpanel_'+id+'.global_subpanel_data'] != undefined){
+ 			if(this.bifConf['auops.subpanel.subpanel_'+id+'.global_subpanel_data'] != this.panelName){
+ 				id++;
+ 				continue;
+ 			}
+ 				
+ 			var pos = this.bifConf['auops.subpanel.subpanel_'+id+'.position.top_left'].split(',');
+    		var left = parseFloat(pos[0]);
+    		var top = parseFloat(pos[1]);
+    		pos = this.bifConf['auops.subpanel.subpanel_'+id+'.position.bottom_right'].split(',');
+    		var right = parseFloat(pos[0]);
+    		var bottom = parseFloat(pos[1]);
+    		
+    		var x = (left + right)/2;
+    		var y = (top + bottom)/2;
+    		var panel_center_x = x * Math.cos(-this.glass_angle) + y * Math.sin(-this.glass_angle) + this.glass_center_x;
+    		var panel_center_y = -x * Math.sin(-this.glass_angle) + y * Math.cos(-this.glass_angle) + this.glass_center_y;
+    		
+    		var x1 = left * Math.cos(-this.glass_angle) + top * Math.sin(-this.glass_angle)  + this.glass_center_x;
+    		var y1 = -left * Math.sin(-this.glass_angle) + top * Math.cos(-this.glass_angle)  + this.glass_center_y;
+    		var x2 = right * Math.cos(-this.glass_angle) + bottom * Math.sin(-this.glass_angle)  + this.glass_center_x;
+    		var y2 = -right * Math.sin(-this.glass_angle) + bottom * Math.cos(-this.glass_angle) + this.glass_center_y;
+    		
+    		x1 = x1 - panel_center_x + parseFloat(this.padConf[this.panelName].panel_center_x);
+    		y1 = y1 - panel_center_y + parseFloat(this.padConf[this.panelName].panel_center_y);
+    		x2 = x2 - panel_center_x + parseFloat(this.padConf[this.panelName].panel_center_x);
+    		y2 = y2 - panel_center_y + parseFloat(this.padConf[this.panelName].panel_center_y);
+    		
+    		var out1 = this.coordinate.UMCoordinateToPanelMapCoordinate(x1,y1)
+    		var out2 = this.coordinate.UMCoordinateToPanelMapCoordinate(x2,y2)
+
+    		x1 = out1.dOutputX;
+    		y1 = this.image.height - out1.dOutputY;
+    		x2 = out2.dOutputX;
+    		y2 = this.image.height - out2.dOutputY;
+    		var line1 = new Mycanvas.Line([x1,y1,x1,y2],{stroke: 'blue',pad:null});
+	 		var line2 = new Mycanvas.Line([x1,y1,x2,y1],{stroke: 'blue',pad:null});
+	 		var line3 = new Mycanvas.Line([x2,y2,x2,y1],{stroke: 'blue',pad:null});
+	 		var line4 = new Mycanvas.Line([x2,y2,x1,y2],{stroke: 'blue',pad:null});
+	 		this.map.add(line1,line2,line3,line4);
+	 		
+	 		this.inspectZoneX1 = x1;
+	 		this.inspectZoneY1 = y1;
+	 		this.inspectZoneX2 = x2;
+	 		this.inspectZoneY2 = y2;
+	 		
+    		break;
+ 		}
+ 	},
+ 	
+ 	updateForSelect:function(){
+    	var self = this; 
+    	var first = true;
+    	this.map.pads.forEach(function(pad){
+			if(pad.padType == self.pad.curType && pad.points.length){
+				if(pad.selected){
+					pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'red';line.fill='red'});
+					if(first){
+						//if(pad.crosses[0])
+							//pad.crosses[0].visible = true;
+						first = false;
+					}
+				}else{
+					pad.lines.forEach(function(line){
+						line.dirty=true;
+						if(pad.padType == "uninspectZone"){
+							line.fill = 'Cyan';
+							line.stroke = 'Cyan';
+				    	}else if(pad.padType == "unregularInspectZone"){
+							line.fill = 'fuchsia';
+							line.stroke = 'fuchsia';
+				    	}else{
+				    		line.stroke = 'yellow';
+							line.fill='yellow'
+				    	}
+						
+					});
+					//if(pad.crosses[0])
+						//pad.crosses[0].visible = false;
+				}
+			}
+		});
+    	this.map.renderAll();
+ 	}
+ 	
+ 	
 });
 
 core.action_registry.add('padtool.panelmap', Panelmap);

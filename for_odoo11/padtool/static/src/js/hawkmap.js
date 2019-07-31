@@ -142,8 +142,9 @@ var Hawkmap = Widget.extend({
 
     		self.eyeLeft = left;
     		self.eyeTop = top;
-    		self.drawPad();
+			self.drawPad();
         });
+    	
     	
     	var hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.parent.isPolygonSubMark==false);
     	this.$el.find('.fa-edit').toggleClass('o_hidden',hidden);
@@ -171,6 +172,19 @@ var Hawkmap = Widget.extend({
  		var line3 = new Mycanvas.Line([x2,y2,x2,y1],{stroke: 'blue',pad:null});
  		var line4 = new Mycanvas.Line([x2,y2,x1,y2],{stroke: 'blue',pad:null});
  		this.map.add(line1,line2,line3,line4);
+ 		
+ 		var wh = 10/this.map.getZoom();
+ 		var center = new Mycanvas.Cross({ 
+			type:'center',lockMovementX:true,lockMovementY:true,selectable:false,
+			visible:true,
+			id:0,
+			left: self.image.width/2, 
+			top: self.image.height/2,
+			width:wh,
+			height:wh,
+			stroke:'red'
+			});
+		self.map.add(center);
  		
     	this.parent.map.pads.forEach(function(obj){
     		var isCurPad = self.map.curPad && self.map.curPad.panelpad && self.map.curPad.panelpad == obj;
@@ -214,8 +228,9 @@ var Hawkmap = Widget.extend({
     		
     		var lineVisible = pad.padType == self.parent.pad.curType 
     		|| (pad.padType == 'region' && self.parent.pad.curType == 'frame')
-    		|| (pad.padType == 'inspectZone' && self.parent.pad.curType == 'uninspectZone')
-			|| (pad.padType == 'uninspectZone' && self.parent.pad.curType == 'inspectZone');
+    		|| ((pad.padType == 'inspectZone'||pad.padType == 'unregularInspectZone') && self.parent.pad.curType == 'uninspectZone')
+			|| ((pad.padType == 'uninspectZone'||pad.padType == 'unregularInspectZone') && self.parent.pad.curType == 'inspectZone')
+			|| ((pad.padType == 'uninspectZone'||pad.padType == 'inspectZone') && self.parent.pad.curType == 'unregularInspectZone');
     		var crossVisible = lineVisible && (pad.padType == 'frame' || self.map.curPad == pad);
     		pad.lines.forEach(function(line){line.visible = lineVisible;});
     		pad.crosses.forEach(function(cross){cross.visible = crossVisible;cross.hasBorders = cross.visible;})
@@ -546,9 +561,10 @@ var Hawkmap = Widget.extend({
 			var y = opt.e.offsetY;
 			var zoom = this.map.getZoom();
 			let {dOutputX:ux,dOutputY:uy} = this.parent.coordinate.HawkmapCoordinateToUMCoordinate(x/zoom,this.image.height-y/zoom);
-			//let {iIPIndex, iScanIndex} = this.parent.coordinate.HawkmapCoordinateToIpScan(x/zoom,this.image.height-y/zoom);
+			let {iIP, iScan} = this.parent.coordinate.JudgeIPScan_UM(ux,uy);
+			let {dCustomerPointX:cx, dCustomerPointY:cy} = this.parent.coordinate.UmCoordinateToCustomerCoordinate(ux,uy);
 			
-			$(".map-info").text("image(x:"+Math.round(x/zoom)+",y:"+Math.round(y/zoom)+") window(x:"+x+",y:"+y+") um(x:"+ux+',y:'+uy);
+			$(".map-info").text("IP("+iIP+") Scan("+iScan+") image("+Math.round(x/zoom)+","+Math.round(y/zoom)+") window("+x+","+y+") um("+Math.round(ux)+','+Math.round(uy) + ") Customer("+Math.round(cx)+","+Math.round(cy)+")");
 		}
 		
     	opt.e.stopPropagation();
@@ -748,7 +764,7 @@ var Hawkmap = Widget.extend({
 			}else{
 				this.do_warn(_t('Incorrect Operation'),_t('Mark is across multiple IPs!'),false);
 			}
-    	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='inspectZone' || this.pad.curType=='uninspectZone')){
+    	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='inspectZone' ||this.pad.curType=='unregularInspectZone' || this.pad.curType=='uninspectZone')){
     		if(!this.map.curPad){
     			var pad = new Mycanvas.MyPolyline(this.parent.map,this.pad.curType);
 				this.map.curPad = new Mycanvas.MyPolyline(this.map,this.pad.curType);
@@ -924,6 +940,9 @@ var Hawkmap = Widget.extend({
 							if(obj.pad.padType == "uninspectZone"){
 								line.fill = 'Cyan';
 								line.stroke = 'Cyan';
+					    	}else if(obj.pad.padType == "unregularInspectZone"){
+								line.fill = 'fuchsia';
+								line.stroke = 'fuchsia';
 					    	}else{
 					    		line.stroke = 'yellow';
 								line.fill='yellow'

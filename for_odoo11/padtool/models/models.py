@@ -104,6 +104,7 @@ class Pad(models.Model):
             raise ValidationError("GlassName and PanelName must be match")
          
     content = fields.Text()
+    curl = fields.Text()
     mainMark = fields.Binary(attachment=True)
     subMark = fields.Binary(attachment=True)
 
@@ -646,6 +647,16 @@ class Pad(models.Model):
                     x,y = (float(s)  for s in p.split(','))
                     inspectZone['points'].append({'ux':x + content['dPanelCenterX'],'uy':y + content['dPanelCenterY']})
                 content['objs'].append(inspectZone)
+                
+            Pad_UnRegularInspect_Number = int(par.get('Pad_UnRegularInspect_Number'.lower(),0))
+            for i in range(0, Pad_UnRegularInspect_Number):
+                unregularInspectZone = {'points':[],'padType':'unregularInspectZone'}
+                for p in par[('Pad.UnRegularInspect0 %d' % i).lower()].split(';'):
+                    if p == '':
+                        continue
+                    x,y = (float(s)  for s in p.split(','))
+                    unregularInspectZone['points'].append({'ux':x + content['dPanelCenterX'],'uy':y + content['dPanelCenterY']})
+                content['objs'].append(unregularInspectZone)
                     
             pad['content'] = json.dumps(content)
             self.create(pad)

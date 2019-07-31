@@ -15,6 +15,55 @@ from odoo.tools.profiler import profile
 imgs = collections.OrderedDict()
 
 class Padtool(http.Controller):
+    @http.route('/padtool/<string:glass_name>/curlimage<int:width>X<int:height>', type='http', auth='user')
+    #@profile
+    def get_curl_image(self,glass_name,width,height,strBlocks, **k):
+        global imgs
+        root = odoo.tools.config['glass_root_path']
+        blocks = json.loads(strBlocks)
+         
+        dest = Image.new('L', (width,height))
+        left = 0
+        top = 0
+        for x in range(len(blocks)):
+            for y in range(len(blocks[x])-1,-1,-1):
+                b = blocks[x][y]    
+                if b is None or b['bHasIntersection'] == False:
+                    continue;
+                
+                imgFile = '%s/%s/ResizeScanJpegFile/IP%d/AoiL_IP%d_resize_small%d.jpeg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'])
+                if imgFile in imgs:
+                    im = imgs[imgFile] #Image.frombytes('L', (imgs[imgFile]['width'],imgs[imgFile]['height']), imgs[imgFile]['img'])
+                    region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                    dest.paste(region, (left,top))
+                    if y == 0:
+                        left += region.width
+                        top = 0
+                    else:
+                        top += region.height
+                    imgs.move_to_end(imgFile)
+                else:        
+                    im = Image.open(imgFile)
+                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                    region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                    dest.paste(region, (left,top))
+                    if y == 0:
+                        left += region.width
+                        top = 0
+                    else:
+                        top += region.height
+                            
+                    imgs[imgFile] = im #{'img':im.tobytes(),'width':im.width,'height':im.height}
+                    if(len(imgs) > 20):
+                        im = imgs.popitem(last=False)[1]
+                        im.close()
+                        
+                    
+
+        output = io.BytesIO()
+        dest.save(output, format="JPEG")
+        response = http.send_file(output,filename="imgname.jpg")  
+        return response    
     
     @http.route('/padtool/<string:glass_name>/image<int:width>X<int:height>', type='http', auth='user')
     #@profile

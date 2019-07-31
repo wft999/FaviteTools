@@ -14,6 +14,7 @@
 			
 			<script type="text/javascript" src="/padtool/static/src/js/map.js"></script>
 			<script type="text/javascript" src="/padtool/static/src/js/hawkmap.js"></script>
+			<script type="text/javascript" src="/padtool/static/src/js/hawkmap2.js"></script>
             <script type="text/javascript" src="/padtool/static/src/js/panelmap.js"></script>
             <script type="text/javascript" src="/padtool/static/src/js/glassmap.js"></script>
             <script type="text/javascript" src="/padtool/static/src/js/import_buttons.js"></script>

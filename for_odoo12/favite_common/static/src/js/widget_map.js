@@ -11,7 +11,7 @@ var Canvas = require('favite_common.Canvas');
 var canvas_registry = require('favite_common.canvas_registry');
 
 var Mixin = require('favite_common.Mixin');
-var Coordinate = require('favite_common.coordinate');
+
 
 var QWeb = core.qweb;
 var _t = core._t;
@@ -27,6 +27,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     	
     	this.offset = {x:0,y:0};
     	this.ratio = {x:1,y:1};
+    	this.size = {x:1,y:1};
 		this.fold = false;
 		this.mouseMode = 'select';
 		
@@ -38,11 +39,12 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         return this._super.apply(this, arguments).then(function () {
         	var l = window.location;
         	var parts = self.getParent().state.data.camera_path.split('\\');
+
+        	self.image_path = l.protocol + "//" + l.host + ':8080/' + parts[parts.length-2]+ '/' + parts[parts.length-1];
         	
-        	self.image_path = l.protocol + "//" + l.host + '/' + parts[parts.length-2] + '/' + parts[parts.length-1];
         	
         	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
-            return $.when();
+        	return $.when();
         });
     },
     
@@ -107,18 +109,10 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     start: function () {
         var self = this;
         
-        
-    	var dMapRatioX = self.ratio.x;
-    	var dMapRatioY = self.ratio.y;
-    	var dMapLeft = self.offset.x;
-    	var dMapBottom = self.offset.y;
-    	self.coord = new Coordinate(self.cameraConf,dMapRatioX,dMapRatioY,dMapLeft,dMapBottom);
-    	
         return this._super.apply(this, arguments).then(function () {
         	self.$el.on('click', 'button.btn',self._onButtonClick.bind(self));
         	self._showObjsList(self.getParent().state.data.geo);
-        	
-        
+
         	return $.when();
         });
     },
@@ -126,7 +120,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     resetMap(){
     	var self = this;
     	var dim = {width:self.$('.oe_content').width(),height:self.$('.oe_content').height()};
-		var zoom = Math.min(dim.width/self.image.width,dim.height/self.image.height);
+		var zoom = Math.min(dim.width/self.size.x,dim.height/self.size.y);
 		
 		self.map.setDimensions(dim);
 		self.map.setZoom(zoom);
@@ -141,7 +135,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     	var self = this;
     	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true});
     	self.map.add(self.image);
-    	
+
 		self.resetMap();
 		
 		self.map.on('mouse:move',self._onMouseMove.bind(self));    		
@@ -170,7 +164,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     	this.geo = {};
     	$.extend(true,this.geo,this.getParent().state.data.geo);
     	if(this.map){
-    		while(this.map.polylines.length){
+    		while(this.map.polylines && this.map.polylines.length){
     			var p = this.map.polylines.pop()
     			p.clear();
     			delete p.points;
@@ -188,7 +182,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         				objClass = canvas_registry.get(baseKey+key);
         			
          			var p = new objClass(self,key,obj,color);
-         			if(p.intersectsWithRect(0,self.image.width,0,self.image.height))
+         			if(p.intersectsWithRect(0,self.size.x,0,self.size.y))
          				p.render();
          			
          			if(obj.selected){
@@ -268,11 +262,11 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 	
 	_geo2map: function(point){
 		var {dOutputX:x, dOutputY:y} = this.coord.UMCoordinateToMapCoordinate(point.x,point.y);
-		return {x,y:this.image.height-y};
+		return {x,y:this.size.y-y};
 		//return {x: (point.x - this.offset.x) * this.ratio.x, y: this.image.height-(point.y - this.offset.y) * this.ratio.y};
 	},
 	_map2geo: function(point){
-		var {dOutputX:x, dOutputY:y} = this.coord.MapCoordinateToUMCoordinate(point.x,this.image.height-point.y);
+		var {dOutputX:x, dOutputY:y} = this.coord.MapCoordinateToUMCoordinate(point.x,this.size.y-point.y);
 		return {x,y};
 		//return {x: (point.x + this.offset.x) / this.ratio.x, y: (this.image.height-point.y) / this.ratio.y + this.offset.y};
 	},

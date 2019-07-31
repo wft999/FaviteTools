@@ -10,11 +10,29 @@
 </t>
 
 <t t-name="Glassmap.Buttons">
+	<div class="btn-group btn-group-md" role="group">
+        <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Objects <span class="caret"/>
+        </button>
+        <ul class="dropdown-menu o_pad_object_list">
+            <li class="selected"><a href="#">curl</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Save</a></li>
+        </ul>
+    </div>
     <div class="btn-group glassmap-mode" role="group">
 		<button class="btn btn-default fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
         <button class="btn btn-default fa  fa-search-plus" title="Zoom In" data-mode="zoom-in" accesskey="i"/>
 		<button class="btn btn-default fa fa-search-minus" title="Zoom Out" data-mode="zoom-out" accesskey="o"/>
     </div>
+    
+    <div class="btn-group btn-group-md"  role="group">
+        <button class="btn btn-default fa fa-trash" title="Delete Object" data-mode="zoom_in"/>
+	</div>
+	<div class="btn-group btn-group-md"  role="group">
+		<button class="btn btn-default fa fa-undo" title="Undo" data-mode="select"/>
+		<button class="btn btn-default fa fa-repeat" title="Redo" data-mode="select"/>
+	</div>
 </t>
 
 <t t-name="Map.info">
@@ -34,6 +52,7 @@
             <li><a href="#">subMark</a></li>
             <li><a href="#">uninspectZone</a></li>
             <li><a href="#">inspectZone</a></li>
+            <li><a href="#">unregularInspectZone</a></li>
             <li class="divider"></li>
             <li><a href="#">Save</a></li>
         </ul>
@@ -59,6 +78,7 @@
 	
 	<div class="btn-group btn-group-md"  role="group">
         <button class="btn btn-default fa fa-eye" title="Hawkeye" data-mode="Hawkeye"/>
+        <span class="ipscan"></span>
 	</div>
 	
 	<div class="btn-group btn-group-md"  role="group">
@@ -174,7 +194,7 @@
   	</div>
 	</form>
 	<div>
-		<span class="ipscan"></span>
+		<span class="ipscan1"></span>
 	</div>
 </div>
 </t>
