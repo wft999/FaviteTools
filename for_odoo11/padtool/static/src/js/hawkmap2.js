@@ -74,10 +74,10 @@ var Hawkmap = Widget.extend({
     	var top = this.parent.hawkeye.top - this.parent.hawkeye.scaleY*this.parent.hawkeye.height/2;
     	var bottom = this.parent.hawkeye.top + this.parent.hawkeye.scaleY*this.parent.hawkeye.height/2;
     	
-    	if(left < 0) left = 0;
-    	if(right > this.parent.image.width) right = this.parent.image.width;
-    	if(top < 0) top = 0;
-    	if(bottom > this.parent.image.height ) bottom = this.parent.image.height;
+    	if(left < 0) left = 1;
+    	if(right > this.parent.image.width) right = this.parent.image.width-1;
+    	if(top < 0) top = 1;
+    	if(bottom > this.parent.image.height ) bottom = this.parent.image.height-1;
     	
     	this.parent.tmpCoordinate.GetRectIntersectionInfoInScanMapMatrix(left,this.parent.image.height-bottom,right,this.parent.image.height-top);
     	if(this.parent.tmpCoordinate.smpScanMapPara.m_ScanMap.length == 0){
@@ -159,6 +159,9 @@ var Hawkmap = Widget.extend({
     	self.map.add(self.image.set({hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false}));
  		
     	this.parent.map.pads.forEach(function(obj){
+    		if(obj.padType != 'curl')
+    			return;
+    		
     		var isCurPad = self.map.curPad && self.map.curPad.panelpad && self.map.curPad.panelpad == obj;
     		var left = self.parent.hawkeye.left - self.parent.hawkeye.scaleX*self.parent.hawkeye.width/2;
         	var right = self.parent.hawkeye.left + self.parent.hawkeye.scaleX*self.parent.hawkeye.width/2;
@@ -174,8 +177,8 @@ var Hawkmap = Widget.extend({
     			if(points[i].ux){
     				var tmp = self.parent.tmpCoordinate.UMCoordinateToScanMapMatrixCoordinate(points[i].ux,points[i].uy);
     				if(tmp.dOutputX == undefined){
-    					var x = (points[i].x - self.eyeLeft)/self.parent.padConf[self.parent.panelName].panel_map_ratio_x;
-        				var y= (points[i].y - self.eyeTop)/self.parent.padConf[self.parent.panelName].panel_map_ratio_y;
+    					var x = (points[i].x - self.eyeLeft)/(self.parent.tmpCoordinate.gmpGlassMapPara.dRatioX * self.parent.tmpCoordinate.smpScanMapPara.nResizeRatioX);
+        				var y= (points[i].y - self.eyeTop)/(self.parent.tmpCoordinate.gmpGlassMapPara.dRatioY * self.parent.tmpCoordinate.smpScanMapPara.nResizeRatioY);
         				pad.points.push({x,y});
     				}else{
     					var x = tmp.dOutputX;
@@ -186,8 +189,8 @@ var Hawkmap = Widget.extend({
     				
     			}else{
     				pad.points.push({
-        				x: (points[i].x - self.eyeLeft)/self.parent.padConf[self.parent.panelName].panel_map_ratio_x,
-        				y: (points[i].y - self.eyeTop)/self.parent.padConf[self.parent.panelName].panel_map_ratio_y,
+        				x: (points[i].x - self.eyeLeft)/(self.parent.tmpCoordinate.gmpGlassMapPara.dRatioX * self.parent.tmpCoordinate.smpScanMapPara.nResizeRatioX),
+        				y: (points[i].y - self.eyeTop)/(self.parent.tmpCoordinate.gmpGlassMapPara.dRatioY * self.parent.tmpCoordinate.smpScanMapPara.nResizeRatioY)
         			});
     			}
     		}

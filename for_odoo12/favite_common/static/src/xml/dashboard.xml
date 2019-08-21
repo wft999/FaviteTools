@@ -19,7 +19,7 @@
         <ul class="dropdown-menu dropdown-menu-right">
         	<li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout" class="width_long">
         		<a class="dropdown-item">
-                	<img t-attf-src="/board/static/src/img/layout_#{layout}.png" alt=""/>
+                	<img t-attf-src="/favite_common/static/src/img/layout_#{layout}.png" alt=""/>
                 	<i t-attf-class="#{layout == currentLayout?'':'o_hidden'}  oe_dashboard_selected_layout fa fa-check fa-lg text-success" aria-label='Layout' role="img" title="Layout" style="margin-left: -50px"/>
                 </a>
             </li>

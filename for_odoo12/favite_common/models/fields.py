@@ -66,10 +66,10 @@ FIELD_TYPES2 = [(key, key) for key in sorted(fields.Field.by_type) if key in ('b
 
 class IrModel(models.Model):
     _inherit = ['ir.model']
-    
+     
     manual_field_id = fields.One2many('ir.model.fields', 'model_id', string='Fields', required=True, copy=True,
                                       domain=[('name','=like','x_%')])
-    
+     
     def button_open_fields(self):
         return {
             'name': 'fields',
@@ -81,35 +81,51 @@ class IrModel(models.Model):
             'domain': [('model_id', '=', self.id),('name','=like','x_%')],
             'context':{'default_model_id':self.id,'default_model':self.model}
         }
-    
-
-            
-        try:
-            if ttype2 == 'char':
-                return default_value
-            elif ttype2 == 'boolean':
-                if default_value.lower() not in ('true','false'):
-                    raise
-                return default_value.lower() == 'true'
-            elif ttype2 == 'float':
-                return float(default_value)
-            elif ttype2 == 'integer':
-                return int(default_value)
-            elif ttype2 == 'selection':
-                sel = safe_eval(selection)
-                for value,_ in sel:
-                    if value == default_value:
-                        return value
-            elif ttype2 == 'integer_array':
-                values = map(lambda v:int(v) ,default_value.split(','))
-                return  ','.join(map(lambda v:str(v),values))    
-            elif ttype2 == 'float_array':
-                values = map(lambda v:float(v) ,default_value.split(','))
-                return  ','.join(map(lambda v:str(v),values))  
-            raise
-        except Exception as e:
-            raise ValidationError("Default value is incorrect!")
+#     
+# 
+#             
+#         try:
+#             if ttype2 == 'char':
+#                 return default_value
+#             elif ttype2 == 'boolean':
+#                 if default_value.lower() not in ('true','false'):
+#                     raise
+#                 return default_value.lower() == 'true'
+#             elif ttype2 == 'float':
+#                 return float(default_value)
+#             elif ttype2 == 'integer':
+#                 return int(default_value)
+#             elif ttype2 == 'selection':
+#                 sel = safe_eval(selection)
+#                 for value,_ in sel:
+#                     if value == default_value:
+#                         return value
+#             elif ttype2 == 'integer_array':
+#                 values = map(lambda v:int(v) ,default_value.split(','))
+#                 return  ','.join(map(lambda v:str(v),values))    
+#             elif ttype2 == 'float_array':
+#                 values = map(lambda v:float(v) ,default_value.split(','))
+#                 return  ','.join(map(lambda v:str(v),values))  
+#             raise
+#         except Exception as e:
+#             raise ValidationError("Default value is incorrect!")
         
+    
+                        
+                
+
+
+class IrModelFields(models.Model):
+    _inherit = ['ir.model.fields']
+    
+    ttype = fields.Selection(selection=FIELD_TYPES, string='Field Type', required=True)
+    ttype2 = fields.Selection(selection=FIELD_TYPES2, string='Field Type',default='char')
+    locate = fields.Char(string='Locate')
+    sequence = fields.Integer(default=0)
+    range_value = fields.Char(string='Range',help="specified as range for a numbric field, "
+                                 "For example: (10,20) (~,200) [10,20) (10,~) ")
+    default_value = fields.Char(string='Default')
+    
     @api.one
     @api.constrains('ttype2', 'default_value')
     def _check_default_value(self):
@@ -144,7 +160,7 @@ class IrModel(models.Model):
         attrs = super(IrModelFields, self)._instanciate_attrs(field_data)
         
         if field_data['state'] == 'manual' and field_data['default_value']:
-            attrs['default'] = self._parse_default_value(field_data)
+            attrs['default'] = field_data['default_value']
             
         return attrs
     
@@ -194,20 +210,6 @@ class IrModel(models.Model):
                     model.pool._sql_error[model._table + '_' + key] = "%s must be less than %d " % (field_data['name'], value)
                             
                 process(model._table, key, definition)
-                        
-                
-
-
-class IrModelFields(models.Model):
-    _inherit = ['ir.model.fields']
-    
-    ttype = fields.Selection(selection=FIELD_TYPES, string='Field Type', required=True)
-    ttype2 = fields.Selection(selection=FIELD_TYPES2, string='Field Type',default='char')
-    locate = fields.Char(string='Locate')
-    sequence = fields.Integer(default=0)
-    range_value = fields.Char(string='Range',help="specified as range for a numbric field, "
-                                 "For example: (10,20) (~,200) [10,20) (10,~) ")
-    default_value = fields.Char(string='Default')
     
     def _parse_default_value(self,field_data=None):
         if field_data:

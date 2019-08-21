@@ -52,6 +52,12 @@ class SimpleHandler : public CefClient,
                                    CefRefPtr<CefContextMenuParams> params,
                                    CefRefPtr<CefMenuModel> model) OVERRIDE;
   CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE;
+  bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
+        CefRefPtr<CefFrame> frame,
+        CefRefPtr<CefContextMenuParams> params,
+        int command_id,
+        EventFlags event_flags);
+   void ShowDevTools(CefRefPtr<CefBrowser> browser);
 
   // Request that all existing browser windows close.
   void CloseAllBrowsers(bool force_close);

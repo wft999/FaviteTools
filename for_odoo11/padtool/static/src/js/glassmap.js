@@ -5,6 +5,7 @@ var ControlPanelMixin = require('web.ControlPanelMixin');
 var core = require('web.core');
 var Widget = require('web.Widget');
 var framework = require('web.framework');
+var Dialog = require('web.Dialog');
 
 var Coordinate = require('padtool.coordinate');
 var Mycanvas = require('padtool.Canvas');
@@ -83,17 +84,21 @@ var Glassmap = Map.extend(ControlPanelMixin,{
     _onButtonSave:function(){
     	var self = this;
     	var pad = new Object();
-    	//pad.dPanelCenterX = parseFloat(this.padConf[this.panelName]['PANEL_CENTER_X'.toLowerCase()]);
-    	//pad.dPanelCenterY = parseFloat(this.padConf[this.panelName]['PANEL_CENTER_Y'.toLowerCase()]);
+
+    	pad.dGlassCenterX = this.glass_center_x;
+ 		pad.dGlassCenterY = this.glass_center_y;
     	
     	pad.objs = new Array();
     	this.map.pads.forEach(function(obj){
     		if(obj.points.length < 2)
     			return;
+    		if(obj.padType != "curl")
+    			return;
     		if(_.some(obj.points,function(p){return p.ux == undefined || p.uy == undefined})){
     			self.do_warn(_t('Operation Result'),_t('Point is not correct !'),false);
     			return;
     		}
+    		
     		
     		var o = {
     			padType: obj.padType,

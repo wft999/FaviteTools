@@ -32,8 +32,8 @@ return BasicRenderer.extend({
      * @param {string} layout
      */
     changeLayout: function (layout) {
-    	this.rawWidget && this.rawWidget.map.setDimensions({width:1,height:1});
-        this.thumbWidget && this.thumbWidget.map.setDimensions({width:1,height:1});
+    	this.rawWidget&& this.rawWidget.map && this.rawWidget.map.setDimensions({width:1,height:1});
+        this.thumbWidget&& this.thumbWidget.map && this.thumbWidget.map.setDimensions({width:1,height:1});
         
         var $dashboard = this.$('.oe_dashboard');
         var current_layout = $dashboard.attr('data-layout');
@@ -54,8 +54,8 @@ return BasicRenderer.extend({
             $dashboard.toggleClass('oe_dashboard_layout_' + current_layout + ' oe_dashboard_layout_' + layout);
             $dashboard.attr('data-layout', layout);
         }
-        this.thumbWidget && this.thumbWidget.resetMap();
-        this.rawWidget && this.rawWidget.resetMap();
+        this.thumbWidget&& this.thumbWidget.map && this.thumbWidget.resetMap();
+        this.rawWidget&& this.rawWidget.map && this.rawWidget.resetMap();
     },
     
     saveBoard: function () {

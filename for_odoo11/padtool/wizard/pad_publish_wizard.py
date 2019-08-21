@@ -27,6 +27,41 @@ class PadPublishWizard(models.TransientModel):
     
     @api.multi
     def publish(self):
+        self.publish_panel_pad()
+        self.publish_curl_pad()
+        
+    @api.multi
+    def publish_curl_pad(self):
+        if self.pad_id.curl is False:
+            raise UserError("Curling(%s) doesn't have content" % self.pad_id.name)
+        
+        pad = self.pad_id;
+        content = json.loads(pad.curl)     
+
+        curl_region_id = 0
+        strCurlRegion = ''
+        
+        for obj in content['objs']:
+            if obj['padType'] == 'curl':
+                regionLeft = obj['points'][0]['ux'] - content['dGlassCenterX']
+                regionBottom = obj['points'][0]['uy'] - content['dGlassCenterY']
+                regionRight = obj['points'][1]['ux'] - content['dGlassCenterX']
+                regionTop = obj['points'][1]['uy'] - content['dGlassCenterY']
+                
+                strCurlRegion += 'Region'+str(curl_region_id)+'.region = '+str(regionLeft)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionTop)+';'+str(regionLeft)+','+str(regionTop)+'\n'
+                curl_region_id = curl_region_id + 1
+
+        if curl_region_id > 0:
+            strCurlRegion = 'TotalRegionNumber = '+str(curl_region_id) +'\n'+ strCurlRegion 
+        
+        for dir in self.directory_ids:  
+            with open(dir.name +'/'+ pad.name+'.cur', 'w') as f:
+                f.write('PanelCenter = %f,%f\n' % (content['dGlassCenterX'],content['dGlassCenterY']))
+                f.write( strCurlRegion )
+
+    
+    @api.multi
+    def publish_panel_pad(self):
         if self.pad_id.content is False:
             raise UserError("Pad(%s) doesn't have content" % self.pad_id.name)
         
@@ -199,6 +234,7 @@ class PadPublishWizard(models.TransientModel):
                 strRegion += 'Region'+str(region_id)+'.region = '+str(regionLeft)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionTop)+';'+str(regionLeft)+','+str(regionTop)+'\n'
                 strRegion += 'Region'+str(region_id)+'.iFrameNo = '+str(obj['iFrameNo'])+'\n'
                 region_id = region_id + 1
+                
                 
         if innerFrame is not None  and outrtFrame is not None:
             frameLeft0 = outrtFrame['points'][0]['ux']-content['dPanelCenterX']

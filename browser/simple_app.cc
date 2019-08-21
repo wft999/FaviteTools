@@ -109,9 +109,16 @@ void SimpleApp::OnContextInitialized() {
     window_info.SetAsPopup(NULL, "Favite Tools");
 #endif
 
+	char szFilePath[MAX_PATH + 1]={0};  
+    GetModuleFileNameA(NULL, szFilePath, MAX_PATH);  
+    (strrchr(szFilePath, '\\'))[0] = 0;
+	(strrchr(szFilePath, '\\'))[0] = 0; 
+
+	char szCookFile[MAX_PATH + 1]={0}; 
+	sprintf(szCookFile,"%s\\CefCookie",szFilePath);
 
 	CefRequestContextSettings settings;
-	CefString(&settings.cache_path) = "D:\\test\\CefCookie";
+	CefString(&settings.cache_path) = szCookFile;//"c:\\CefCookie";
 
 	CefRefPtr<CefRequestContext> context1 = CefRequestContext::CreateContext(settings, NULL);
 

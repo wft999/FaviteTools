@@ -10,6 +10,7 @@ var Map = require('padtool.Map');
 var Mycanvas = require('padtool.Canvas');
 var Hawkmap = require('padtool.Hawkmap');
 var Coordinate = require('padtool.coordinate');
+var Submark = require('padtool.submark');
 
 
 var QWeb = core.qweb;
@@ -111,7 +112,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	var self = this;
     	
     	if(e.currentTarget.children[0].text != 'Save'){
-    		if(this.pad.curType == 'subMark'){
+    		if(e.currentTarget.children[0].text == 'subMark'){
         		if(this.isPolygonSubMark == false && _.some(this.map.pads,function(obj){return obj.padType == 'subMark'}) == false){
         			this._drawSubMark();
         		}

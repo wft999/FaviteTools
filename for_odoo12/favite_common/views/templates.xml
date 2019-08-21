@@ -29,7 +29,7 @@
         	</xpath>
     	</template>
     	
-    	<template id="layout2" name="layout2" inherit_id="web.login_layout">
+<!--     	<template id="layout2" name="layout2" inherit_id="web.login_layout">
    			<xpath expr="//img" position="replace">
             	<img t-attf-src="/web_guide/static/description/logo.png" alt="Logo" style="max-height:120px; max-width: 100%; width:auto"/>
         	</xpath>
@@ -37,7 +37,7 @@
         	<xpath expr="//a[@href='https://www.odoo.com?utm_source=db&amp;utm_medium=auth']" position="replace">
             	<a href="http://www.favite.com" target="_blank">Powered by <span>Favite</span></a>
         	</xpath>
-	    </template>
+	    </template> -->
 	
     </data>
 </odoo>

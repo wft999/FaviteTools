@@ -55,9 +55,9 @@ return Widget.extend({
     start: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
-        	self.$('input[name="pseudopoint_enable"]')[0].checked = self.geo.mask['pseudopoint_enable'] || false;
+/*        	self.$('input[name="pseudopoint_enable"]')[0].checked = self.geo.mask['pseudopoint_enable'] || false;
         	self.$('input[name="distance_x"]')[0].value = self.geo.mask['distance_x'] || '';
-        	self.$('input[name="distance_y"]')[0].value = self.geo.mask['distance_y'] || '';
+        	self.$('input[name="distance_y"]')[0].value = self.geo.mask['distance_y'] || '';*/
         	self.$('input[name="threshold"]')[0].value = self.geo.mask.objs[self.oid]['threshold'] || '';
         	return $.when();
         });

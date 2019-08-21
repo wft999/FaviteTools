@@ -3,7 +3,9 @@
 
 
 <t t-extend="UserMenu.Actions">
-    <t t-jquery="a[data-menu='documentation']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='documentation']" t-operation="replace">
+    	<a role="menuitem" href="?debug=assets" class="dropdown-item">Debug</a>
+    </t>
     <t t-jquery="a[data-menu='support']" t-operation="replace"></t>
     <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
 </t>

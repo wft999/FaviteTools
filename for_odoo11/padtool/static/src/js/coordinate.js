@@ -1204,8 +1204,13 @@ var COORDINATE_TRANSFER =  Class.extend({
     			dOutputX = (iInputX / this.gmpGlassMapPara.dRatioX - iRange_Left) * dResolutionX + dOffsetX;
     			dOutputY = (iInputY / this.gmpGlassMapPara.dRatioY - iRange_Bottom) * dResolutionY + dOffsetY;
     			
-    			return {dOutputX, dOutputY};
+    			
+    		}else{
+    			dOutputX = dTempX;
+    			dOutputY = dTempY;
     		}
+    		
+    		return {dOutputX, dOutputY};
     	}
     	
     	return {};
@@ -1444,48 +1449,33 @@ var COORDINATE_TRANSFER =  Class.extend({
     	}
     },
     
-    GetScanMapMatrixScanRangePixel:function()
+    GetScanMapMatrixScanRangePixel:function(dRangeLeft,dRangeBottom,dRangeRight,dRangeTop)
     {
-    	var iIPIndex;
-    	var iScanIndex;
-    	
-    	this.smpScanMapPara.iScanMapMatrixMinX = this.smpScanMapPara.m_ScanMap[0][0].iRange_Right;
-    	this.smpScanMapPara.iScanMapMatrixMinY = this.smpScanMapPara.m_ScanMap[0][0].iRange_Top;
-    	this.smpScanMapPara.iScanMapMatrixMaxX = 0;
-    	this.smpScanMapPara.iScanMapMatrixMaxY = 0;
-    	
-    	for(var i = 0; i < this.smpScanMapPara.iTotalScanX; i ++)
-    	{
-    		for(var j = 0; j < this.smpScanMapPara.iTotalScanY; j ++)
-    		{
-    			iIPIndex = this.smpScanMapPara.m_ScanMap[i][j].iIPIndex;
-    			iScanIndex = this.smpScanMapPara.m_ScanMap[i][j].iScanIndex;
-    			
-    			if(iIPIndex >= 0 && iIPIndex < this.mpMachinePara.iTotalIP && iScanIndex >= 0 && iScanIndex < this.mpMachinePara.iTotalScan)
-    			{
-    				
-    				
-    				if(this.smpScanMapPara.m_ScanMap[i][j].iRange_Left < this.smpScanMapPara.iScanMapMatrixMinX)
-    				{
-    					this.smpScanMapPara.iScanMapMatrixMinX = this.smpScanMapPara.m_ScanMap[i][j].iRange_Left;
-    				}
-    				
-    				if(this.smpScanMapPara.m_ScanMap[i][j].iRange_Bottom < this.smpScanMapPara.iScanMapMatrixMinY)
-    				{
-    					this.smpScanMapPara.iScanMapMatrixMinY = this.smpScanMapPara.m_ScanMap[i][j].iRange_Bottom;
-    				}
-    				
-    				if(this.smpScanMapPara.m_ScanMap[i][j].iRange_Right > this.smpScanMapPara.iScanMapMatrixMaxX)
-    				{
-    					this.smpScanMapPara.iScanMapMatrixMaxX = this.smpScanMapPara.m_ScanMap[i][j].iRange_Right;
-    				}
-    				
-    				if(this.smpScanMapPara.m_ScanMap[i][j].iRange_Top > this.smpScanMapPara.iScanMapMatrixMaxY)
-    				{
-    					this.smpScanMapPara.iScanMapMatrixMaxY = this.smpScanMapPara.m_ScanMap[i][j].iRange_Top;
-    				}
-    			}
-    		}
+    	let {iIP:iIPIndex, iScan:iScanIndex} = this.JudgeIPScan_UM(dRangeLeft, dRangeBottom);
+    	if(iIPIndex != undefined || iScanIndex != undefined){
+    		var dOffsetX = this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].dOffsetX;
+    		var dOffsetY =  this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].dOffsetY;
+    		var dResolutionX =  this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].dResolutionX;
+    		var dResolutionY =  this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].dResolutionY;
+    		var iRange_Left =  this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].iRange_Left;
+    		var iRange_Bottom =  this.mpMachinePara.aIPParaArray[iIPIndex].aScanParaArray[iScanIndex].iRange_Bottom;
+    		
+    		this.smpScanMapPara.iScanMapMatrixMinX = ((dRangeLeft - dOffsetX) / dResolutionX + iRange_Left) / this.smpScanMapPara.nResizeRatioX;
+    		this.smpScanMapPara.iScanMapMatrixMinY = ((dRangeBottom - dOffsetY) / dResolutionY + iRange_Bottom) / this.smpScanMapPara.nResizeRatioY;
+    	}
+    	 
+
+    	let {iIP:iIPIndex2, iScan:iScanIndex2} = this.JudgeIPScan_UM(dRangeRight, dRangeTop);
+    	if(iIPIndex2 != undefined || iScanIndex2 != undefined){
+    		var dOffsetX = this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].dOffsetX;
+    		var dOffsetY =  this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].dOffsetY;
+    		var dResolutionX =  this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].dResolutionX;
+    		var dResolutionY =  this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].dResolutionY;
+    		var iRange_Right =  this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].iRange_Right;
+    		var iRange_Top =  this.mpMachinePara.aIPParaArray[iIPIndex2].aScanParaArray[iScanIndex2].iRange_Top;
+    		
+    		this.smpScanMapPara.iScanMapMatrixMaxX = ((dRangeRight - dOffsetX) / dResolutionX + iRange_Right) / this.smpScanMapPara.nResizeRatioX;
+    		this.smpScanMapPara.iScanMapMatrixMaxY = ((dRangeTop - dOffsetY) / dResolutionY + iRange_Top) / this.smpScanMapPara.nResizeRatioY;
     	}
     	
     	this.smpScanMapPara.iScanMapMatrixWidth = this.smpScanMapPara.iScanMapMatrixMaxX - this.smpScanMapPara.iScanMapMatrixMinX + 1;
@@ -1495,11 +1485,11 @@ var COORDINATE_TRANSFER =  Class.extend({
     GetRectIntersectionInfoInScanMapMatrix:function( iRangeLeft,  iRangeBottom,  iRangeRight,  iRangeTop){
     	this.InitialScanMapMatrix(iRangeLeft,  iRangeBottom,  iRangeRight,  iRangeTop);
     	this.GetScanMapMatrixScanRangeUM();
-    	this.GetScanMapMatrixScanRangePixel();
-    	//bRet = GlassMapCoordinateToUMCoordinate(iRangeLeft, iRangeBottom, dRangeLeft, dRangeBottom);
+
     	let {dOutputX:dRangeLeft, dOutputY:dRangeBottom} = this.GlassMapCoordinateToUMCoordinate(iRangeLeft, iRangeBottom);
-    	//bRet = GlassMapCoordinateToUMCoordinate(iRangeRight, iRangeTop, dRangeRight, dRangeTop);
     	let {dOutputX:dRangeRight, dOutputY:dRangeTop} = this.GlassMapCoordinateToUMCoordinate(iRangeRight, iRangeTop );
+    	this.GetScanMapMatrixScanRangePixel(dRangeLeft,dRangeBottom,dRangeRight,dRangeTop);
+    	
     	for(var i = 0; i < this.smpScanMapPara.iTotalScanX; i ++)
     	{
     		for(var j = 0; j < this.smpScanMapPara.iTotalScanY; j ++)
@@ -1510,7 +1500,6 @@ var COORDINATE_TRANSFER =  Class.extend({
     			var dScanRangeTop = this.smpScanMapPara.m_ScanMap[i][j].dRange_Top;
     			
     			let {rtInter_BottomLeftX:dInterRangeLeft, rtInter_BottomLeftY:dInterRangeBottom, rtInter_TopRightX:dInterRangeRight, rtInter_TopRightY:dInterRangeTop} = this.GetTwoRectInter(dRangeLeft, dRangeBottom, dRangeRight, dRangeTop, dScanRangeLeft, dScanRangeBottom, dScanRangeRight, dScanRangeTop);
-    			//bRet = GetTwoRectInter(dRangeLeft, dRangeBottom, dRangeRight, dRangeTop, dScanRangeLeft, dScanRangeBottom, dScanRangeRight, dScanRangeTop, dInterRangeLeft, dInterRangeBottom, dInterRangeRight, dInterRangeTop);
     			
     			if(dInterRangeLeft != undefined)
     			{

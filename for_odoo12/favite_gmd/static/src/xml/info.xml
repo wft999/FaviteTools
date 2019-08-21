@@ -89,17 +89,17 @@
 <t t-name="favite_gmd.info_mark">
 
     	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mark</div></td></tr>
-       	<tr>
+<!--        	<tr>
            	<td class="o_td_label"><label for="shift" class="o_form_label">Mark shift(pixel)</label></td>
            	<td width="100%"><input type="number" class="o_field_widget o_input" name="shift" /></td>
-       	</tr>
+       	</tr> -->
 
 </t>
 
 <t t-name="favite_gmd.info_mask">
 
     	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mask</div></td></tr>
-    	<tr>
+<!--     	<tr>
            	<td class="o_td_label"><label for="pseudopoint_enable" class="o_form_label">pseudopoint.enable</label></td>
            	<td width="100%"><div class="o_field_widget"><input type="checkbox" name="pseudopoint_enable" class=" o_input" /></div></td>
        	</tr>
@@ -111,7 +111,7 @@
            	<td class="o_td_label"><label for="distance_y" class="o_form_label">postion.distance y(pixel)</label></td>
            	<td width="100%"><input type="number" class="o_field_widget o_input" name="distance_y" /></td>
        	</tr>
-       	<tr><td class="o_horizontal_separator"></td></tr>
+       	<tr><td class="o_horizontal_separator"></td></tr> -->
        	<tr>
            	<td class="o_td_label"><label for="threshold" class="o_form_label">threshold</label></td>
            	<td width="100%"><input type="number" class="o_field_widget o_input" name="threshold" /></td>

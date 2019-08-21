@@ -28,30 +28,73 @@ void startPython(){
 	STARTUPINFO si;
     PROCESS_INFORMATION pi;
 
+	char szFilePath[MAX_PATH + 1]={0};  
+    GetModuleFileNameA(NULL, szFilePath, MAX_PATH);  
+    (strrchr(szFilePath, '\\'))[0] = 0;
+	(strrchr(szFilePath, '\\'))[0] = 0; 
+
+	char szNginxFile[MAX_PATH + 1]={0}; 
+	sprintf(szNginxFile,"%s\\nginx\\nginx.exe",szFilePath);
+	//int sBufSize = strlen(szNginxFile);
+    //DWORD dBufSize=MultiByteToWideChar(CP_ACP, 0, szNginxFile, sBufSize, NULL, 0);
+    wchar_t * dNginxFile=new wchar_t[MAX_PATH];
+    wmemset(dNginxFile, 0, MAX_PATH);
+	int nRet = MultiByteToWideChar(CP_ACP, 0, szNginxFile, (int)strlen(szNginxFile), dNginxFile, MAX_PATH);
+
+	char szNginx[MAX_PATH + 1]={0}; 
+	sprintf(szNginx,"%s\\nginx",szFilePath);
+    wchar_t * dNginx=new wchar_t[MAX_PATH];
+    wmemset(dNginx, 0, MAX_PATH);
+    nRet=MultiByteToWideChar(CP_ACP, 0, szNginx, (int)strlen(szNginx), dNginx, MAX_PATH);
+
     ZeroMemory( &si, sizeof(si) );
     si.cb = sizeof(si);
     ZeroMemory( &pi, sizeof(pi) );
-	CreateProcess( TEXT("D:\\work\\thirdparty\\nginx\\nginx.exe"),   // No module name (use command line)
+	CreateProcess( dNginxFile,   // No module name (use command line)
         NULL,        // Command line
         NULL,           // Process handle not inheritable
         NULL,           // Thread handle not inheritable
         FALSE,          // Set handle inheritance to FALSE
         CREATE_NO_WINDOW,              // No creation flags
         NULL,           // Use parent's environment block
-        TEXT("D:\\work\\thirdparty\\nginx"),           // Use parent's starting directory 
+        dNginx,           // Use parent's starting directory 
         &si,            // Pointer to STARTUPINFO structure
         &pi ); 
+	delete(dNginxFile);
+	delete(dNginx);
 
-	CreateProcess( TEXT("D:\\work\\python\\python.exe"),   // No module name (use command line)
-        TEXT("D:\\work\\python\\python.exe D:\\work\\code\\odoo\\odoo-bin"),        // Command line
+	char szPython[MAX_PATH + 1]={0}; 
+	sprintf(szPython,"%s\\python\\python.exe",szFilePath);
+    wchar_t * dPython=new wchar_t[MAX_PATH];
+    wmemset(dPython, 0, MAX_PATH);
+    nRet=MultiByteToWideChar(CP_ACP, 0, szPython, (int)strlen(szPython), dPython, MAX_PATH);
+
+	char szCommand[MAX_PATH + 1]={0}; 
+	sprintf(szCommand,"%s\\python\\python.exe %s\\server\\odoo-bin",szFilePath,szFilePath);
+    wchar_t * dCommand=new wchar_t[MAX_PATH];
+    wmemset(dCommand, 0, MAX_PATH);
+    nRet=MultiByteToWideChar(CP_ACP, 0, szCommand, (int)strlen(szCommand), dCommand, MAX_PATH);
+
+	char szOdoo[MAX_PATH + 1]={0}; 
+	sprintf(szOdoo,"%s\\server",szFilePath);
+    wchar_t * dOdoo=new wchar_t[MAX_PATH];
+    wmemset(dOdoo, 0, MAX_PATH);
+    nRet=MultiByteToWideChar(CP_ACP, 0, szOdoo, (int)strlen(szOdoo), dOdoo, MAX_PATH);
+
+	CreateProcess( dPython,   // No module name (use command line)
+        dCommand,        // Command line
         NULL,           // Process handle not inheritable
         NULL,           // Thread handle not inheritable
         FALSE,          // Set handle inheritance to FALSE
         CREATE_NO_WINDOW,              // No creation flags
         NULL,           // Use parent's environment block
-        TEXT("D:\\work\\code\\odoo"),           // Use parent's starting directory 
+        dOdoo,           // Use parent's starting directory 
         &si,            // Pointer to STARTUPINFO structure
         &pi ); 
+
+	delete(dPython);
+	delete(dCommand);
+	delete(dOdoo);
 }
 
 void stopPython(){
@@ -96,6 +139,7 @@ int APIENTRY wWinMain(HINSTANCE hInstance,
 
   // Specify CEF global settings here.
   CefSettings settings;
+  settings.remote_debugging_port = 8088;
 
 #if !defined(CEF_USE_SANDBOX)
   settings.no_sandbox = true;
