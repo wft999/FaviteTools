@@ -15,6 +15,11 @@ from odoo.tools.profiler import profile
 imgs = collections.OrderedDict()
 
 class Padtool(http.Controller):
+    @http.route('/padtool/restimagecahe', type='json', auth='user')
+    def rest_image_cahe(self):
+        imgs.clear()
+        return "ok"
+        
     @http.route('/padtool/<string:glass_name>/curlimage<int:width>X<int:height>', type='http', auth='user')
     #@profile
     def get_curl_image(self,glass_name,width,height,strBlocks, **k):

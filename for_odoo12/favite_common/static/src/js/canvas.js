@@ -430,8 +430,8 @@ var Polyline = Class.extend({
 			this.widget.map.add(cross);
 		}
 		
-		if(this.obj.label && this.points.length == 2){
-			this.text = new fabric.Text(this.obj.label, { left: (this.points[0].x + this.points[1].x)/2, 
+		if(this.obj.name && this.points.length == 2){
+			this.text = new fabric.Text(this.obj.name, { left: (this.points[0].x + this.points[1].x)/2, 
 				top: (this.points[0].y + this.points[1].y)/2, fill: this.color });
 			this.widget.map.add(this.text);
 		}

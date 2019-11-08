@@ -10,7 +10,7 @@ var client = require('web.web_client');
 var KanbanRecord = require('web.KanbanRecord');
 KanbanRecord.include({
 	_openRecord: function (event) {
-        if (this.modelName === 'favite_gmd.gmd') {
+        if (this.modelName.search('^favite_\S+')  || this.modelName == "ir.model") {
         	this.$('.dropdown-menu a').first().click();
         } else {
             this._super.apply(this, arguments);

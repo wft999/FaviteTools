@@ -2,17 +2,15 @@
 <templates id="template" xml:space="preserve">
 
 
-<t t-extend="UserMenu.Actions">
+<!-- <t t-extend="UserMenu.Actions">
     <t t-jquery="a[data-menu='documentation']" t-operation="replace"></t>
     <t t-jquery="a[data-menu='support']" t-operation="replace"></t>
     <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
-</t>
+</t> -->
 
 <t t-name="favite_gmd.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
-			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>

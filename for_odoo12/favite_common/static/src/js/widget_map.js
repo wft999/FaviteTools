@@ -77,7 +77,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 		var baseKey = self.getParent().getParent().getBaseKey();
 		var color = local_storage.getItem(baseKey+key) || 'yellow';
 		
-		var obj = {points:[]};
+		var obj = {name:(key+new Date().getTime()),points:[]};
 		self.geo[key].objs.push(obj);
 		
 		var objClass = Canvas.Polyline;
@@ -210,12 +210,14 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     updateMap: function(sel){
     	this.objTypes = sel;
-    	_.each(this.map.polylines,function(p){
-    		var visible = sel.hasOwnProperty(p.type);
-    		var color = visible && sel[p.type];
-    		p.update(visible,color);
-    	});
-    	this.map.requestRenderAll();
+    	if(this.map){
+    		this.map.polylines && _.each(this.map.polylines,function(p){
+        		var visible = sel.hasOwnProperty(p.type);
+        		var color = visible && sel[p.type];
+        		p.update(visible,color);
+        	});
+        	this.map.requestRenderAll();
+    	}
     	
     	this._showObjsList(sel);
     },

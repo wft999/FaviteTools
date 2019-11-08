@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_favite_bif_bif,favite_bif.bif,model_favite_bif_bif,,1,1,1,1

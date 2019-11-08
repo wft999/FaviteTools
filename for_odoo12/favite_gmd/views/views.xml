@@ -91,15 +91,15 @@
 				<templates>
 					<t t-name="kanban-box">
 						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
-							<div class="o_dropdown_kanban dropdown">
+								<div class="o_dropdown_kanban dropdown">
                                     <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
                                         <span class="fa fa-ellipsis-v"/>
                                     </a>
                                     <div class="dropdown-menu" role="menu">
                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
-           							<a type="edit" class="dropdown-item">Setting</a>
-           							<a type="edit" class="dropdown-item">Export</a>
-           							<a type="delete" class="dropdown-item">Delete</a>
+           								<a type="edit" class="dropdown-item">Setting</a>
+           								<a type="edit" class="dropdown-item">Export</a>
+           								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
                                 </div>
                                 
@@ -182,21 +182,8 @@
 				record.open_map()
             </field>
         </record> -->
-   
-
-    <!-- Top menu item -->
     
-    <menuitem name="gmd" id="favite_gmd.menu_root"/>
-   
-    <!-- menu categories -->
-    
-    <menuitem name="Data" id="favite_gmd.data" parent="favite_gmd.menu_root"/>
-    <menuitem name="Config" id="favite_gmd.menu_config" parent="favite_gmd.menu_root"/>
-   
-    <!-- actions -->
-    
-    <menuitem name="gmd" id="gmd" parent="favite_gmd.data" sequence="11"
-              action="favite_gmd.open_kanban_gmd"/>
+    <menuitem name="Gmd" id="favite_gmd.gmd" parent="favite_common.menu_root" action="favite_gmd.open_kanban_gmd"/>
    
   </data>
 </odoo>

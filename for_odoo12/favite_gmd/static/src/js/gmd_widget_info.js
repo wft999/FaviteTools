@@ -204,6 +204,7 @@ var WidgetInfo = Widget.extend({
             changes:{geo:this.geo},
             noundo:true
         });
+    	this.geo.no_render_map = false;
     	
     	var src = $el.find('img').attr('src');
     	this.$el.find('.o_corner_type_list .o_corner_type_img').attr('src',src);
@@ -246,6 +247,7 @@ var WidgetInfo = Widget.extend({
             changes:{geo:this.geo},
             noundo:true
         });
+    	this.geo.no_render_map = false;
     	
     	var src = $el.find('img').attr('src');
     	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',src);

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+<t t-name="favite_bif.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<div class="easyui-tabs" style="width:100%;height:250px">
+        		<div title="Main" style="padding:10px">
+            		<table class="o_group o_inner_group o_label_nowrap bif_info">
+		       			<tr>
+		       				<td><div class="o_horizontal_separator">Glass</div></td>
+		       				<td>
+			       				<div class="btn-group">
+					        		<div  class="o_corner_type_list">
+					        			<img class="o_corner_type_img" t-attf-src="/favite_gmd/static/src/img/ico_GlassCorner{{widget.geo.glass.corner}}.ico" alt="Icon" />
+					        		</div>
+					        		
+					        		<div  class="o_coord_type_list">
+					        			<img class="o_coord_type_img"  t-attf-src="/favite_gmd/static/src/img/icon{{widget.geo.glass.coord+1}}.ico" alt="Icon" />
+					        		</div>
+					    		</div>
+		       				</td>	
+		       			</tr>
+		       			<tr>
+		           			<td class="o_td_label"><label for="galss_size" class="o_form_label">Size(mm)</label></td>
+		           			<td width="100%"><span class=''><t t-esc="widget.geo.glass.size[0]"/>x<t t-esc="widget.geo.glass.size[1]"/></span></td>
+		       			</tr>
+		
+		   			</table>
+        		</div>
+        		
+        		<div title="Title2"></div>
+        		<div title="Title3"></div>
+    		</div>
+    
+       		
+        </div>
+    </div>
+</t>
+
+
+<t t-name="favite_bif.info_panel">
+		<tr>
+			<td><div class="o_horizontal_separator">Panel</div></td>
+			<td style="vertical-align: bottom;"><button class="btn btn-xs btn-secondary o_button_apply" type="button">Apply to block</button></td>	
+		</tr>
+		<t t-call="favite_bif.radio_item"></t>
+       	<tr>
+           	<td class="o_td_label"><label for="sort_start_pos" class="o_form_label">Gsp</label></td>
+           	<td width="50%">
+       			<select  class="o_field_widget o_input o_glass_data" name="sort_start_pos">
+					<option value ="0">TopLeft</option>
+					<option value ="1">TopRight</option>
+					<option value="2">BottomLeft</option>
+					<option value="3">BottomRight</option>
+				</select>
+			</td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="sort_start_pos" class="o_form_label">Pad</label></td>
+           	<td width="50%">
+       			<select  class="o_field_widget o_input o_glass_data" name="sort_start_pos">
+					<option value ="0">TopLeft</option>
+					<option value ="1">TopRight</option>
+					<option value="2">BottomLeft</option>
+					<option value="3">BottomRight</option>
+				</select>
+			</td>
+       	</tr>
+</t>
+
+<t t-name="favite_bif.radio_item">
+	<t t-foreach="widget.radios" t-as="r">
+		<tr t-att-class="r.name">
+    		<td class="o_td_label"><label class="o_form_label"><t t-esc='r.label'/></label></td>
+    		<td>
+    			<div class="o_field_radio o_horizontal o_field_widget">
+    				<t t-foreach="r.items" t-as="item">
+       				<div  class="custom-control custom-radio o_radio_item">
+						<input class="custom-control-input o_radio_input" t-attf-data-value="{{item.value}}" t-attf-name="{{r.name}}" t-attf-id="{{item.id}}" type="radio"/>
+						<label class="custom-control-label o_form_label" t-attf-for="{{item.id}}"><t t-esc='item.label'/></label>
+					</div>
+					</t>
+				</div>
+    		</td>
+    	</tr>
+    </t>
+</t>
+
+<t t-name="favite_bif.info_block">
+    	
+    	<t t-foreach="widget.curPolyline.panels" t-as="panel">
+			<t t-if="panel.obj.selected">
+				<t t-call="favite_bif.info_panel"></t>
+			</t>
+		</t>
+
+</t>
+
+
+</templates>

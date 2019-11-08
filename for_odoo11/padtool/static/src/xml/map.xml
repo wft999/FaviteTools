@@ -83,6 +83,7 @@
 	
 	<div class="btn-group btn-group-md"  role="group">
         <button class="btn btn-default fa fa-th" title="submark view" data-mode="submark"/>
+        <button class="btn btn-default fa fa-recycle" title="reset image cache" data-mode="resetCache"/>
 	</div>
 	
 	<div class="btn-group btn-group-md checkbox submask-checkbox"  role="group">

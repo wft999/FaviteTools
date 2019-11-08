@@ -167,9 +167,9 @@ var MapEventHandle = {
 	    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(p.x - range,p.y - range,p.x + range,p.y + range,true);
 	    	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
 	    		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
+	    	}else{
+	    		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
 	    	}	
-	    	
-   	 		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
     	}else if(opt.target.type == "cross"){
     		if(opt.target.mouseMove()){
     			var obj = opt.target.polyline.obj;

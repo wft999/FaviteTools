@@ -440,6 +440,13 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 		}
     },
     
+    _onButtonResetImageCache: function(){
+    	var self = this;
+    	this._rpc({route: '/padtool/restimagecahe'}).then(function (data) {
+    		self.do_notify(_t('Operation Result'),_t('Image cache has reset!'),false);
+        });
+    },
+    
     _renderButtons: function () {
     	this.$buttons = $(QWeb.render('Panelmap.Buttons'));
     	//this.$switch_buttons = $(QWeb.render('Panelmap.status'));
@@ -452,6 +459,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	this.$buttons.on('click', '.fa-trash',this._onButtonTrash.bind(this) );
     	this.$buttons.on('click', '.fa-eye',this._onButtonHawkeye.bind(this) );
     	this.$buttons.on('click', '.fa-th',this._onButtonSubmark.bind(this) );
+    	this.$buttons.on('click', '.fa-recycle',this._onButtonResetImageCache.bind(this) );
     	
     	this.$buttons.on('click', '.fa-undo',this.undo.bind(this) );
     	this.$buttons.on('click', '.fa-repeat',this.redo.bind(this) );

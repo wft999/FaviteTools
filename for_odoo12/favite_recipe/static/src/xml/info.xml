@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+
+<t t-extend="UserMenu.Actions">
+    <t t-jquery="a[data-menu='documentation']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='support']" t-operation="replace"></t>
+    <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
+</t>
+
+<t t-name="favite_gmd.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+       		<table class="o_group o_inner_group o_label_nowrap gmd_info">
+       			<tr>
+       				<td><div class="o_horizontal_separator">Glass</div></td>
+       				<td>
+	       				<div class="btn-group">
+			        		<div  class="o_corner_type_list">
+			        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="glass corner" title="glass corner">
+			                		<img class="o_corner_type_img" t-attf-src="/favite_gmd/static/src/img/ico_GlassCorner{{widget.geo.glass.corner}}.ico" alt="Icon" />
+			            		</a>
+			       				<ul class="dropdown-menu">
+			       					<li><a class="dropdown-item" data-type="1"><img src="/favite_gmd/static/src/img/ico_GlassCorner1.ico" alt="Icon" /></a></li>
+			       					<li><a class="dropdown-item" data-type="2"><img src="/favite_gmd/static/src/img/ico_GlassCorner2.ico" alt="Icon" /></a></li>
+			       					<li><a class="dropdown-item" data-type="3"><img src="/favite_gmd/static/src/img/ico_GlassCorner3.ico" alt="Icon" /></a></li>
+			       					<li><a class="dropdown-item" data-type="4"><img src="/favite_gmd/static/src/img/ico_GlassCorner4.ico" alt="Icon" /></a></li>
+			       				</ul>
+			        		</div>
+			        		
+			        		<div  class="o_coord_type_list">
+			        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="coordinate system" title="coordinate system">
+			                		<img class="o_coord_type_img"  t-attf-src="/favite_gmd/static/src/img/icon{{widget.geo.glass.coord+1}}.ico" alt="Icon" />
+			            		</a>
+			       				<ul class="dropdown-menu">
+			       					<t t-foreach="[1, 2, 3,4,9,10,11,12]" t-as="i">
+			       						<li class="width_long"><a class="dropdown-item" t-attf-data-type="{{i-1}}"><img t-attf-src="/favite_gmd/static/src/img/icon{{i}}.ico" alt="Icon" /></a></li>
+			       					</t>
+			       					<t t-foreach="[5,6,7,8,13,14,15,16]" t-as="i">
+			       						<li class="width_short"><a class="dropdown-item" t-attf-data-type="{{i-1}}"><img t-attf-src="/favite_gmd/static/src/img/icon{{i}}.ico" alt="Icon" /></a></li>
+			       					</t>
+			       				</ul>
+			        		</div>
+			    		</div>
+       				</td>	
+       			</tr>
+       			<tr>
+           			<td class="o_td_label"><label for="galss_size" class="o_form_label">Size(mm)</label></td>
+           			<td width="100%"><input type="text" class="o_field_widget o_input o_glass_data" name="galss_size" placeholder="e.g. 2000x1000" t-attf-value="{{widget.geo.glass.size[0]}}x{{widget.geo.glass.size[1]}}"></input></td>
+       			</tr>
+       			<tr>
+    				<td><div class="o_horizontal_separator">Sort</div></td>
+    				<td style="vertical-align: bottom;"><button class="btn btn-xs btn-secondary o_button_resort" type="button">Resort</button></td>
+    			</tr>
+    			<tr>
+           			<td class="o_td_label"><label for="use_hsd" class="o_form_label">Use HSD</label></td>
+           			<td width="100%">
+           				<input type="checkbox" name="use_hsd" class="o_glass_data" />
+					</td>
+       			</tr>
+       			<t t-call="favite_gmd.radio_item"></t>
+       			<tr class="sort_start_pos">
+           			<td class="o_td_label"><label for="sort_start_pos" class="o_form_label">Start pos</label></td>
+           			<td width="50%">
+           				<select  class="o_field_widget o_input o_glass_data" name="sort_start_pos">
+  							<option value ="0">TopLeft</option>
+  							<option value ="1">TopRight</option>
+  							<option value="2">BottomLeft</option>
+  							<option value="3">BottomRight</option>
+						</select>
+					</td>
+       			</tr>
+       			
+       			
+
+   			</table>
+        </div>
+    </div>
+</t>
+
+<t t-name="favite_gmd.info_mark">
+
+    	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mark</div></td></tr>
+<!--        	<tr>
+           	<td class="o_td_label"><label for="shift" class="o_form_label">Mark shift(pixel)</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="shift" /></td>
+       	</tr> -->
+
+</t>
+
+<t t-name="favite_gmd.info_mask">
+
+    	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mask</div></td></tr>
+<!--     	<tr>
+           	<td class="o_td_label"><label for="pseudopoint_enable" class="o_form_label">pseudopoint.enable</label></td>
+           	<td width="100%"><div class="o_field_widget"><input type="checkbox" name="pseudopoint_enable" class=" o_input" /></div></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="distance_x" class="o_form_label">postion.distance x(pixel)</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="distance_x" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="distance_y" class="o_form_label">postion.distance y(pixel)</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="distance_y" /></td>
+       	</tr>
+       	<tr><td class="o_horizontal_separator"></td></tr> -->
+       	<tr>
+           	<td class="o_td_label"><label for="threshold" class="o_form_label">threshold</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="threshold" /></td>
+       	</tr>
+
+   	
+</t>
+
+<t t-name="favite_gmd.info_panel">
+		<tr>
+			<td><div class="o_horizontal_separator">Panel</div></td>
+			<td style="vertical-align: bottom;"><button class="btn btn-xs btn-secondary o_button_apply" type="button">Apply to block</button></td>	
+		</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="pixelsize" class="o_form_label">pixel size</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" id="pixelsize" placeholder="e.g. 100x200"/></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="d1g1" class="o_form_label">d1g1</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" id="d1g1" /></td>
+       	</tr>
+</t>
+
+<t t-name="favite_gmd.radio_item">
+	<t t-foreach="widget.radios" t-as="r">
+		<tr t-att-class="r.name">
+    		<td class="o_td_label"><label class="o_form_label"><t t-esc='r.label'/></label></td>
+    		<td>
+    			<div class="o_field_radio o_horizontal o_field_widget">
+    				<t t-foreach="r.items" t-as="item">
+       				<div  class="custom-control custom-radio o_radio_item">
+						<input class="custom-control-input o_radio_input" t-attf-data-value="{{item.value}}" t-attf-name="{{r.name}}" t-attf-id="{{item.id}}" type="radio"/>
+						<label class="custom-control-label o_form_label" t-attf-for="{{item.id}}"><t t-esc='item.label'/></label>
+					</div>
+					</t>
+				</div>
+    		</td>
+    	</tr>
+    </t>
+</t>
+
+<t t-name="favite_gmd.info_block">
+    	<tr>
+    		<td><div class="o_horizontal_separator">Block</div></td><td></td>
+    	</tr>
+    	
+    	<tr calss="wft tr_panel_start_id">
+           	<td class="o_td_label"><label for="panel_start_id" class="o_form_label">start id</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_block_data" id="panel_start_id" placeholder="e.g. 1 or 1A"/></td>
+       	</tr>
+       	<tr calss="wft tr_panel_start_id_x">
+           	<td class="o_td_label"><label for="panel_start_id_x" class="o_form_label">start id x</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_block_data" id="panel_start_id_x" placeholder="e.g. 1 or 1A"/></td>
+       	</tr>
+       	<tr class="tr_panel_start_id_ygg">
+           	<td class="o_td_label"><label for="panel_start_id_y" class="o_form_label">start id y</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_block_data" id="panel_start_id_y" placeholder="e.g. 1 or 1A"/></td>
+       	</tr>
+    	
+    	<t t-foreach="widget.curPolyline.panels" t-as="panel">
+			<t t-if="panel.obj.selected">
+				<t t-call="favite_gmd.info_panel"></t>
+			</t>
+		</t>
+
+</t>
+
+
+</templates>

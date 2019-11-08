@@ -39,7 +39,7 @@ var Block = Canvas.Polyline.extend({
 				for(var c = 0; c < col; c++){
 					var x = c * (width + offsetX) + obj.points[0].x;
 					var y = r * (height + offsetY) + obj.points[0].y;
-					var panel = {points:[],label:"panel"};
+					var panel = {points:[],name:"panel" + (r * col + c)};
 					panel.points.push({x,y});
 					panel.points.push({x:x+width,y:y+height});
 					obj.panels.push(panel);

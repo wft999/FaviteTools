@@ -11,26 +11,25 @@
 				<field name="model" />
 				<templates>
 					<t t-name="kanban-box">
-						<div class="oe_module_vignette">
-							<img t-attf-src="/favite_common/static/description/icon.png" class="oe_module_icon"
-								alt="Icon" />
-							<div class="oe_module_desc"
-								t-att-title="record.model.value">
-								<h4 class="o_kanban_record_title">
-									<field name="model" />
-									&amp;nbsp;
-									<code groups="base.group_no_one">
-										<field name="name" />
-									</code>
-								</h4>
-								<p class="oe_module_name">
-									---------------------
-                          		</p>
-								<div class="oe_module_action">
-									<button type="object" class="btn btn-primary btn-sm" name="button_open_fields">Config</button>
-								</div>
-							</div>
+						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+								<div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a name="button_open_fields" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="model" /></strong>
+                                    </div>
+                                    
+                                </div>
+                                <div class="oe_clear"/>
 						</div>
+					
 					</t>
 				</templates>
 			</kanban>
@@ -60,17 +59,19 @@
 		</field>
 	</record>
         
+    <!-- Top menu item -->
+    <menuitem name="First" id="favite_common.menu_root"/>
         
     <!-- actions opening views on models -->
 	<record id="favite_common.action_model_model" model="ir.actions.act_window">
-		<field name="name">Models</field>
+		<field name="name">Config Models</field>
 		<field name="res_model">ir.model</field>
 		<field name="view_mode">kanban</field>
 		<field name="domain">[('model', '=like', 'favite%'),('model', 'not like', '.mixin'),('model', 'not like', 'favite_common')]</field>
 		<field name="view_id" ref="model_view_kanban" />
 	</record>
 
-    <menuitem name="Models" id="favite_common_models_menu" action="favite_common.action_model_model" parent="base.menu_administration" sequence="-1" groups="base.group_system"/>
+    <menuitem name="Config" id="favite_common_models_menu" action="favite_common.action_model_model" parent="favite_common.menu_root" sequence="10000" groups="base.group_system"/>
 
   </data>
 </odoo>
