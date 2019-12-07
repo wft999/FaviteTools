@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "favite_bif",
+    'name': "lm_gate",
 
     'summary': """
         Short (1 phrase/line) summary of the module's purpose, used as
@@ -20,30 +20,22 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','favite_gmd'],
+    'depends': ['base'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/panel.xml',
-        'views/pad.xml',
-        'views/gsp.xml',
-        'views/bif.xml',
+        'views/views.xml',
         'views/templates.xml',
-        
-        #'views/panel.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
     'qweb': [
-        "static/src/xml/info.xml",
     ],
 
     'installable': True,
     'auto_install': False,
     'application': True,
-    
-#     'post_load':'start_watchdog'
 }

@@ -22,6 +22,13 @@
     
     
 <t t-name="MapView.buttons">
+	<div class="o_form_buttons_view" role="toolbar" aria-label="Main actions">
+        <button t-if="widget.is_action_enabled('edit')" type="button"
+                class="btn btn-primary o_form_button_edit" accesskey="a">
+            Edit
+        </button>
+    </div>
+
     <div class="o_form_buttons_edit" role="toolbar" aria-label="Main actions">
         <button type="button"
                 class="btn btn-primary o_form_button_save" accesskey="s">

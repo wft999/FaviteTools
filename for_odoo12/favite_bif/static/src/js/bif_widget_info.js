@@ -3,6 +3,7 @@ odoo.define('favite_bif.WidgetInfo', function (require) {
 
 var core = require('web.core');
 var Dialog = require('web.Dialog');
+var dialogs = require('web.view_dialogs');
 
 var Widget = require('web.Widget');
 var framework = require('web.framework');
@@ -31,6 +32,7 @@ var WidgetInfo = Widget.extend({
         return this._super.apply(this, arguments);
     },
    
+   
     willStart: function () {
     	var self = this;
         return this._super.apply(this, arguments).then(function () {
@@ -55,17 +57,41 @@ var WidgetInfo = Widget.extend({
     	$.extend(true,self.geo,this.getParent().state.data.geo);
     },
     
+    _openPanel: function () {
+        var self = this;
+        this._rpc({
+            model: 'favite_bif.panel',
+            method: 'get_formview_action',
+            args: [[130]],
+        })
+        .then(function (action) {
+            self.trigger_up('do_action', {action: action});
+        });
+    },
+    
+    _openPanelDialog: function () {
+        var self = this;
+        this._rpc({
+                model: 'favite_bif.panel',
+                method: 'get_formview_id',
+                args: [[110]],
+            })
+            .then(function (view_id) {
+                new dialogs.FormViewDialog(self, {
+                    res_model: 'favite_bif.panel',
+                    res_id: 110,
+                    title: _t("Open: ") + self.string,
+                    view_id: view_id,
+                    readonly: false,
+                }).open();
+            });
+    },
+    
     _onMapSelectChange:function(curPolyline){
-    	this.geo = {};
-    	$.extend(true,this.geo,this.getParent().state.data.geo);
-    	
-    	this.widget_info && this.widget_info.destroy();
-    	this.widget_info = null;
     	if(curPolyline){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
-    		if(curPolyline.type == 'block'){
-    			this.widget_info = new InfoBlock(this, curPolyline,this.geo,oid);
-    			this.widget_info.appendTo('.bif_info');
+    		if(curPolyline.type == 'panel'){
+    			//this._openPanel();
     		}
     	}
     },

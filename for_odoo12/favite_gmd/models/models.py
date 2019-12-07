@@ -3,7 +3,8 @@ import logging
 import os        
 import io
 import json
-
+import math
+from PIL import Image
 try:
     import configparser as ConfigParser
 except ImportError:
@@ -17,59 +18,89 @@ class Frame(models.Model):
     _name = 'favite_gmd.frame'
     _inherit = ['favite_common.geometry']
     
-    geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
+    
+    @api.model
+    def _default_geo(self):
+        geo = {
+        "filter":{"objs":[]},
+        "inspect":{"objs":[]},
+        }
+        return geo
+        
+    @api.one
+    @api.depends('gmd_id','gmd_id.geo')
+    def _compute_geo(self):
+        self.geo['glass'] = self.gmd_id.geo['glass']
+        if 'filter' not in self.geo:
+            self.geo['filter'] = {"objs":[]}
+        if 'inspect' not in self.geo:
+            self.geo['inspect'] = {"objs":[]}
+    
+    geo = fields.Jsonb(string = "geometry value",default=_default_geo)
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
+    
+    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
+    
+    @api.multi
+    def get_formview_id(self, access_uid=None):
+        return self.env.ref('favite_gmd.favite_gmd_frame_map').id
     
 class Mark(models.Model):
     _name = 'favite_gmd.mark'
     _inherit = ['favite_common.geometry']
     
     geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
+    
+    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
+    
+    @api.multi
+    def get_formview_id(self, access_uid=None):
+        return self.env.ref('favite_gmd.favite_gmd_mark_map').id
     
 class Measure(models.Model):
     _name = 'favite_gmd.measure'
     _inherit = ['favite_common.geometry']
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
+    geo = fields.Jsonb(string = "geometry value")
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
+    
+    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
+    
+    @api.multi
+    def get_formview_id(self, access_uid=None):
+        return self.env.ref('favite_gmd.favite_gmd_measure_map').id
     
 class Fixpoint(models.Model):
     _name = 'favite_gmd.fixpoint'
     _inherit = ['favite_common.geometry']
     
     geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
+    
+    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
+    
+    @api.multi
+    def get_formview_id(self, access_uid=None):
+        return self.env.ref('favite_gmd.favite_gmd_fixpoint_map').id
     
 class Lut(models.Model):
     _name = 'favite_gmd.lut'   
     _inherit = ['favite_common.geometry']  
     
     geo = fields.Jsonb(string = "geometry value")   
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')    
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)    
     
-class Pad(models.Model):
-    _name = 'favite_gmd.pad'   
-    _inherit = ['favite_common.geometry']
+    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
-    geo = fields.Jsonb(string = "geometry value")   
-    block_id = fields.Many2one('favite_gmd.block',ondelete='cascade')
+    @api.multi
+    def get_formview_id(self, access_uid=None):
+        return self.env.ref('favite_gmd.favite_gmd_lut_map').id
     
-class Gsp(models.Model):
-    _name = 'favite_gmd.gsp'   
-    _inherit = ['favite_common.geometry']
-    
-    geo = fields.Jsonb(string = "geometry value")   
-    block_id = fields.Many2one('favite_gmd.block',ondelete='cascade')        
-    
-class Block(models.Model):
-    _name = 'favite_gmd.block'   
-    _inherit = ['favite_common.geometry']
-     
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
-
-    gsp_ids = fields.One2many('favite_gmd.gsp', 'block_id', string='Gsp lines')
-    pad_ids = fields.One2many('favite_gmd.pad', 'block_id', string='Pad lines')
-    
-
 class Gmd(models.Model):
     _name = 'favite_gmd.gmd'
     _inherit = ['favite_common.geometry']
@@ -97,12 +128,12 @@ class Gmd(models.Model):
     
     @api.model
     def create(self, vals):
-        self._create_block(vals)   
+        #self._create_block(vals)   
         return super(Gmd, self).create(vals)   
     
     @api.multi
     def write(self, vals):
-        self._create_block(vals)    
+        #self._create_block(vals)    
         return super(Gmd, self).write(vals)
         
     def _create_block(self,vals):

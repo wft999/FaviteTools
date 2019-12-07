@@ -5,44 +5,12 @@
 <t t-name="favite_bif.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
 			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
             <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
-        </div>
-        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
-        	<div class="easyui-tabs" style="width:100%;height:250px">
-        		<div title="Main" style="padding:10px">
-            		<table class="o_group o_inner_group o_label_nowrap bif_info">
-		       			<tr>
-		       				<td><div class="o_horizontal_separator">Glass</div></td>
-		       				<td>
-			       				<div class="btn-group">
-					        		<div  class="o_corner_type_list">
-					        			<img class="o_corner_type_img" t-attf-src="/favite_gmd/static/src/img/ico_GlassCorner{{widget.geo.glass.corner}}.ico" alt="Icon" />
-					        		</div>
-					        		
-					        		<div  class="o_coord_type_list">
-					        			<img class="o_coord_type_img"  t-attf-src="/favite_gmd/static/src/img/icon{{widget.geo.glass.coord+1}}.ico" alt="Icon" />
-					        		</div>
-					    		</div>
-		       				</td>	
-		       			</tr>
-		       			<tr>
-		           			<td class="o_td_label"><label for="galss_size" class="o_form_label">Size(mm)</label></td>
-		           			<td width="100%"><span class=''><t t-esc="widget.geo.glass.size[0]"/>x<t t-esc="widget.geo.glass.size[1]"/></span></td>
-		       			</tr>
-		
-		   			</table>
-        		</div>
-        		
-        		<div title="Title2"></div>
-        		<div title="Title3"></div>
-    		</div>
-    
-       		
         </div>
     </div>
 </t>

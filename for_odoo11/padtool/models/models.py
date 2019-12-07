@@ -651,7 +651,7 @@ class Pad(models.Model):
             Pad_UnRegularInspect_Number = int(par.get('Pad_UnRegularInspect_Number'.lower(),0))
             for i in range(0, Pad_UnRegularInspect_Number):
                 unregularInspectZone = {'points':[],'padType':'unregularInspectZone'}
-                for p in par[('Pad.UnRegularInspect0 %d' % i).lower()].split(';'):
+                for p in par[('Pad.UnRegularInspect%d' % i).lower()].split(';'):
                     if p == '':
                         continue
                     x,y = (float(s)  for s in p.split(','))
@@ -666,9 +666,9 @@ class Pad(models.Model):
         return {'success': written,'message':message}
     
     @api.model
-    def search_goa(self,glass_name,width,height,strBlocks,strPoints):
+    def search_goa(self,glass_name,width,height,strBlocks,strPoints,type):
         try:
-            getattr(windll,"favite")
+            getattr(windll,"AutoPeriod")
         except:
             raise UserError("'auto search' not supported on goa")
         
@@ -701,12 +701,12 @@ class Pad(models.Model):
         nVertices = len(points['x'])
         aVerticesX = (c_int * nVertices)(*points['x'])
         aVerticesY = (c_int * nVertices)(*points['y'])
-        periodX = c_double()
-        periodY = c_double()
-        periodType = c_int()
+        periodX = c_int()
+        periodY = c_int()
+        periodType = c_int(type)
         pMapStart = create_string_buffer(width*height*3)
         nMapStep = 3*width
-        '''
+        
         with open('d:/src.bmp', 'wb') as f:
             dest.save(f, format="BMP")
             
@@ -716,9 +716,9 @@ class Pad(models.Model):
             f.write("step:%d\n"%step)
             f.write("nVertices:%d\n"%nVertices)
             f.write("aVerticesX:%s\n"%strPoints)
-        '''
         
-        res = windll.favite.GetPeriod(pSrcStart,width,height,step,nVertices,aVerticesX,aVerticesY,byref(periodX),byref(periodY),byref(periodType),pMapStart,nMapStep)
+        
+        res = windll.AutoPeriod.GetPeriod(pSrcStart,width,height,step,nVertices,aVerticesX,aVerticesY,byref(periodX),byref(periodY),periodType,pMapStart,nMapStep)
         if res == 1:
             out = Image.frombytes('RGB', (width,height), pMapStart)
             b = BytesIO()

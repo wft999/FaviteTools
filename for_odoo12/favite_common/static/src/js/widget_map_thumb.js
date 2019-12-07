@@ -34,9 +34,13 @@ var WidgetMapThumb = WidgetMap.extend({
     
     start: function () {
         var self = this;
+        var pos = self.cameraConf['image.dm.resizerate'].split(',');
+    	self.ratio.x = 1/parseFloat(pos[0]);
+    	self.ratio.y = 1/parseFloat(pos[1]);
         return this._super.apply(this, arguments).then(function () {
         	self.showMap();
     		self._drawHawk();
+    		self._drawCorner();
         	return $.when();
         });
     },
@@ -75,9 +79,10 @@ var WidgetMapThumb = WidgetMap.extend({
     	self.image = new fabric.Image();
 
     	var src = self.image_path + '/glass.bmp';
+
     	var def = $.Deferred();
     	self.image.setSrc(src, function(img){
-    		img.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false });
+    		img.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });
     		self.size = {x:img.width,y:img.height};
 
     		def.resolve();
@@ -93,9 +98,40 @@ var WidgetMapThumb = WidgetMap.extend({
  			top: this.image.height/2,
  			width:100,
  			height:100,
+ 			coord:this.geo.glass.coord
  			});
     	this.map.add(this.hawkeye);
     	this.hawkeye.bringToFront();
+    },
+    
+    _drawCorner:function(){    
+    	var left = 0;
+    	var top = 0;
+		switch(this.geo.glass.corner){
+		case 1:
+			left = this.image.width;
+			top = 0;
+			break;
+		case 2:
+			left = 0;
+			top = 0;
+			break;
+		case 3:
+			left = 0;
+			top = this.image.height;
+			break;
+		case 4:
+			left = this.image.width;
+			top = this.image.height;
+			break;
+		}
+    	this.corner = new Canvas.Corner({ 
+    		left,
+    		top,
+ 			cornerType:this.geo.glass.corner
+ 			});
+    	this.map.add(this.corner);
+    	this.corner.bringToFront();
     },
 
 });

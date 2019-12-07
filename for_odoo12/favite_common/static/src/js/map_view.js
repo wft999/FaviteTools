@@ -5,7 +5,7 @@ odoo.define('favite_common.MapView', function (require) {
 var core = require('web.core');
 var config = require('web.config');
 
-var BasicView = require('web.BasicView');
+var BasicView = require('web.FormView');
 var MapRender = require('favite_common.MapRender');
 var MapController = require('favite_common.MapController');
 var MapModel = require('favite_common.MapModel');
@@ -32,8 +32,8 @@ var MapView = BasicView.extend({
         this._super.apply(this, arguments);
 
         this.loadParams.type = 'record';
-        this.controllerParams.mode = 'edit';
-        this.rendererParams.mode = 'edit';
+        //this.controllerParams.mode = 'edit';
+        //this.rendererParams.mode = 'edit';
         
     },
 });

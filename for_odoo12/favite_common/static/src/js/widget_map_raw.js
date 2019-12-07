@@ -19,6 +19,8 @@ var WidgetMapRaw = WidgetMap.extend({
     },
 
     init: function(){
+    	this.offset = {x:0,y:0};
+    	this.ratio = {x:1,y:1};
     	this.map_type = "raw";
         return this._super.apply(this, arguments);
     },

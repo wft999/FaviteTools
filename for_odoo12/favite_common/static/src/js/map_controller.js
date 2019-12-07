@@ -3,7 +3,7 @@ odoo.define('favite_common.MapController', function (require) {
 
 var core = require('web.core');
 var config = require('web.config');
-var BasicController = require('web.BasicController');
+var BasicController = require('web.FormController');
 var Dialog = require('web.Dialog');
 var local_storage = require('web.local_storage');
 
@@ -49,7 +49,7 @@ return BasicController.extend({
             	self.changeStack = [{geo:self.renderer.state.data.geo}];
             	self.changeStackIndex = 0;
             	self._updateButtons();
-                return this._setMode('edit');
+                return this._setMode('readonly');
             }
         } else {
             var record = this.model.get(this.handle);
@@ -87,7 +87,7 @@ return BasicController.extend({
     	return this._super.apply(this, arguments).done(function(){
     		self.changeStack = [{geo:self.renderer.state.data.geo}];
             self.changeStackIndex = 0;
-        	self.mode = 'edit';
+        	self.mode = 'readonly';
         	
         	self._updateButtons();
         	
@@ -134,7 +134,7 @@ return BasicController.extend({
     
     update: function (params, options) {
     	options = _.extend({reload : false}, options);
-        params = _.extend({viewType: 'map', mode: this.mode, noRender: true}, params);
+        params = _.extend({viewType: 'map', mode: this.mode, noRender: false}, params);
         return this._super(params, options);
     },
     
@@ -143,7 +143,7 @@ return BasicController.extend({
         this.set('title', title);
         this._updateButtons();
         this._updateSidebar();
-        return this._super.apply(this, arguments).then();
+        return this._super.apply(this, arguments).then(this.autofocus.bind(this));
     },
     
     
@@ -155,12 +155,16 @@ return BasicController.extend({
     
     _updateButtons: function () {
         if (this.$buttons) {
-//            this.$buttons.find('.o_form_buttons_edit')
-//                         .toggleClass('o_hidden', !this.isDirty());
+        	var edit_mode = (this.mode === 'edit');
+            this.$buttons.find('.o_form_buttons_edit')
+                         .toggleClass('o_hidden', !edit_mode);
+            this.$buttons.find('.o_form_buttons_view')
+            				.toggleClass('o_hidden', edit_mode);
+            
         	this.$buttons.find('.o_form_button_save')
         				 .toggleClass('o_hidden', !this.isDirty());
-        	this.$buttons.find('.o_form_button_cancel')
-			 			 .toggleClass('o_hidden', !this.isDirty());
+//        	this.$buttons.find('.o_form_button_cancel')
+//			 			 .toggleClass('o_hidden', !this.isDirty());
             this.$buttons.find('.o_form_button_redo')
                          .toggleClass('o_hidden', !(this.changeStack.length > this.changeStackIndex + 1));
             this.$buttons.find('.o_form_button_undo')
@@ -235,7 +239,7 @@ return BasicController.extend({
     
     renderSelect: function ($node) {
     	var self = this;
-    	$node = $node || $('.o_cp_buttons');
+    	$node = $node || $('.o_search_options');
     	this.$select && this.$select.remove();
     	
         this.$select = $('<div class="o_field_many2manytags o_input o_field_widget"/>');
@@ -325,6 +329,7 @@ return BasicController.extend({
         this.$buttons = $('<div/>');
 
         this.$buttons.append(qweb.render("MapView.buttons", {widget: this}));
+        this.$buttons.on('click', '.o_form_button_edit', this._onEdit.bind(this));
         this.$buttons.on('click', '.o_form_button_save', this._onSave.bind(this));
         this.$buttons.on('click', '.o_form_button_cancel', this._onDiscard.bind(this));
         this.$buttons.on('click', '.o_form_button_redo', this._onRedo.bind(this));
@@ -375,9 +380,9 @@ return BasicController.extend({
                 $searchview_buttons:$('<div>')
             };
 
-            this.renderButtons(elements.$searchview_buttons);
+            this.renderButtons(elements.$buttons);
             //this.renderSidebar(elements.$sidebar);
-            this.renderSelect(elements.$buttons);
+            this.renderSelect(elements.$searchview_buttons);
             // remove the unnecessary outer div
             elements = _.mapObject(elements, function($node) {
                 return $node && $node.contents();

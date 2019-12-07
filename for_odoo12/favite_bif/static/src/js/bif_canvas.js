@@ -158,38 +158,6 @@ var Block = Canvas.Polyline.extend({
 		
 		this.pad && this.pad.clear();
 		
-/*		var row = 0;
-		var col = 0;
-		var offsetX = 0;
-		var offsetY = 0;
-		var width = this.points.length > 1 ? this.points[1].x-this.points[0].x : 0;
-		var height = this.points.length > 1 ? this.points[1].y-this.points[0].y : 0;
-		if(this.points.length == 2){
-			row = 1;
-			col = 1;
-		}else if(this.points.length == 3){
-			col = Math.floor((this.points[2].x-this.points[0].x)/width);
-			row = Math.floor((this.points[2].y-this.points[0].y)/height);
-			offsetX = col>1?((this.points[2].x-this.points[0].x)%width)/(col-1):0;
-			offsetY = row>1?((this.points[2].y-this.points[0].y)%height)/(row-1):0;
-		}else if(this.points.length == 4){
-			offsetX = this.points[2].x-this.points[1].x;
-			offsetY = this.points[2].y-this.points[1].y;
-			row = Math.floor((this.points[3].y-this.points[0].y + offsetY)/(height+offsetY) + 0.5);
-			col = Math.floor((this.points[3].x-this.points[0].x + offsetX)/(width+offsetX) + 0.5);
-		}
-		
-		for(var r = 0; r < row; r++){
-			for(var c = 0; c < col; c++){
-				var x = c * (width + offsetX) + this.points[0].x;
-				var y = r * (height + offsetY) + this.points[0].y;
-				var obj = {points:[],block:this};
-				obj.points.push(this.widget._map2geo({x,y}));
-				obj.points.push(this.widget._map2geo({x:x+width,y:y+height}));
-				this._addPanel(obj);
-			}
-		}*/
-		
 		var self = this;
 		if(this.obj.panels){
 			_.each(this.obj.panels,p=>{

@@ -40,7 +40,7 @@
 <t t-name="favite_common.DashBoard.subview">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-pill badge-primary"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-pill badge-info"> <t t-esc="widget.string"/> </span>
             <div t-if="widget.id != 'info'" class="btn-group" role="group">
 				<button class="btn btn-secondary btn-sm fa fa-mouse-pointer active" title="Select" data-mode="default"  accesskey="s"/>
 				<button class="btn btn-secondary btn-sm fa fa-arrows" title="Pan" data-mode="move" accesskey="m"/>
@@ -68,8 +68,8 @@
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
             <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
         </div>
-        <div t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
-        	<canvas t-if="widget.id != 'info'"></canvas>
+        <div  t-if="widget.id != 'info'" t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<canvas></canvas>
         </div>
         
     </div>

@@ -1097,13 +1097,14 @@ var Hawkmap = Widget.extend({
     	var strPoints = JSON.stringify(points);
     	
     	var self = this;
+    	var type = parseInt(self.dialog.$('.o_set_type_input').val());
     	framework.blockUI();
-    	this._rpc({model: 'padtool.pad',method: 'search_goa',args: [this.parent.glassName,imgWidth,imgHeight,strBlocks,strPoints],})
+    	this._rpc({model: 'padtool.pad',method: 'search_goa',args: [this.parent.glassName,imgWidth,imgHeight,strBlocks,strPoints,type],})
         .then(function(res) {
         	framework.unblockUI();
         	if(res.result){
-        		self.dialog.$('.o_set_periodx_input').val(res.periodX);
-                self.dialog.$('.o_set_periody_input').val(res.periodY);
+        		self.dialog.$('.o_set_periodx_input').val(res.periodX*dResolutionX);
+                self.dialog.$('.o_set_periody_input').val(res.periodY*dResolutionY);
                 self.dialog.$('.img-responsive')[0].src = "data:image/jpeg;base64,"+res.map;
                 self.dialog.$('.img-responsive')[0].style="margin-top:10px;padding-top:10px;border-top: 1px solid #e5e5e5;"
                 self.do_notify(_t('Operation Result'),_t('The search is success!'),false);

@@ -1,26 +1,26 @@
 .o_form_view.o_form_nosheet.o_form_map{
-    padding: 0px;
+    padding-top: 0px;
     height: 100%;
 }
 
-.o_form_map_bg{
-    border-bottom: 1px solid #ddd;
-    background: url(/web/static/src/img/form_sheetbg.png);
-    position: relative;
-    height: 100%;
-}
+/* .o_form_map_bg{ */
+/*     border-bottom: 1px solid #ddd; */
+/*     background: url(/web/static/src/img/form_sheetbg.png); */
+/*     position: relative; */
+/*     height: 100%; */
+/* } */
 
-.col-md-6.o_form_map{
-    /* min-width: 650px; */
-    /* max-width: 1140px; */
+/* .col-md-6.o_form_map{ */
+/*     min-width: 650px; */
+/*     max-width: 1140px; */
     
-    height: 100%;
-    padding: 16px;
-    border: 1px solid #c8c8d3;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    margin: 2px auto;
-    background: white;
-}
+/*     height: 100%; */
+/*     padding: 16px; */
+/*     border: 1px solid #c8c8d3; */
+/*     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); */
+/*     margin: 2px auto; */
+/*     background: white; */
+/* } */
 
 .o_field_widget.o_field_many2manytags .o_tag_color_red, .o_field_widget.o_field_many2manytags .o_tag_color_red::after {
   background-color: #FF0000;

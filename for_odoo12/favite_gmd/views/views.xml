@@ -132,7 +132,7 @@
 		</field>
 	</record>
 	
-	
+ 
 	<record id="favite_gmd_geo_map" model="ir.ui.view">
 		<field name="model">favite_gmd.gmd</field>
 		<field name="arch" type="xml">
@@ -143,8 +143,167 @@
 			</map>
 		</field>
 	</record>
-
-
+	
+	<record id="frame_form_simplified" model="ir.ui.view">
+		<field name="name">favite_gmd.frame.form.simplified</field>
+		<field name="model">favite_gmd.frame</field>
+		<field name="arch" type="xml">
+			<form string="frame">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<field name="gmd_id" string="Gmd" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>	
+	<record id="favite_gmd_frame_map" model="ir.ui.view">
+		<field name="name">favite_gmd.frame.map</field>
+		<field name="model">favite_gmd.frame</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="mark_form_simplified" model="ir.ui.view">
+		<field name="name">favite_gmd.mark.form.simplified</field>
+		<field name="model">favite_gmd.mark</field>
+		<field name="arch" type="xml">
+			<form string="mark">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<field name="gmd_id" string="Gmd" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_gmd_mark_map" model="ir.ui.view">
+		<field name="name">favite_gmd.mark.map</field>
+		<field name="model">favite_gmd.mark</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="measure_form_simplified" model="ir.ui.view">
+		<field name="name">favite_gmd.measure.form.simplified</field>
+		<field name="model">favite_gmd.measure</field>
+		<field name="arch" type="xml">
+			<form string="measure">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<field name="gmd_id" string="Gmd" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_gmd_measure_map" model="ir.ui.view">
+		<field name="name">favite_gmd.measure.map</field>
+		<field name="model">favite_gmd.measure</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="fixpoint_form_simplified" model="ir.ui.view">
+		<field name="name">favite_gmd.fixpoint.form.simplified</field>
+		<field name="model">favite_gmd.fixpoint</field>
+		<field name="arch" type="xml">
+			<form string="fixpoint">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<field name="gmd_id" string="Gmd" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_gmd_fixpoint_map" model="ir.ui.view">
+		<field name="name">favite_gmd.fixpoint.map</field>
+		<field name="model">favite_gmd.fixpoint</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="lut_form_simplified" model="ir.ui.view">
+		<field name="name">favite_gmd.lut.form.simplified</field>
+		<field name="model">favite_gmd.lut</field>
+		<field name="arch" type="xml">
+			<form string="lut">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<field name="gmd_id" string="Gmd" />
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_gmd_lut_map" model="ir.ui.view">
+		<field name="name">favite_gmd.lut.map</field>
+		<field name="model">favite_gmd.lut</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
 	<record id="open_create_gmd" model="ir.actions.act_window">
 		<field name="name">Create a Gmd</field>
 		<field name="res_model">favite_gmd.gmd</field>

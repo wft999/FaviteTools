@@ -109,6 +109,75 @@ var Cross = fabric.util.createClass(fabric.Object, {
 	}
   });
 
+var Corner = fabric.util.createClass(fabric.Object, {
+	type:'corner',
+	hasRotatingPoint:false,
+	transparentCorners: false,
+    objectCaching: true,
+	hasControls: false,
+	hasBorders:false,
+	visible:true,
+	originX:"center",
+	originY:"center",
+	stroke:"white",
+	fill:"white",
+	
+    initialize: function(options) {
+    	this.callSuper('initialize', options);
+    	this.w=20;
+    	this.cornerType = this.cornerType || 1;
+    },
+
+	/*_render: function(ctx) {
+		ctx.fillStyle = '#4FC3F7';
+		ctx.globalAlpha = 0.3;
+		ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height);
+    }*/
+    
+    _render: function(ctx) {
+		this.width = this.w/this.canvas.getZoom();
+		this.height = this.w/this.canvas.getZoom();
+		ctx.lineWidth= Math.round(2/this.canvas.getZoom());
+		
+		switch(this.cornerType){
+		case 1:
+			ctx.beginPath(); 
+			ctx.moveTo(0,0);
+			ctx.lineTo(-this.width/2,0);
+			ctx.lineTo(0,this.height/2);
+			ctx.closePath();
+		    ctx.fill();
+			
+			break;
+		case 2:
+			ctx.beginPath(); 
+			ctx.moveTo(0,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.lineTo(0,this.height/2);
+			ctx.closePath();
+		    ctx.fill();
+			break;
+		case 3:
+			ctx.beginPath(); 
+			ctx.moveTo(0,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.lineTo(0,-this.height/2);
+			ctx.closePath();
+		    ctx.fill();
+			break;
+		case 4:
+			ctx.beginPath(); 
+			ctx.moveTo(0,0);
+			ctx.lineTo(-this.width/2,0);
+			ctx.lineTo(0,-this.height/2);
+			ctx.closePath();
+		    ctx.fill();
+			break;
+		}
+		
+    },
+  });
+
 var Hawkeye = fabric.util.createClass(fabric.Object, {
 	type:'hawkeye',
 	hasRotatingPoint:false,
@@ -121,34 +190,237 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 	originY:"center",
 	cornerSize:5,
 	hoverCursor:'move',
-	stroke:"yellow",
+	stroke:"red",
 	fill:false,
 	
     initialize: function(options) {
     	this.callSuper('initialize', options);
     	this.w=30;
     },
-
-	/*_render: function(ctx) {
-		ctx.fillStyle = '#4FC3F7';
-		ctx.globalAlpha = 0.3;
-		ctx.fillRect(-this.width/2,-this.height/2,this.width,this.height);
-    }*/
     
-    _render: function(ctx) {
-		this.width = this.w/this.canvas.getZoom(),
-		this.height = this.w/this.canvas.getZoom(),
-		
-		ctx.beginPath(); 
-		ctx.lineWidth= Math.round(2/this.canvas.getZoom());
-		ctx.moveTo(-this.width/2,0);
-		ctx.lineTo(this.width/2,0);
-		ctx.stroke();
-
+    leftp:function(ctx,x,y){
 		ctx.beginPath();
-		ctx.moveTo(0,-this.height/2);
-		ctx.lineTo(0,this.height/2); 
+		ctx.moveTo(x+this.width/12,y-this.height/12); 
+		ctx.lineTo(x,y);
+		ctx.lineTo(x+this.width/12,y+this.height/12); 
 		ctx.stroke(); 
+    },
+    rightp:function(ctx,x,y){
+		ctx.beginPath();
+		ctx.moveTo(x-this.width/12,y-this.height/12); 
+		ctx.lineTo(x,y);
+		ctx.lineTo(x-this.width/12,y+this.height/12); 
+		ctx.stroke(); 
+    },
+    downp:function(ctx,x,y){
+		ctx.beginPath();
+		ctx.moveTo(x-this.width/12,y-this.height/12); 
+		ctx.lineTo(x,y);
+		ctx.lineTo(x+this.width/12,y-this.height/12); 
+		ctx.stroke(); 
+    },
+    upp:function(ctx,x,y){
+		ctx.beginPath();
+		ctx.moveTo(x-this.width/12,y+this.height/12); 
+		ctx.lineTo(x,y);
+		ctx.lineTo(x+this.width/12,y+this.height/12); 
+		ctx.stroke(); 
+    },
+    _render: function(ctx) {
+		this.width = this.w/this.canvas.getZoom();
+		this.height = this.w/this.canvas.getZoom();
+		ctx.lineWidth= Math.round(1/this.canvas.getZoom());
+		
+		switch(this.coord){
+		case 0:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/4,0);
+			ctx.lineTo(this.width/4,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/2);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.leftp(ctx,-this.width/4,0);
+			this.downp(ctx,0,this.height/2);
+			break;
+		case 1:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/4,0);
+			ctx.lineTo(this.width/4,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/2);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.downp(ctx,0,this.height/2);
+			this.rightp(ctx,this.width/4,0);
+			break;
+		case 2:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/4,0);
+			ctx.lineTo(this.width/4,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/2);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/2);
+			this.rightp(ctx,this.width/4,0);
+			break;
+		case 3:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/4,0);
+			ctx.lineTo(this.width/4,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/2);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/2);
+			this.leftp(ctx,-this.width/4,0);
+			break;
+			
+		case 4:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/4);
+			ctx.lineTo(0,this.height/4); 
+			ctx.stroke(); 
+			
+			this.leftp(ctx,-this.width/2,0);
+			this.downp(ctx,0,this.height/4);
+			break;
+		case 5:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/4);
+			ctx.lineTo(0,this.height/4); 
+			ctx.stroke(); 
+			
+			this.downp(ctx,0,this.height/4);
+			this.rightp(ctx,this.width/2,0);
+			break;
+		case 6:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/4);
+			ctx.lineTo(0,this.height/4); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/4);
+			this.rightp(ctx,this.width/2,0);
+			break;
+		case 7:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(this.width/2,0);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(0,-this.height/4);
+			ctx.lineTo(0,this.height/4); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/4);
+			this.leftp(ctx,-this.width/2,0);
+			break;
+			
+		case 8:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,this.height); 
+			ctx.stroke(); 
+			
+			this.leftp(ctx,-this.width/2,0);
+			this.downp(ctx,0,this.height);
+			break;
+			
+		case 9:
+			ctx.beginPath(); 
+			ctx.moveTo(this.width/2,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,this.height); 
+			ctx.stroke(); 
+			
+			this.downp(ctx,0,this.height);
+			this.rightp(ctx,this.width/2,0);
+			break;
+		case 10:
+			ctx.beginPath(); 
+			ctx.moveTo(this.width/2,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,-this.height); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height);
+			this.rightp(ctx,this.width/2,0);
+			break;
+		case 11:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,-this.height); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height);
+			this.leftp(ctx,-this.width/2,0);
+			break;	
+			
+		case 12:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.leftp(ctx,-this.width,0);
+			this.downp(ctx,0,this.height/2);
+			break;
+		case 13:
+			ctx.beginPath(); 
+			ctx.moveTo(this.width,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,this.height/2); 
+			ctx.stroke(); 
+			
+			this.downp(ctx,0,this.height/2);
+			this.rightp(ctx,this.width,0);
+			break;
+		case 14:
+			ctx.beginPath(); 
+			ctx.moveTo(this.width,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,-this.height/2); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/2);
+			this.rightp(ctx,this.width,0);
+			break;
+		case 15:
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width,0);
+			ctx.lineTo(0,0);
+			ctx.lineTo(0,-this.height/2); 
+			ctx.stroke(); 
+			
+			this.upp(ctx,0,-this.height/2);
+			this.leftp(ctx,-this.width,0);
+			break;	
+		}
 		
     },
   });
@@ -430,9 +702,12 @@ var Polyline = Class.extend({
 			this.widget.map.add(cross);
 		}
 		
-		if(this.obj.name && this.points.length == 2){
-			this.text = new fabric.Text(this.obj.name, { left: (this.points[0].x + this.points[1].x)/2, 
-				top: (this.points[0].y + this.points[1].y)/2, fill: this.color });
+		if(this.obj.name && this.points.length >= 2){
+			this.text = new fabric.Text(this.obj.name, { 
+				left:  _.reduce(this.points, function(memo, p){ return memo + p.x; }, 0) / this.points.length, 
+				top: _.reduce(this.points, function(memo, p){ return memo + p.y; }, 0) / this.points.length,
+				fill: this.color }
+			);
 			this.widget.map.add(this.text);
 		}
 	}
@@ -443,6 +718,7 @@ return {
 	Cross,
 	Hawkeye,
 	Polyline,
+	Corner
 };
 
 });

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<record id="panel_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.panel.form.simplified</field>
+		<field name="model">favite_bif.panel</field>
+		<field name="arch" type="xml">
+			<form string="panel">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_bif_panel_map" model="ir.ui.view">
+		<field name="name">favite_bif.panel.map</field>
+		<field name="model">favite_bif.panel</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="bif_id" invisible="1"/>
+				<field name="geo" invisible="1" />
+				<notebook>	
+					<page string="Global">
+						<group>
+							<field name="active" />
+							<field name="gsp_id" />
+						</group>
+					</page>				
+				</notebook>
+			</form>
+		</field>
+	</record>
+</odoo>

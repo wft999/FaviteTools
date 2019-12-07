@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_lm_gate_point,lm_gate.point,model_lm_gate_point,,1,1,1,1
+access_lm_gate_device,lm_gate.device,model_lm_gate_device,,1,1,1,1
+access_lm_gate_modbus_rtu,lm_gate.modbus_rtu,model_lm_gate_modbus_rtu,,1,1,1,1
+access_lm_gate_modbus_pi,lm_gate.modbus_pi,model_lm_gate_modbus_pi,,1,1,1,1
+access_lm_gate_modbus_tcp,lm_gate.modbus_tcp,model_lm_gate_modbus_tcp,,1,1,1,1
+access_lm_gate_gate,lm_gate.gate,model_lm_gate_gate,,1,1,1,1

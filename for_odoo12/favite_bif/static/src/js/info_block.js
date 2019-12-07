@@ -14,9 +14,20 @@ return Widget.extend({
 	template: 'favite_bif.info_block',
     events: {
     	
-    	'click .o_button_apply': '_onApplyPanelData',
+    	'click .o_button_apply': 'panelEdit',
     	'change input.o_panel_data': '_onPanelDataChange',
     	'change input.o_block_data': '_onBlockDataChange',
+    },
+    
+    panelEdit: function(e) {
+        e.preventDefault();
+        return this.do_action({
+            type: 'ir.actions.act_window',
+            res_model: 'favite_bif.panel',
+            res_id: 75,
+            views: [[false, 'form']],
+            target: 'new'
+        });
     },
     
     _onApplyPanelData: function(){

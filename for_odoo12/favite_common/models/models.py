@@ -61,6 +61,27 @@ class GeometryModel(models.Model):
     def close_dialog(self):
         return {'type': 'ir.actions.act_window_close'}
     
+    @api.multi
+    def get_formview_action(self, access_uid=None):
+        """ Return an action to open the document ``self``. This method is meant
+            to be overridden in addons that want to give specific view ids for
+            example.
+
+        An optional access_uid holds the user that will access the document
+        that could be different from the current user. """
+        view_id = self.sudo().get_formview_id(access_uid=access_uid)
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'view_type': 'map',
+            'view_mode': 'map',
+            'views': [(view_id, 'map')],
+            'target': 'current',
+            'res_id': self.id,
+            'context': dict(self._context),
+            'flags':{'hasSearchView':False}
+        }
+    
     @api.multi  
     def open_map(self):
         self.ensure_one()
@@ -92,7 +113,7 @@ class GeometryModel(models.Model):
     def load_views(self, views, options=None):
         result = super(GeometryModel, self).load_views(views, options)
 
-        if 'form' in result['fields_views'] and result['fields_views']['form']['name'].endswith('parameter'):
+        if 'map' in result['fields_views'] or 'form' in result['fields_views']:
             notebook = E.xpath(expr="//notebook", position="inside")
 
             pages = {}
@@ -135,11 +156,20 @@ class GeometryModel(models.Model):
                     
                 g2[key3].append(E.field(name=fname))
 
-            src = etree.fromstring(result['fields_views']['form']['arch'])
+            if 'map' in result['fields_views']:
+                src = etree.fromstring(result['fields_views']['map']['arch'])
+            elif 'form' in result['fields_views']:
+                src = etree.fromstring(result['fields_views']['form']['arch'])
             View = self.env['ir.ui.view']
-            dest = View.apply_inheritance_specs(src,notebook,0)
-            result['fields_views']['form']['arch'] = etree.tostring(dest, encoding='unicode')
-        
+            node = View.locate_node(src,notebook)
+            if node  is not None:
+                dest = View.apply_inheritance_specs(src,notebook,0)
+            
+                if 'map' in result['fields_views']:
+                    result['fields_views']['map']['arch'] = etree.tostring(dest, encoding='unicode')
+                elif 'form' in result['fields_views']:
+                   result['fields_views']['form']['arch'] = etree.tostring(dest, encoding='unicode')
+                
         return result   
     
 

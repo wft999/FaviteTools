@@ -5,7 +5,7 @@ var core = require('web.core');
 var config = require('web.config');
 var local_storage = require('web.local_storage');
 
-var BasicRenderer = require('web.BasicRenderer');
+var BasicRenderer = require('web.FormRenderer');
 var Dialog = require('web.Dialog');
 var widgetRegistry = require('web.widget_registry');
 
@@ -98,12 +98,13 @@ return BasicRenderer.extend({
         
 
         var baseKey = this.getParent().getBaseKey();
-        var layout = local_storage.getItem(baseKey+'layout') || "2-1";
+        var layout = local_storage.getItem(baseKey+'layout') || "1-1-1";
         var $board = $(QWeb.render('favite_common.DashBoard', {layout}));
         this.$el.append($board);
         
         var defs = [];
         var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:'Detail'}];
+        local_storage.clear();
         _.each([0,1,2],function(col_id){
         	var str = local_storage.getItem(baseKey + col_id) || "";
         	_.each(str.split(','),function(subview_id){
@@ -120,11 +121,11 @@ return BasicRenderer.extend({
         		
         	});
         });
-        _.each(subviews,function(subview){
+        _.each(subviews,function(subview,i){
         	if(subview.ready)
         		return;
         	
-        	var parent = $board.find('.oe_dashboard_column.index_0');
+        	var parent = $board.find('.oe_dashboard_column.index_'+i);
         	defs.push(self._renderSubview(subview,parent));
         });
 
@@ -149,18 +150,81 @@ return BasicRenderer.extend({
     	w.fold = eval(w.fold.toLowerCase())
     	
     	this.widgets.push(w);
+    	
 
         if(subview.id == 'info'){
-        	this.infoWidget = w;
-        	//this.infoWidget.$el.find('.oe_content').append(self._renderTree.bind(self)());
+        	self.infoWidget = w;
+        	
+            var defs = [];
+            this.defs = defs;
+            var $form = this._renderNode(this.arch).addClass(this.className + ' oe_content');
+            delete this.defs;
+
+            return $.when.apply($, defs).then(function () {
+            	return w.appendTo(parent).then(function(){
+            		self.infoWidget.$el.append($form);
+                    self._updateView($form);
+                    if (self.state.res_id in self.alertFields) {
+                        self.displayTranslationAlert();
+                    }
+            	})
+            	
+            }, function () {
+                $form.remove();
+            }).then(function(){
+                if (self.lastActivatedFieldIndex >= 0) {
+                    self._activateNextFieldWidget(self.state, self.lastActivatedFieldIndex);
+                }
+            });
+        	
         }else if(subview.id == 'raw'){
         	this.rawWidget = w;
+        	return w.appendTo(parent);
         }else if(subview.id == 'thumb'){
         	this.thumbWidget = w;
+        	return w.appendTo(parent);
         }
-        
-        return w.appendTo(parent);
+    },
+    
+    _updateView: function ($form) {
+        var self = this;
 
+        // Set the new content of the form view, and toggle classnames
+
+        $form.toggleClass('o_form_nosheet', !this.has_sheet);
+        if (this.has_sheet) {
+            this.$el.children().not('.oe_chatter')
+                .wrapAll($('<div/>', {class: 'o_form_sheet_bg'}));
+        }
+        $form.toggleClass('o_form_editable', this.mode === 'edit');
+        $form.toggleClass('o_form_readonly', this.mode === 'readonly');
+
+        // Enable swipe for mobile when formview is in readonly mode and there are multiple records
+        if (config.device.isMobile && this.mode === 'readonly' && this.state.count > 1) {
+            this._enableSwipe();
+        }
+
+        // Attach the tooltips on the fields' label
+        _.each(this.allFieldWidgets[this.state.id], function (widget) {
+            var idForLabel = self.idsForLabels[widget.name];
+            // We usually don't support multiple widgets for the same field on the
+            // same view but it is the case with the new settings view on V11.0.
+            // Therefore, we need to retrieve the correct label since it could be
+            // displayed multiple times on the view, otherwise, for example the
+            // enterprise label will be displayed as many times as the field
+            // exists on settings.
+            var $widgets = self.$('.o_field_widget[name=' + widget.name + ']');
+            var $label = idForLabel ? self.$('.o_form_label[for=' + idForLabel + ']') : $();
+            $label = $label.eq($widgets.index(widget.$el));
+            if (config.debug || widget.attrs.help || widget.field.help) {
+                self._addFieldTooltip(widget, $label);
+            }
+            if (widget.attrs.widget === 'upgrade_boolean') {
+                // this widget needs a reference to its $label to be correctly
+                // rendered
+                widget.renderWithLabel($label);
+            }
+        });
     },
     
   //--------------------------------------------------------------------------

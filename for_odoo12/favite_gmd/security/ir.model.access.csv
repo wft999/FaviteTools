@@ -1,2 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_favite_gmd_gmd,favite_gmd.gmd,model_favite_gmd_gmd,,1,1,1,1
+
+access_favite_gmd_mark,favite_gmd.mark,model_favite_gmd_mark,,1,1,1,1
+access_favite_gmd_frame,favite_gmd.frame,model_favite_gmd_frame,,1,1,1,1
+access_favite_gmd_measure,favite_gmd.measure,model_favite_gmd_measure,,1,1,1,1
+access_favite_gmd_fixpoint,favite_gmd.fixpoint,model_favite_gmd_fixpoint,,1,1,1,1
+access_favite_gmd_lut,favite_gmd.lut,model_favite_gmd_lut,,1,1,1,1
+

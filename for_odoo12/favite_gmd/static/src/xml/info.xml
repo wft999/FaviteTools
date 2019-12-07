@@ -11,6 +11,7 @@
 <t t-name="favite_gmd.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+        	<span class="badge badge-primary"> <t t-esc="widget.string"/> </span>
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>

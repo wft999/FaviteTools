@@ -107,16 +107,40 @@
 	
 	
 	<record id="favite_bif_geo_map" model="ir.ui.view">
+		<field name="name">favite_bif.bif.map.parameter</field>
 		<field name="model">favite_bif.bif</field>
 		<field name="arch" type="xml">
-			<map string="Fields"  duplicate="false">
-				<field name="geo" />
-				<field name="camera_path" />
-				<field name="camera_ini" />
-			</map>
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo"  invisible="1"/>
+
+                <button class="btn btn-sm btn-primary float-right"  name="open_gsp_list" type="object">Gsp</button>
+				<notebook>	
+					<page string="Panel">
+                        <field name="panel_ids" widget="one2many_list">
+                            <tree editable="bottom" string="Panel Items" create="0" delete="0">
+                                <field name="name" readonly="1"/>
+                                <field name="bif_id" invisible="1"/>
+                                <field name="gsp_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="active"/>
+                            </tree>
+                        </field>
+					</page>			
+					<page string="Subbif">
+						<group>
+							<field name="frame_id" />
+							<field name="mark_id" />
+							<field name="measure_id" />
+							<field name="fixpoint_id" />
+							<field name="lut_id" />
+						</group>
+					</page>
+				</notebook>
+				
+			</form>
 		</field>
 	</record>
-
 
 	<record id="open_create_bif" model="ir.actions.act_window">
 		<field name="name">Create a Bif</field>
@@ -134,28 +158,6 @@
 		<field name="view_mode">kanban,form</field>
 		<field name="target">current</field>
 	</record>
-
-    <!-- server action to the one above -->
-    
-<!--     <record model="ir.actions.server" id="favite_gmd.action_server_kanban">
-      <field name="name">gmd server</field>
-      <field name="model_id" ref="model_favite_gmd_gmd"/>
-      <field name="state">code</field>
-      <field name="code">
-			action = model.open_kanban()
-      </field>
-    </record>
-    
-    <record id="action_mark_late_activities_done" model="ir.actions.server">
-            <field name="name">Mark Late Activities as Done</field>
-            <field name="model_id" ref="model_favite_gmd_gmd"/>
-            <field name="binding_model_id" ref="favite_gmd.model_favite_gmd_gmd"/>
-            <field name="state">code</field>
-            <field name="code">
-				record.open_map()
-            </field>
-        </record> -->
-   
 
 	<menuitem name="Bif" id="favite_bif.bif" parent="favite_common.menu_root" action="favite_bif.open_kanban_bif"/>
    
