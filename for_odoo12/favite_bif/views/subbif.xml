@@ -1,0 +1,165 @@
+<odoo>
+  <data>
+	
+	<record id="frame_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.frame.form.simplified</field>
+		<field name="model">favite_bif.frame</field>
+		<field name="arch" type="xml">
+			<form string="frame">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>	
+	<record id="favite_bif_frame_map" model="ir.ui.view">
+		<field name="name">favite_bif.frame.map</field>
+		<field name="model">favite_bif.frame</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="mark_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.mark.form.simplified</field>
+		<field name="model">favite_bif.mark</field>
+		<field name="arch" type="xml">
+			<form string="mark">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_bif_mark_map" model="ir.ui.view">
+		<field name="name">favite_bif.mark.map</field>
+		<field name="model">favite_bif.mark</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="measure_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.measure.form.simplified</field>
+		<field name="model">favite_bif.measure</field>
+		<field name="arch" type="xml">
+			<form string="measure">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_bif_measure_map" model="ir.ui.view">
+		<field name="name">favite_bif.measure.map</field>
+		<field name="model">favite_bif.measure</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="fixpoint_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.fixpoint.form.simplified</field>
+		<field name="model">favite_bif.fixpoint</field>
+		<field name="arch" type="xml">
+			<form string="fixpoint">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_bif_fixpoint_map" model="ir.ui.view">
+		<field name="name">favite_bif.fixpoint.map</field>
+		<field name="model">favite_bif.fixpoint</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+	<record id="lut_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.lut.form.simplified</field>
+		<field name="model">favite_bif.lut</field>
+		<field name="arch" type="xml">
+			<form string="lut">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>		
+	<record id="favite_bif_lut_map" model="ir.ui.view">
+		<field name="name">favite_bif.lut.map</field>
+		<field name="model">favite_bif.lut</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+	
+  </data>
+</odoo>

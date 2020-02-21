@@ -1,2 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_favite_recipe_recipe,favite_recipe.recipe,model_favite_recipe_recipe,,1,1,1,1
+access_favite_recipe_judge,favite_recipe.judge,model_favite_recipe_judge,,1,1,1,1
+access_favite_recipe_filter,favite_recipe.filter,model_favite_recipe_filter,,1,1,1,1
+access_favite_recipe_mura,favite_recipe.mura,model_favite_recipe_mura,,1,1,1,1
+access_favite_recipe_decode,favite_recipe.decode,model_favite_recipe_decode,,1,1,1,1
+access_favite_recipe_filter_range,favite_recipe.filter_range,model_favite_recipe_filter_range,,1,1,1,1
+access_favite_recipe_judge_defect,favite_recipe.judge_defect,model_favite_recipe_judge_defect,,1,1,1,1

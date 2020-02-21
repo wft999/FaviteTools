@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_filter_enablereporthost">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_filter" />
+            <field name="name">x_enablereporthost</field>
+			<field name="complete_name">enablereporthost</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">Enable report host</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>  
+</odoo>

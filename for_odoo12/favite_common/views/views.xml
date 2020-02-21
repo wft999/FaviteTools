@@ -47,8 +47,8 @@
 				<field name="model_id" invisible="1" />
 				<field name="complete_name" string="Name" />
 				<field name="field_description" string="Label" />
-				<field name="ttype" string="Type" invisible="1" />
-				<field name="ttype2" string="Type" />
+<!-- 				<field name="ttype" string="Type" invisible="1" /> -->
+				<field name="ttype" string="Type" />
 				<field name="locate" />
 				<field name="selection" string="Selection"
 					attrs="{'readonly': [('ttype', '!=', 'selection')]}" />

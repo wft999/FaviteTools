@@ -1,25 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-
-	<record id="favite_bif_gsp_map" model="ir.ui.view">
-		<field name="name">favite_bif.gsp.map.parameter</field>
-		<field name="model">favite_bif.gsp</field>
-		<field name="arch" type="xml">
-			<map string="Fields"  duplicate="false">
-				<field name="camera_path" invisible="1"/>
-				<field name="camera_ini" invisible="1"/>
-				<field name="geo" />
-				<button class="btn btn-sm btn-primary float-right"  name="open_pad_list" type="object">Pad</button>
-				<notebook>					
-				</notebook>
-			</map>
-		</field>
-	</record>
-			
 	<record id="gsp_form_simplified" model="ir.ui.view">
 		<field name="name">favite_bif.gsp.form.simplified</field>
 		<field name="model">favite_bif.gsp</field>
+		<field name="priority">2</field>
 		<field name="arch" type="xml">
 			<form string="gsp">
 				<sheet>
@@ -29,14 +14,31 @@
 						<div name="summary_def">
 							<field name="description" />
 						</div>
-						<field name="gmd_id" invisible="1" />
-						<field name="src_panel_id" string="Source Panel" />
 					</group>
 				</sheet>
 			</form>
 		</field>
 	</record>	  
-   
+	<record id="gsp_form" model="ir.ui.view">
+		<field name="name">favite_bif.gsp.form</field>
+		<field name="model">favite_bif.gsp</field>
+		<field name="priority">0</field>
+		<field name="arch" type="xml">
+			<form string="Gsp" >
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="geo"  invisible="1"/>
+				<field name="gmd_id" invisible="1"/>
+				<field name="src_panel_id" invisible="1"/>
+				<notebook>				
+				</notebook>
+				<group string="Global">
+					<field name="pad_id"  context="{'default_gmd_id': gmd_id,'default_src_panel_id':src_panel_id}" options="{'no_create_edit': False, 'no_quick_create': False}"/>
+					<field name="panel_polygon_file" string = "Polygon file" />
+				</group>
+			</form>
+		</field>
+	</record>   
 	<record id="gsp_view_kanban" model="ir.ui.view">
 		<field name="name">favite_bif.gsp.kanban</field>
 		<field name="model">favite_bif.gsp</field>

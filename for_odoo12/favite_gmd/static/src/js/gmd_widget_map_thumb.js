@@ -28,16 +28,16 @@ var WidgetMapThumb = Thumb.extend(GmdWidgetMap,{
     willStart: function () {
     	var self = this;
         return this._super.apply(this, arguments).then(function () {
-            return $.when();
+        	return self.LoadGlassMap();
         });
     },
     
     start: function () {
         var self = this;
-        var pos = self.cameraConf['image.dm.resizerate'].split(',');
-    	self.ratio.x = 1/parseFloat(pos[0]);
-    	self.ratio.y = 1/parseFloat(pos[1]);
         return this._super.apply(this, arguments).then(function () {
+        	self.showMap();
+    		self._drawHawk();
+    		self._drawCorner();
         	return $.when();
         });
     },

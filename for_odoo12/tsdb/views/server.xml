@@ -1,0 +1,126 @@
+<odoo>
+  <data>
+
+	<record id="server_form" model="ir.ui.view">
+		<field name="name">tsdb.server.form</field>
+		<field name="model">tsdb.server</field>
+		<field name="arch" type="xml">
+			<form string="Server" title="Server Parameter">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="description" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+					<group>
+						<group string="Server setting">
+                           <field name="ip" string='IP'/>
+                           <field name="port"  string='Port'/>
+                           <field name="user_name" string='User'/>
+                           <field name="user_password"  string='Password'/>
+                         </group>
+                	</group> 
+       	
+				</sheet>
+			</form>
+		</field>
+	</record>   
+	
+	<record id="server_view_kanban" model="ir.ui.view">
+		<field name="name">tsdb.server.kanban</field>
+		<field name="model">tsdb.server</field>
+		<field name="arch" type="xml">
+			<kanban on_create="tsdb.open_create_server"  class="oe_background_grey  o_emphasize_colors">
+				<field name="description" />
+				<field name="db_count"/>
+				<field name="write_date"/>
+				<templates>
+					<t t-name="kanban-box">
+						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+							<div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+           								<a type="delete" class="dropdown-item">Delete</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted o_kanban_record_subtitle">
+                                        <span> <t t-esc="record.description.value"/></span>
+                                    </div>
+                                   
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <a type="object" name="open_database_action"><span>Database</span></a>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <a type="object" name="open_modbus_action"><span>Gateway</span></a>
+                                        
+                                    </div>
+                                </div>
+                                <div class="oe_clear"/>
+						</div>
+					</t>
+				</templates>
+			</kanban>
+		</field>
+	</record>	
+	 
+
+    <!-- actions opening views on models -->
+    <record model="ir.actions.act_window" id="tsdb.action_window">
+      <field name="name">Server</field>
+      <field name="res_model">tsdb.server</field>
+      <field name="view_mode">kanban,form</field>
+    </record>
+   <record id="open_create_server" model="ir.actions.act_window">
+		<field name="name">Create a server</field>
+		<field name="res_model">tsdb.server</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="server_form" />
+		<field name="target">new</field>
+	</record>
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="tsdb.action_server">
+      <field name="name">tsdb server</field>
+      <field name="model_id" ref="model_tsdb_tsdb"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    
+    <menuitem name="tsdb" id="tsdb.menu_root"/>
+   
+    <!-- menu categories -->
+    
+    <menuitem name="Menu 1" id="tsdb.menu_1" parent="tsdb.menu_root"/>
+    <menuitem name="Menu 2" id="tsdb.menu_2" parent="tsdb.menu_root"/>
+   
+    <!-- actions -->
+    
+    <menuitem name="List" id="tsdb.menu_1_list" parent="tsdb.menu_1"
+              action="tsdb.action_window"/>
+<!--     <menuitem name="Server to list" id="tsdb" parent="tsdb.menu_2"
+              action="tsdb.action_server"/> -->
+   
+  </data>
+</odoo>

@@ -29,9 +29,14 @@
         'views/pad.xml',
         'views/gsp.xml',
         'views/bif.xml',
+        'views/subbif.xml',
         'views/templates.xml',
         
-        #'views/panel.xml',
+        'data/bif.xml',
+        'data/gsp.xml',
+        'data/pad.xml',
+        'data/subbif.xml',
+
     ],
     # only loaded in demonstration mode
     'demo': [

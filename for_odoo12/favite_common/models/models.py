@@ -41,7 +41,7 @@ class ActWindowView(models.Model):
     view_mode = fields.Selection(selection_add=[('map', "Map")])
     
 
-class GeometryModel(models.Model):
+class GeometryModel(models.AbstractModel):
     _name = 'favite_common.geometry'
     
     name = fields.Char(required=True,)
@@ -118,7 +118,6 @@ class GeometryModel(models.Model):
 
             pages = {}
             g1 = {}
-            g2 = {}
             
             fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
             for fname, field in sorted(fields_data.items(), key=lambda f: f[1]['sequence']):
@@ -128,13 +127,11 @@ class GeometryModel(models.Model):
                     continue
                 
                 if 'locate' not in field or field['locate'] is None:
-                    names = ['Common','Unnamed','Others']
+                    names = ['Common','Others']
                 else:
                     names = field['locate'].split('.')
                     if len(names) == 1:
-                        names = ['Common','Unnamed']+ names
-                    elif len(names) == 2:
-                        names = ['Common']+names
+                        names = names + ['Others']
                         
                 key1 = names[0]
                 if key1 not in pages:
@@ -147,14 +144,7 @@ class GeometryModel(models.Model):
                     g = E.group(string=names[1])
                     g1[key2] = g
                     pages[key1].append(g)
-                    
-                key3 = names[0] + '.' + names[1]  + '.' + names[2]
-                if key3 not in g2:
-                    g = E.group(string=names[2])
-                    g2[key3] = g
-                    g1[key2].append(g)
-                    
-                g2[key3].append(E.field(name=fname))
+                g1[key2].append(E.field(name=fname))
 
             if 'map' in result['fields_views']:
                 src = etree.fromstring(result['fields_views']['map']['arch'])

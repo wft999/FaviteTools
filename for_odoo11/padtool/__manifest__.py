@@ -7,7 +7,7 @@
         subtitle on modules listing or apps.openerp.com""",
 
     'description': """
-        版本：1.8.0日期：20190822
+        版本：1.8.2日期：20191226
     """,
 
     'author': "My Company",

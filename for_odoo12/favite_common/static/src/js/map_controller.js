@@ -73,9 +73,11 @@ return BasicController.extend({
 				event.data.changes = this.changeStack[--this.changeStackIndex];
 		}else if(event.data.noundo){
 
-		}else{
+		}else if(event.data.changes['geo']) {
 			this.changeStack.push(event.data.changes);
 			this.changeStackIndex++;
+		}else{
+
 		}
 		
 		if(event.data.changes)

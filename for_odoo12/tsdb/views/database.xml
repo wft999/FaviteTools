@@ -1,0 +1,82 @@
+<odoo>
+  <data>
+
+	<record id="database_form" model="ir.ui.view">
+		<field name="name">tsdb.database.form</field>
+		<field name="model">tsdb.database</field>
+		<field name="arch" type="xml">
+			<form string="Database" title="Database Parameter">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+					</group>
+                	<footer>
+						<button string="Create" name="close_dialog" type="object"
+							class="btn-primary" />
+						<button string="Discard" class="btn-default"
+							special="cancel" />
+					</footer>       	
+				</sheet>
+			</form>
+		</field>
+	</record>   
+	
+	<record id="database_view_kanban" model="ir.ui.view">
+		<field name="name">tsdb.database.kanban</field>
+		<field name="model">tsdb.database</field>
+		<field name="arch" type="xml">
+			<kanban on_create="tsdb.open_create_database"  class="oe_background_grey  o_emphasize_colors">
+				<field name="ntables"/>
+				<field name="tables"/>
+				<templates>
+					<t t-name="kanban-box">
+						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+							<div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+           								<a type="delete" class="dropdown-item">Delete</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <a type="object" name="open_table_action"><span>table</span></a>
+                                    </div>
+                                    <div class="oe_kanban_bottom_left">
+                                        <a type="object" name="open_stable_action"><span>stable</span></a>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="status" widget="state_selection"/>
+                                        
+                                    </div>
+                                </div>
+                                <div class="oe_clear"/>
+						</div>
+					</t>
+				</templates>
+			</kanban>
+		</field>
+	</record>	
+	 
+
+    <!-- actions opening views on models -->
+
+   <record id="open_create_database" model="ir.actions.act_window">
+		<field name="name">Create a database</field>
+		<field name="res_model">tsdb.database</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="database_form" />
+		<field name="target">new</field>
+	</record>
+
+   
+  </data>
+</odoo>

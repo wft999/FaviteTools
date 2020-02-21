@@ -64,6 +64,12 @@ var WidgetInfo = Widget.extend({
         return this._super.apply(this, arguments).then(function () {
         	self.geo = {};
         	$.extend(true,self.geo,self.getParent().state.data.geo);
+        	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
+            var pos = self.cameraConf['glass.center.position.0'].split(',');
+        	var x = parseInt(pos[0]);
+        	var y = parseInt(pos[1]);
+        	self.width_short = (x < y);
+        	
             return $.when();
         });
     },
@@ -72,6 +78,7 @@ var WidgetInfo = Widget.extend({
         var self = this;
         return this._super.apply(this, arguments).then(function () {
         	core.bus.on('map_select_change', self, self._onMapSelectChange);
+        	
         	self._showCoordList();
         	self.$('input[name="use_hsd"]')[0].checked = self.geo.glass.use_hsd == 1;
 
@@ -120,7 +127,14 @@ var WidgetInfo = Widget.extend({
     },
     
     _showCoordList: function(){
-    	var size = this.geo.glass.size;
+		if(this.width_short){
+			this.$el.find('li.width_long').toggleClass('o_hidden',false);
+    		this.$el.find('li.width_short').toggleClass('o_hidden',true);
+		}else{
+			this.$el.find('li.width_long').toggleClass('o_hidden',true);
+    		this.$el.find('li.width_short').toggleClass('o_hidden',false);
+		}
+/*    	var size = this.geo.glass.size;
     	if(size[0] > 0 && size[1] > 0){
     		if(size[0] > size[1]){
     			this.$el.find('li.width_long').toggleClass('o_hidden',true);
@@ -133,23 +147,29 @@ var WidgetInfo = Widget.extend({
     	}else{
     		this.$el.find('li.width_long').toggleClass('o_hidden',true);
     		this.$el.find('li.width_short').toggleClass('o_hidden',true);
-    	}
+    	}*/
     },
     
     _glassSizeChange: function(value){
     	value = value.toLowerCase();
     	if(value.match(/^\d+x\d+$/)){
-    		this.geo.glass.size = _.map(value.split('x'),v=>parseInt(v));
-        	this.geo.glass.coord = 0;
-        	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',"/favite_gmd/static/src/img/icon0.ico");
-        	
-        	this.trigger_up('field_changed', {
-                dataPointID: this.getParent().state.id,
-                changes:{geo:this.geo},
-                noundo:true
-            });
-        	
-        	this._showCoordList();
+    		var size = _.map(value.split('x'),v=>parseInt(v));
+    		if(this.width_short && size[0]>size[1]){
+    			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
+    		}else{
+        		this.geo.glass.size = size;
+            	this.geo.glass.coord = 0;
+            	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',"/favite_gmd/static/src/img/icon0.ico");
+            	
+            	this.trigger_up('field_changed', {
+                    dataPointID: this.getParent().state.id,
+                    changes:{geo:this.geo},
+                    noundo:true
+                });
+            	
+            	//this._showCoordList();
+    		}
+
     	}else{
     		this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
     	}

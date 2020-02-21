@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+<t t-name="GatewayView.buttons">
+	<div class="o_form_buttons_view" role="toolbar" aria-label="Main actions">
+        <button t-if="widget.is_action_enabled('edit')" type="button"
+                class="btn btn-primary o_form_button_edit" accesskey="a">
+            Edit
+        </button>
+    </div>
+
+    <div class="o_form_buttons_edit" role="toolbar" aria-label="Main actions">
+        <button type="button"
+                class="btn btn-primary o_form_button_save" accesskey="s">
+            Save
+        </button>
+        <button type="button"
+                class="btn btn-secondary o_form_button_cancel" accesskey="j">
+            Discard
+        </button>
+        
+        <button  type="button"
+                class="btn btn-secondary o_form_button_undo" accesskey="c">
+            Undo
+        </button>
+        <button  type="button"
+                class="btn btn-secondary o_form_button_redo" accesskey="a">
+            Redo
+        </button>
+    </div>
+    
+</t>    
+
+<t t-name="lm_gate.ControlPanel.SwitchButton">
+    <button type="button" t-att-accesskey="button.accessKey"
+        t-attf-class="btn btn-secondary fa fa-lg #{button.icon} o_cp_switch_#{button.type}"
+        t-attf-aria-label="#{button.type}"
+        t-att-data-button-type="button.type" t-attf-title="#{button.type}" tabindex="-1"/>
+</t>
+
+<t t-name="lm_gate.ControlPanel.SwitchButtons">
+    <t t-foreach="buttons" t-as="group">
+    	<div t-foreach="group" t-as="button" class="btn-group btn-group-md" role="group">
+        	<t t-call="favite_common.ControlPanel.SwitchButton"/>
+    	</div>
+    </t>
+    <div class="btn-group btn-group-md" role="group">
+    	<button type="button" class="btn btn-secondary fa fa-lg fa-th-large" title="Layout" tabindex="-1" data-toggle="dropdown" aria-expanded="false"/>
+        <ul class="dropdown-menu dropdown-menu-right">
+        	<li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout" class="width_long">
+        		<a class="dropdown-item">
+                	<img t-attf-src="/favite_common/static/src/img/layout_#{layout}.png" alt=""/>
+                	<i t-attf-class="#{layout == currentLayout?'':'o_hidden'}  oe_dashboard_selected_layout fa fa-check fa-lg text-success" aria-label='Layout' role="img" title="Layout" style="margin-left: -50px"/>
+                </a>
+            </li>
+			       					
+		</ul>
+    </div>
+</t>
+    
+<t t-name="lm_gate.DashBoard">
+    <table t-att-data-layout="layout" t-attf-class="oe_dashboard oe_dashboard_layout_#{layout}" cellspacing="0" cellpadding="0" border="0">
+    <tr>
+        <td id="column_0" class="oe_dashboard_column index_0" />
+		<td id="column_1" class="oe_dashboard_column index_1" />
+    </tr>
+    </table>
+</t>
+<t t-name="lm_gate.DashBoard.subview">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-pill badge-info"> <t t-esc="widget.string"/> </span>
+
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div  t-if="widget.id != 'info'" t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        </div>
+        
+    </div>
+    
+</t>
+
+
+</templates>

@@ -24,7 +24,7 @@ class Jsonb(fields.Field):
         
         return json.dumps(value)        
     
-fields.Jsonb = Jsonb   
+  
             
 class NumericArray(fields.Field):
     type = 'float_array'
@@ -60,9 +60,11 @@ class IntegerArray(NumericArray):
         
         return '{' + ','.join(str(v) for v in value) + '}'
     
-
+fields.Jsonb = Jsonb 
+fields.NumericArray = NumericArray 
+fields.IntegerArray = IntegerArray 
 FIELD_TYPES = [(key, key) for key in sorted(fields.Field.by_type)]    
-FIELD_TYPES2 = [(key, key) for key in sorted(fields.Field.by_type) if key in ('boolean','char','float','integer','selection','integer_array','float_array')]
+# FIELD_TYPES2 = [(key, key) for key in sorted(fields.Field.by_type) if key in ('boolean','char','float','integer','selection','integer_array','float_array')]
 
 class IrModel(models.Model):
     _inherit = ['ir.model']
@@ -81,45 +83,12 @@ class IrModel(models.Model):
             'domain': [('model_id', '=', self.id),('name','=like','x_%')],
             'context':{'default_model_id':self.id,'default_model':self.model}
         }
-#     
-# 
-#             
-#         try:
-#             if ttype2 == 'char':
-#                 return default_value
-#             elif ttype2 == 'boolean':
-#                 if default_value.lower() not in ('true','false'):
-#                     raise
-#                 return default_value.lower() == 'true'
-#             elif ttype2 == 'float':
-#                 return float(default_value)
-#             elif ttype2 == 'integer':
-#                 return int(default_value)
-#             elif ttype2 == 'selection':
-#                 sel = safe_eval(selection)
-#                 for value,_ in sel:
-#                     if value == default_value:
-#                         return value
-#             elif ttype2 == 'integer_array':
-#                 values = map(lambda v:int(v) ,default_value.split(','))
-#                 return  ','.join(map(lambda v:str(v),values))    
-#             elif ttype2 == 'float_array':
-#                 values = map(lambda v:float(v) ,default_value.split(','))
-#                 return  ','.join(map(lambda v:str(v),values))  
-#             raise
-#         except Exception as e:
-#             raise ValidationError("Default value is incorrect!")
         
-    
-                        
-                
-
-
 class IrModelFields(models.Model):
     _inherit = ['ir.model.fields']
     
     ttype = fields.Selection(selection=FIELD_TYPES, string='Field Type', required=True)
-    ttype2 = fields.Selection(selection=FIELD_TYPES2, string='Field Type',default='char')
+#     ttype2 = fields.Selection(selection=FIELD_TYPES2, string='Field Type',default='char')
     locate = fields.Char(string='Locate')
     sequence = fields.Integer(default=0)
     range_value = fields.Char(string='Range',help="specified as range for a numbric field, "
@@ -127,16 +96,18 @@ class IrModelFields(models.Model):
     default_value = fields.Char(string='Default')
     
     @api.one
-    @api.constrains('ttype2', 'default_value')
+    @api.constrains('ttype', 'default_value')
     def _check_default_value(self):
         if not self.default_value:
             return
-        self._parse_default_value()
+#         self._parse_default_value()
         
     @api.one
-    @api.constrains('ttype2', 'range_value')
+    @api.constrains('ttype', 'range_value')
     def _check_range_value(self):
         if not self.range_value:
+            return
+        if self.ttype not in ('float','integer') :
             return
         
         result = range_vaule_re.match(self.range_value)
@@ -151,10 +122,10 @@ class IrModelFields(models.Model):
         if self.complete_name and self.state == 'manual':
             self.name = 'x_' + self.complete_name.replace('.','_')
             
-    @api.onchange('ttype2')
-    def _onchange_ttype2(self):
-        if self.ttype2 and self.state == 'manual':
-            self.ttype = self.ttype2
+#     @api.onchange('ttype2')
+#     def _onchange_ttype2(self):
+#         if self.ttype2 and self.state == 'manual':
+#             self.ttype = self.ttype2
             
     def _instanciate_attrs(self, field_data):
         attrs = super(IrModelFields, self)._instanciate_attrs(field_data)
@@ -213,10 +184,10 @@ class IrModelFields(models.Model):
     
     def _parse_default_value(self,field_data=None):
         if field_data:
-            ttype2 = field_data['ttype2']
+#             ttype2 = field_data['ttype2']
             selection = field_data['selection']
             default_value = field_data['default_value']
         else:
-            ttype2 = self.ttype2
+#             ttype2 = self.ttype2
             selection = self.selection
             default_value = self.default_value

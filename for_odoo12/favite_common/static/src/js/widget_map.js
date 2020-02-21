@@ -40,7 +40,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         	var l = window.location;
         	var parts = self.getParent().state.data.camera_path.split('\\');
 
-        	self.image_path = l.protocol + "//" + l.host + ':8080/' + parts[parts.length-2]+ '/' + parts[parts.length-1];
+        	self.image_path = l.protocol + "//" + l.host + ':8080/' + 'BaiduNetdiskDownload/Glass1';
         	
         	
         	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
@@ -49,7 +49,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     },
     
     destroy: function(){	
-    	this.$el.off('click', 'button.btn');
+    	this.$el && this.$el.off('click', 'button.btn');
     	
     	if(this.map){
     		this.map.off('mouse:move');    		
@@ -97,7 +97,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     	var $types = this.$('div.obj-types');
     	$types.empty();
     	for(var key in sel){
-    		if(_.isString(sel[key]) || _.has(sel[key],'objs')){
+    		if(_.isString(sel[key]) || (_.has(sel[key],'objs') && (!_.has(sel[key],'readonly')))){
     			var $it = $('<a class="dropdown-item" data-type="'+key+'">'+key+'</a>');
         		$types.append($it);
         		$it.click(self._onTypeButtonClick.bind(self));
@@ -120,10 +120,11 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     resetMap(){
     	var self = this;
     	var dim = {width:self.$('.oe_content').width(),height:self.$('.oe_content').height()};
-		var zoom = Math.min(dim.width/self.size.x,dim.height/self.size.y);
-		
+    	
+    	var zoom = Math.min(dim.width/self.size.x,dim.height/self.size.y);
 		self.map.setDimensions(dim);
 		self.map.setZoom(zoom);
+		
 		
 /*		var left = (dim.width - zoom * self.image.width)/2;
 		var top = (dim.height - zoom * self.image.height)/2;
@@ -144,6 +145,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 		self.map.on('mouse:down',self._onMouseDown.bind(self));
 		self.map.on('mouse:wheel',self._onMouseWheel.bind(self));
 		
+		
 		this.map.on('object:moving',_.debounce(this._onObjectMoving.bind(this), 100));
 		self.map.on('object:moved',self._onObjectMoved.bind(self));
 		self.map.on('selection:updated',this._onObjectSelect.bind(this));
@@ -155,8 +157,11 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     updateState: function(state){
     	var self = this;
-    	if(!this.getParent().state.data.geo.no_render_map)
+    	
+    	if(!this.getParent().state.data.geo.no_render_map){
     		this._drawObjects();
+    	}
+    		
     },
     
     _drawObjects:function(){
@@ -181,7 +186,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         			if(canvas_registry.get(baseKey+key))
         				objClass = canvas_registry.get(baseKey+key);
         			
-         			var p = new objClass(self,key,obj,color);
+         			var p = new objClass(self,key,obj,color,!!self.geo[key].readonly);
          			if(p.intersectsWithRect(0,self.size.x,0,self.size.y))
          				p.render();
          			
@@ -201,6 +206,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         		});
         	}
         	
+        	this.map.discardActiveObject();
         	if(selected.length > 0){
 				var sel = new fabric.ActiveSelection(selected, {canvas: this.map,hasControls: false,hoverCursor:"move",hasBorders:false});
 				this.map.setActiveObject(sel);
@@ -265,12 +271,10 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 	_geo2map: function(point){
 		var {dOutputX:x, dOutputY:y} = this.coord.UMCoordinateToMapCoordinate(point.x,point.y);
 		return {x,y:this.size.y-y};
-		//return {x: (point.x - this.offset.x) * this.ratio.x, y: this.image.height-(point.y - this.offset.y) * this.ratio.y};
 	},
 	_map2geo: function(point){
 		var {dOutputX:x, dOutputY:y} = this.coord.MapCoordinateToUMCoordinate(point.x,this.size.y-point.y);
 		return {x,y};
-		//return {x: (point.x + this.offset.x) / this.ratio.x, y: (this.image.height-point.y) / this.ratio.y + this.offset.y};
 	},
 	
 });

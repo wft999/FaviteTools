@@ -27,6 +27,12 @@
         'security/ir.model.access.csv',
         'views/views.xml',
         'views/templates.xml',
+        'data/recipe.xml',
+        'data/decode.xml',
+        'data/filter.xml',
+        'data/mura.xml',
+        'data/judge.xml',
+        'data/defect.xml'
     ],
     # only loaded in demonstration mode
     'demo': [

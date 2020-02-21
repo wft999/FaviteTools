@@ -389,8 +389,13 @@ var BLOCK_MAP_MATRIX = Class.extend({
 var SCAN_MAP_MATRIX = Class.extend({
 	init: function (padConf) {
 		this.m_ScanMap = new Array();
-		this.nResizeRatioX = parseFloat(padConf['RESIZE_SCAN_INFORMATION']['SCAN_MAP_RATIO_X'.toLowerCase()]);
-    	this.nResizeRatioY = parseFloat(padConf['RESIZE_SCAN_INFORMATION']['SCAN_MAP_RATIO_Y'.toLowerCase()]);
+		this.nResizeRatioX = 1;
+		this.nResizeRatioY = 1;
+		if(padConf['RESIZE_SCAN_INFORMATION']){
+			this.nResizeRatioX = parseFloat(padConf['RESIZE_SCAN_INFORMATION']['SCAN_MAP_RATIO_X'.toLowerCase()]);
+	    	this.nResizeRatioY = parseFloat(padConf['RESIZE_SCAN_INFORMATION']['SCAN_MAP_RATIO_Y'.toLowerCase()]);
+		}
+		
 	},
 	
 	IsInMap2:function(iIPIndex, iScanIndex){

@@ -9,10 +9,6 @@ var Widget = require('web.Widget');
 var framework = require('web.framework');
 var widgetRegistry = require('web.widget_registry');
 
-//var InfoMask = require('favite_gmd.InfoMask');
-//var InfoMark = require('favite_gmd.InfoMark');
-var InfoBlock = require('favite_bif.InfoBlock');
-
 
 var QWeb = core.qweb;
 var _t = core._t;
@@ -51,8 +47,16 @@ var WidgetInfo = Widget.extend({
         });
     },
     
+    destroy: function(){	
+    	core.bus.off('map_select_change', this, this._onMapSelectChange);
+    	this._super.apply(this, arguments);
+    },
+    
+    
     updateState: function(state){
     	var self = this;
+    	if(!this.getParent())
+    		return;
     	self.geo = {};
     	$.extend(true,self.geo,this.getParent().state.data.geo);
     },
@@ -87,8 +91,12 @@ var WidgetInfo = Widget.extend({
             });
     },
     
-    _onMapSelectChange:function(curPolyline){
-    	if(curPolyline){
+    _onMapSelectChange:function(src){
+    	if(this.getParent() !== src.getParent())
+    		return
+    		
+    	var curPolyline = src.map.curPolyline;
+    	if(curPolyline /*&& this.geo[curPolyline.type]*/){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
     		if(curPolyline.type == 'panel'){
     			//this._openPanel();

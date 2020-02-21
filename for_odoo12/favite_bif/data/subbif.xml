@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_bif_frame_template_enable">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_template_enable</field>
+			<field name="complete_name">template.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">common.template</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_frame_template_enableclean">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_template_enableclean</field>
+			<field name="complete_name">template.enableclean</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">common.template</field>
+            <field name="field_description">Enable clean</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_frame_template_enlargerate">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_template_enlargerate</field>
+			<field name="complete_name">template.enlargerate</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.template</field>
+            <field name="field_description">Enlarge rate</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="4" />
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_frame_template_enlargerange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_template_enlargerange</field>
+			<field name="complete_name">template.enlargerange</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.template</field>
+            <field name="field_description">Enlarge range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="5" />
+            <field name="sequence">4</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_bif_frame_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_threshold</field>
+			<field name="complete_name">threshold</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.global</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="20" />
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_frame_minsize">
+            <field name="model_id" ref="favite_bif.model_favite_bif_frame" />
+            <field name="name">x_minsize</field>
+			<field name="complete_name">minsize</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.global</field>
+            <field name="field_description">minsize</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">3</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_bif_mark_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_mark" />
+            <field name="name">x_threshold</field>
+			<field name="complete_name">threshold</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.global</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="20" />
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_mark_minsize">
+            <field name="model_id" ref="favite_bif.model_favite_bif_mark" />
+            <field name="name">x_minsize</field>
+			<field name="complete_name">minsize</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.global</field>
+            <field name="field_description">minsize</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">3</field>
+    </record>    
+
+</odoo>

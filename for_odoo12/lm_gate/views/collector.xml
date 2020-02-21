@@ -1,0 +1,206 @@
+<odoo>
+  <data>
+        
+	<!-- bif -->
+	<record id="collector_form" model="ir.ui.view">
+		<field name="name">lm_gate.collector.form</field>
+		<field name="model">lm_gate.collector</field>
+		<field name="arch" type="xml">
+			<form string="Collector" title="Collector Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" readonly="1" />
+						</h1>
+						<div>
+							<field name="description" placeholder="collector summary..." />
+						</div>
+						<div>
+							<field name="type" readonly="1"/>
+						</div>
+					</div>
+					
+					<group>
+						<group string="Database Server">
+                           <field name="db_host" string='IP'/>
+                           <field name="db_port"  string='Port'/>
+                           <field name="user_name" string='User'/>
+                           <field name="user_password"  string='Password'/>
+                         </group>
+                         <group string="Modbus" attrs="{'invisible': [('type','not in',['Modbus RTU','Modbus TCP','Modbus PI'])]}">
+                           <field name="byte_timeout_sec"/>
+                           <field name="byte_timeout_usec"/>
+                           <field name="response_timeout_sec"/>
+                           <field name="response_timeout_usec"/>
+                         </group>
+                         <group  string="Modbus TCP" attrs="{'invisible': [('type','not in',['Modbus TCP'])]}">
+                           <field name="ip"/>
+                           <field name="port"/>
+                         </group>
+                         <group  string="Modbus RTU" attrs="{'invisible': [('type','not in',['Modbus RTU'])]}">
+                           <field name="mode"/>
+                           <field name="rts"/>
+                           <field name="rts_delay"/>
+                           <field name="device"/>
+                           <field name="baud"/>
+                           <field name="parity"/>
+                           <field name="data_bit"/>
+                           <field name="stop_bit"/>
+                         </group>
+                         <group  string="Modbus PI" attrs="{'invisible': [('type','not in',['Modbus PI'])]}">
+                           <field name="node"/>
+                           <field name="service"/>
+                         </group>
+                	</group>
+<!-- 					<group string="Points">
+						<field name="points_ids" widget="one2many_list" nolabel="1" context="{'default_collector_id': id}">
+	                        <tree editable="bottom"  string="Point Items">
+	                            <field name="name"/>
+	                            <field name="description"/>
+	                            <field name="table_id" context="{'default_collector_id': context.get('default_collector_id')}"/>
+	                            <field name="collector_type" invisible="1"/>
+	                            <field name="collector_id" invisible="1"/>
+	                            <field name="type"/>
+	                            <field name="device" attrs="{'invisible': [('collector_type','not in',['Modbus RTU'])],'required': [('collector_type', 'in', ['Modbus RTU'])]}"/>
+                                <field name="address"/>
+                                <field name="value_type"/>
+	                        </tree>
+	                    </field>
+					</group>   -->              	
+				</sheet>
+			</form>
+		</field>
+	</record>
+	
+	<record id="collector_form_simplified" model="ir.ui.view">
+		<field name="name">lm_gate.collector.form.simplified</field>
+		<field name="model">lm_gate.collector</field>
+		<field name="arch" type="xml">
+			<form string="Collector">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="description" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<label for="type" string="Type" />
+						<div>
+							<field name="type"/>
+						</div>
+					</group>
+					<footer>
+						<button string="Create" name="close_dialog" type="object"
+							class="btn-primary" />
+						<button string="Discard" class="btn-default"
+							special="cancel" />
+					</footer>
+
+				</sheet>
+			</form>
+		</field>
+	</record>   
+	
+	<record id="collector_gateway" model="ir.ui.view">
+		<field name="name">lm_gate.collector.gateway</field>
+		<field name="model">lm_gate.collector</field>
+		<field name="arch" type="xml">
+			<gateway string="Collector">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="description" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+						<label for="type" string="Type" />
+						<div>
+							<field name="type"/>
+						</div>
+					</group>
+					<footer>
+						<button string="Create" name="close_dialog" type="object"
+							class="btn-primary" />
+						<button string="Discard" class="btn-default"
+							special="cancel" />
+					</footer>
+
+				</sheet>
+			</gateway>
+		</field>
+	</record>
+	
+	<record id="collector_view_kanban" model="ir.ui.view">
+		<field name="name">lm_gate.collector.kanban</field>
+		<field name="model">lm_gate.collector</field>
+		<field name="arch" type="xml">
+			<kanban  on_create="lm_gate.open_create_collector" class="oe_background_grey  o_emphasize_colors">
+				<field name="description" />
+				<field name="write_uid"/>
+				<field name="write_date"/>
+				<templates>
+					<t t-name="kanban-box">
+						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+							<div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+                                        <a name="action_view_points" type="object" role="menuitem" class="dropdown-item o_hiddenx">Points</a>
+           								<a type="edit" class="dropdown-item">Setting</a>
+<!--            								<a type="edit" class="dropdown-item">Export</a> -->
+           								<a type="delete" class="dropdown-item">Delete</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted o_kanban_record_subtitle">
+                                        <span> <t t-esc="record.description.value"/></span>
+                                    </div>
+                                    
+                                    <div>
+                                        <strong class="o_kanban_record_title">Modified by:</strong>
+                                    </div>
+                                    <div>
+                                        <span>
+											<t t-esc="record.write_uid.value" />
+											<t t-esc="record.write_date.value" />
+										</span>
+                                    </div>
+                                </div>
+                                <div class="oe_clear"/>
+						</div>
+					</t>
+				</templates>
+			</kanban>
+		</field>
+	</record>
+
+	<record id="open_create_collector" model="ir.actions.act_window">
+		<field name="name">Create a collector</field>
+		<field name="res_model">lm_gate.collector</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form</field>
+		<field name="view_id" ref="collector_form_simplified" />
+		<field name="target">new</field>
+	</record>
+	
+	<record id="open_kanban_collector" model="ir.actions.act_window">
+		<field name="name">Collector</field>
+		<field name="res_model">lm_gate.collector</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,form</field>
+		<field name="target">current</field>
+		
+	</record>
+	<menuitem name="Gateway"
+        id="menu_main_gm"
+        web_icon="project,static/description/icon.png"
+        sequence="50"/>
+	<menuitem sequence="10" name="Collectors" id="lm_gate.collector" parent="lm_gate.menu_main_gm" action="lm_gate.open_kanban_collector"/>
+   
+  </data>
+</odoo>

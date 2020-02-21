@@ -28,6 +28,7 @@ var WidgetInfo = Widget.extend({
     willStart: function () {
     	var self = this;
         return this._super.apply(this, arguments).then(function () {
+        	
             return $.when();
         });
     },

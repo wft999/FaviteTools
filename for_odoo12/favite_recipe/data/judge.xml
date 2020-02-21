@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_common_constant_postion_distance">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_common_constant_postion_distance</field>
+			<field name="complete_name">common.constant.postion.distance</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">common.constant</field>
+            <field name="field_description">postion distance</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">500,500</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_common_constant_number">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_common_constant_number</field>
+			<field name="complete_name">common.constant.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.constant</field>
+            <field name="field_description">number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="3" />
+            <field name="sequence">2</field>
+    </record>  
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_common_unconstant_buffer_size">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_common_unconstant_buffer_size</field>
+			<field name="complete_name">common.unconstant.buffer.size</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.unconstant</field>
+            <field name="field_description">buffer size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="500" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_common_unconstant_number">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_common_unconstant_number</field>
+			<field name="complete_name">common.unconstant.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">common.unconstant</field>
+            <field name="field_description">number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">2</field>
+    </record>    
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_size_mode">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_size_mode</field>
+			<field name="complete_name">size.mode</field>
+			<field name="ttype">selection</field>
+			<field name="selection">[(0,'0'),(1,'1'),(2,'2')]</field>
+            <field name="locate">size.</field>
+            <field name="field_description">mode</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">1</field>
+    </record>      
+    <record  model="ir.model.fields"  id="favite_recipe_judge_size_ss_max">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_size_ss_max</field>
+			<field name="complete_name">size.ss.max</field>
+			<field name="ttype">integer</field>
+            <field name="locate">size.</field>
+            <field name="field_description">ss max</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">2</field>
+    </record>    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_size_s_max">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_size_s_max</field>
+			<field name="complete_name">size.s.max</field>
+			<field name="ttype">integer</field>
+            <field name="locate">size.</field>
+            <field name="field_description">s max</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="29" />
+            <field name="sequence">3</field>
+    </record>     
+    <record  model="ir.model.fields"  id="favite_recipe_judge_size_m_max">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_size_m_max</field>
+			<field name="complete_name">size.m.max</field>
+			<field name="ttype">integer</field>
+            <field name="locate">size.</field>
+            <field name="field_description">m max</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="59" />
+            <field name="sequence">4</field>
+    </record> 
+    <record  model="ir.model.fields"  id="favite_recipe_judge_size_l_max">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_size_l_max</field>
+			<field name="complete_name">size.l.max</field>
+			<field name="ttype">integer</field>
+            <field name="locate">size.</field>
+            <field name="field_description">l max</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="100" />
+            <field name="sequence">5</field>
+    </record> 
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_ng_enablertdc">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_ng_enablertdc</field>
+			<field name="complete_name">judge.ng.enablertdc</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">ng.</field>
+            <field name="field_description">enable rtdc</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False" />
+            <field name="sequence">1</field>
+    </record>   
+    <record  model="ir.model.fields"  id="favite_recipe_judge_glass_largedefect_size">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_glass_largedefect_size</field>
+			<field name="complete_name">judge.ng.general.glass.largedefect.size</field>
+			<field name="ttype">integer</field>
+            <field name="locate">ng.glass</field>
+            <field name="field_description">large defect size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="99999" />
+            <field name="sequence">2</field>
+    </record>   
+    <record  model="ir.model.fields"  id="favite_recipe_judge_glass_largedefect_number">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_glass_largedefect_number</field>
+			<field name="complete_name">judge.ng.general.glass.largedefect.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">ng.glass</field>
+            <field name="field_description">large defect number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="99999" />
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_glass_ngpanel_number">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_glass_ngpanel_number</field>
+			<field name="complete_name">judge.ng.general.glass.ngpanel.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">ng.glass</field>
+            <field name="field_description">ng panel number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">4</field>
+    </record>   
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_panel_largedefect_size">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_panel_largedefect_size</field>
+			<field name="complete_name">judge.ng.general.panel.largedefect.size</field>
+			<field name="ttype">integer</field>
+            <field name="locate">ng.panel</field>
+            <field name="field_description">large defect size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="99999" />
+            <field name="sequence">2</field>
+    </record>   
+    <record  model="ir.model.fields"  id="favite_recipe_judge_panel_largedefect_number">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge" />
+            <field name="name">x_panel_largedefect_number</field>
+			<field name="complete_name">judge.ng.general.panel.largedefect.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">ng.panel</field>
+            <field name="field_description">large defect number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="99999" />
+            <field name="sequence">3</field>
+    </record>    
+</odoo>

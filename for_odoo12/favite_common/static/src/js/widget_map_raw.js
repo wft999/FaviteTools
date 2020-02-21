@@ -12,7 +12,6 @@ var Coordinate = require('favite_common.coordinate');
 var QWeb = core.qweb;
 var _t = core._t;
 
-
 var WidgetMapRaw = WidgetMap.extend({
     events: {
 //        'keydown.canvas-map': '_onKeydown'
@@ -45,6 +44,7 @@ var WidgetMapRaw = WidgetMap.extend({
     
     showMap: function(){
     	var self = this;
+    	var data = this.getParent().state.data;
     	var dim = {width:self.$('.oe_content').width(),height:self.$('.oe_content').height()};
     	
     	if(self.map){
@@ -71,22 +71,24 @@ var WidgetMapRaw = WidgetMap.extend({
 			self.map.on('selection:updated',self._onObjectSelect.bind(self));
 			self.map.on('selection:created',self._onObjectSelect.bind(self));
 			
-			var dMapRatioX = self.ratio.x;
-	    	var dMapRatioY = self.ratio.y;
-	    	var dMapLeft = self.offset.x;
-	    	var dMapBottom = self.offset.y;
-	    	self.coord = new Coordinate(self.cameraConf,dMapRatioX,dMapRatioY,dMapLeft,dMapBottom);
-			
 			self.map.polylines = [];
     	}
     	
+    	var strBlocks = JSON.stringify(this.hawkeyeObj.blocks);
     	var first_block = this.hawkeyeObj.blocks[0][0];
 		var last_block = this.hawkeyeObj.blocks[this.hawkeyeObj.blocks.length-1][this.hawkeyeObj.blocks[0].length-1];
-		var width = last_block.iRange_Right - first_block.iRange_Left;
-		var height = last_block.iRange_Top - first_block.iRange_Bottom;
+		var imgWidth = _.reduce(this.hawkeyeObj.blocks, function(memo, block){ 
+    		return memo + (block[0]&&block[0].bHasIntersection?block[0].iInterSectionWidth:0); 
+    		}, 0);
+    	var imgHeight = _.reduce(this.hawkeyeObj.blocks[0], function(memo, block){ 
+    		return memo  + (block&&block.bHasIntersection?block.iInterSectionHeight:0); 
+    		}, 0);
 		
-		this.size = {x:width,y:height};
-		this.offset = {x:first_block.iRange_Left,y:first_block.iRange_Bottom};
+		this.size = {x:imgWidth,y:imgHeight};
+		this.offset = {
+				x:first_block.iRange_Left + first_block.iInterSectionStartX,
+				y:first_block.iRange_Bottom + first_block.iInterSectionStartY
+				};
 		
 		if(self.coord){
 			delete self.coord;
@@ -97,8 +99,29 @@ var WidgetMapRaw = WidgetMap.extend({
     	var dMapLeft = self.offset.x;
     	var dMapBottom = self.offset.y;
     	self.coord = new Coordinate(self.cameraConf,dMapRatioX,dMapRatioY,dMapLeft,dMapBottom);
+    	
+    	var image = new fabric.Image();
+    	var id = data.gmd_id ? data.gmd_id.res_id : data.id;
+    	image.setSrc('/gmd/'+id+'/image'+imgWidth+'X'+imgHeight+'?strBlocks='+strBlocks, function(img) {
+    		if(img.width == 0 || img.height == 0){
+    			self.do_warn(_t('Incorrect Operation'),_t('Image is not exsit!'),false);
+    			return;
+    		}
+        	if(self.image !== undefined)
+        		delete self.image;
+
+    		self.image = img;
+    		self.map.add(img);
+    		var p = self._geo2map(self.hawkeyeObj.point);
+			self.map.viewportTransform[4] = (-p.x + dim.width/2)*self.map.getZoom();
+		    self.map.viewportTransform[5] = (-p.y + dim.height/2)*self.map.getZoom();
+		    
+		    
+		    self._drawObjects();
+		    self.map.requestRenderAll();
+        });
 		
-		var defs = [];
+/*		var defs = [];
 		for(var i = 0; i < self.hawkeyeObj.blocks.length; i++){
 			for(var j = 0; j < self.hawkeyeObj.blocks[i].length; j++){
 				var b = self.hawkeyeObj.blocks[i][j];
@@ -133,20 +156,15 @@ var WidgetMapRaw = WidgetMap.extend({
 		    self.map.requestRenderAll();
 		    
 		    self._drawObjects();
-	    })
+	    })*/
 
     },
     
     _onHawkeyeChange(obj){
-    	
-    	
     	this.hawkeyeObj = obj;
     	this.showMap();
-    	
     	console.log(obj.blocks)
     }
-    
-    
 });
 
 

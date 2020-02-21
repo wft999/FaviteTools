@@ -33,7 +33,8 @@ class PadPublishWizard(models.TransientModel):
     @api.multi
     def publish_curl_pad(self):
         if self.pad_id.curl is False:
-            raise UserError("Curling(%s) doesn't have content" % self.pad_id.name)
+            return
+#             raise UserError("Curling(%s) doesn't have content" % self.pad_id.name)
         
         pad = self.pad_id;
         content = json.loads(pad.curl)     

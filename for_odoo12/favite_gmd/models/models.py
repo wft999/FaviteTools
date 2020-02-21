@@ -12,94 +12,9 @@ except ImportError:
  
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools
 
-
+PANEL_MAP_RATE = 1/10
 _logger = logging.getLogger(__name__)
-class Frame(models.Model):
-    _name = 'favite_gmd.frame'
-    _inherit = ['favite_common.geometry']
-    
-    
-    @api.model
-    def _default_geo(self):
-        geo = {
-        "filter":{"objs":[]},
-        "inspect":{"objs":[]},
-        }
-        return geo
-        
-    @api.one
-    @api.depends('gmd_id','gmd_id.geo')
-    def _compute_geo(self):
-        self.geo['glass'] = self.gmd_id.geo['glass']
-        if 'filter' not in self.geo:
-            self.geo['filter'] = {"objs":[]}
-        if 'inspect' not in self.geo:
-            self.geo['inspect'] = {"objs":[]}
-    
-    geo = fields.Jsonb(string = "geometry value",default=_default_geo)
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
-    
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
-    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
-    
-    @api.multi
-    def get_formview_id(self, access_uid=None):
-        return self.env.ref('favite_gmd.favite_gmd_frame_map').id
-    
-class Mark(models.Model):
-    _name = 'favite_gmd.mark'
-    _inherit = ['favite_common.geometry']
-    
-    geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
-    
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
-    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
-    
-    @api.multi
-    def get_formview_id(self, access_uid=None):
-        return self.env.ref('favite_gmd.favite_gmd_mark_map').id
-    
-class Measure(models.Model):
-    _name = 'favite_gmd.measure'
-    _inherit = ['favite_common.geometry']
-    geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
-    
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
-    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
-    
-    @api.multi
-    def get_formview_id(self, access_uid=None):
-        return self.env.ref('favite_gmd.favite_gmd_measure_map').id
-    
-class Fixpoint(models.Model):
-    _name = 'favite_gmd.fixpoint'
-    _inherit = ['favite_common.geometry']
-    
-    geo = fields.Jsonb(string = "geometry value")
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
-    
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
-    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
-    
-    @api.multi
-    def get_formview_id(self, access_uid=None):
-        return self.env.ref('favite_gmd.favite_gmd_fixpoint_map').id
-    
-class Lut(models.Model):
-    _name = 'favite_gmd.lut'   
-    _inherit = ['favite_common.geometry']  
-    
-    geo = fields.Jsonb(string = "geometry value")   
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)    
-    
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
-    camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
-    
-    @api.multi
-    def get_formview_id(self, access_uid=None):
-        return self.env.ref('favite_gmd.favite_gmd_lut_map').id
+
     
 class Gmd(models.Model):
     _name = 'favite_gmd.gmd'
@@ -235,8 +150,79 @@ class Gmd(models.Model):
             dest.paste(im, (left,top))
             im.close()
                 
-        dest.save(root + '\glass.bmp', format="bmp")
+        dest.save(root + '\glass.bmp', format="bmp")    
     
+    def _generate_glass_map2(self,root):
+        conf = ConfigParser.RawConfigParser()
+        with open(root + '\camera.ini', 'r') as f:
+            conf.read_string("[DEFAULT]\r\n" + f.read())
+            
+        ip_num = int(conf._defaults['ip.number'])
+        scan_num = int(conf._defaults['ip.scan.number'])
+        dLeft = 0
+        
+        scanrect = [int(s) for s in conf._defaults['image.scanrect'].split(',')]
+        resizerate = [float(s) for s in conf._defaults['image.dm.resizerate'].split(',')]
+        
+        dms = []
+        width = 0
+        height = 0
+        for ip in range(ip_num):
+            for scan in range(scan_num):
+                dLeft,iRange_Left,iRange_Bottom = self._get_top_left(conf._defaults,ip,scan,dLeft)
+                imgFile = root + '\\Image\\IP%d\\bmp\\AoiL_IP%d_small%d.bmp'%(ip+1,ip,scan)
+                dms.append({'imgFile':imgFile,'iRange_Left':iRange_Left,'iRange_Bottom':iRange_Bottom})
+                if iRange_Left > width:
+                    width = iRange_Left
+                if iRange_Bottom > height:
+                    height = iRange_Bottom
+
+        width = math.floor((width+scanrect[2])/resizerate[0])
+        height = math.floor((height+scanrect[3])/resizerate[1])
+        dest = Image.new('L', (width,height))        
+        for dm in dms:
+            im = Image.open(dm['imgFile'])
+            left = math.ceil(dm['iRange_Left'] / resizerate[0])
+            top = height - math.ceil((dm['iRange_Bottom'] + scanrect[3] -1) / resizerate[1])
+            dest.paste(im, (left,top))
+            im.close()
+                
+        dest.save(root + '\glass.bmp', format="bmp")
+        
+    def generate_panel_map(self,panelName,width,height,strBlocks):
+        root = self.camera_path  
+        blocks = json.loads(strBlocks)
+        dest = Image.new('L', (int(width*PANEL_MAP_RATE),int(height*PANEL_MAP_RATE)))
+        left = 0
+        top = 0
+        for x in range(len(blocks)):
+            for y in range(len(blocks[x])-1,-1,-1):
+                b = blocks[x][y]    
+                if b is None or b['bHasIntersection'] == False:
+                    continue;
+                
+                imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (root,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                
+                rw = int(b['iInterSectionWidth']*PANEL_MAP_RATE)
+                rh = int(b['iInterSectionHeight']*PANEL_MAP_RATE)
+                try:
+                    im = Image.open(imgFile)
+                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                    region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                    
+                    region = region.resize((rw,rh))
+                    dest.paste(region, (left,top))
+                    im.close()
+                except Exception as e:
+                    pass
+                
+                if y == 0:
+                    left += rw
+                    top = 0
+                else:
+                    top += rh
+        dest.save(root +'/'+ panelName +'.jpg', format="jpeg")
+
     def _list_all_camers(self):
         cameras = []
         root = tools.config['camera_data_path']  

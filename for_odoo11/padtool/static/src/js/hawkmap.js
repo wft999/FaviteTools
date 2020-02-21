@@ -1071,8 +1071,8 @@ var Hawkmap = Widget.extend({
     	}
     	var centerx = (uLeft + uRight)/2;
     	var centery = (uBottom + uTop)/2;
-    	var width = 1000*dResolutionX;
-    	var height = 1000*dResolutionY;
+    	var width = 2000*dResolutionX;
+    	var height = 2000*dResolutionY;
     	uLeft = centerx - width/2;
     	uRight = centerx + width/2;
     	uBottom = centery - height/2;
@@ -1103,8 +1103,8 @@ var Hawkmap = Widget.extend({
         .then(function(res) {
         	framework.unblockUI();
         	if(res.result){
-        		self.dialog.$('.o_set_periodx_input').val(res.periodX*dResolutionX);
-                self.dialog.$('.o_set_periody_input').val(res.periodY*dResolutionY);
+        		self.dialog.$('.o_set_periodx_input').val(Math.floor(100 * res.periodX*dResolutionX)/100.0);
+                self.dialog.$('.o_set_periody_input').val(Math.floor(100 * res.periodY*dResolutionY)/100.0);
                 self.dialog.$('.img-responsive')[0].src = "data:image/jpeg;base64,"+res.map;
                 self.dialog.$('.img-responsive')[0].style="margin-top:10px;padding-top:10px;border-top: 1px solid #e5e5e5;"
                 self.do_notify(_t('Operation Result'),_t('The search is success!'),false);

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_ipflag">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_ipflag</field>
+			<field name="complete_name">ipflag</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">ipflag</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1</field>
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_zone_list">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_zone_list</field>
+			<field name="complete_name">zone.list</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">zone.list</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">1,2,3</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_location">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_location</field>
+			<field name="complete_name">location</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">location</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">1,2,3</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_size">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_size</field>
+			<field name="complete_name">size</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,0</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_grey">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_grey</field>
+			<field name="complete_name">grey</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">grey</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,0</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_grey_dif">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_grey_dif</field>
+			<field name="complete_name">grey_dif</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">grey_dif</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,0</field>
+            <field name="sequence">2</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_lengthwidthratio">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_lengthwidthratio</field>
+			<field name="complete_name">lengthwidthratio</field>
+			<field name="ttype">float</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">lengthwidthratio</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="2.0" />
+            <field name="sequence">1</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_arearatio">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_arearatio</field>
+			<field name="complete_name">arearatio</field>
+			<field name="ttype">float</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">arearatio</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0.25" />
+            <field name="sequence">1</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_ismasked">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_ismasked</field>
+			<field name="complete_name">ismasked</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">ismasked</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False" />
+            <field name="sequence">1</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_glass_defectnumber">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_glass_defectnumber</field>
+			<field name="complete_name">glass.defectnumber</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">glass defect number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_panel_defectnumber">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_panel_defectnumber</field>
+			<field name="complete_name">panel.defectnumber</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">panel defect number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False" />
+            <field name="sequence">1</field>
+    </record>
+      
+</odoo>

@@ -52,8 +52,6 @@
             </a>
             <div t-if="widget.id != 'info'"  class="dropdown-menu obj-types" role="menu" aria-labelledby="dLabel">
             </div>
-
-                        
 		    <div t-if="widget.id != 'info'"  class="btn-group btn-group-md"  role="group">
         		<button class="o_hidden btn btn-secondary btn-sm fa fa-trash" title="Delete" data-command="Delete" accesskey="d"/>
 			</div>

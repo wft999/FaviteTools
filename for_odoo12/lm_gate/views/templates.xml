@@ -2,7 +2,14 @@
     <data>
         <template id="assets_common" name="lm assets" inherit_id="web.assets_common">
         	<xpath expr="." position="inside">
-
+        		<link rel="stylesheet" type="text/scss" href="/lm_gate/static/src/scss/dashboard.scss"/>
+        		
+                <script type="text/javascript" src="/lm_gate/static/src/js/gateway_model.js"></script>
+                <script type="text/javascript" src="/lm_gate/static/src/js/gateway_render.js"></script>
+                <script type="text/javascript" src="/lm_gate/static/src/js/gateway_controller.js"></script>
+                <script type="text/javascript" src="/lm_gate/static/src/js/gateway_view.js"></script>
+                <script type="text/javascript" src="/lm_gate/static/src/js/widget_info.js"></script>
+                <script type="text/javascript" src="/lm_gate/static/src/js/widget_thumb.js"></script>
             </xpath>
         </template>
        

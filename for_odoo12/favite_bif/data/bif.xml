@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_enable">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_enable</field>
+			<field name="complete_name">crack.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_glasssize">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_glasssize</field>
+			<field name="complete_name">crack.glasssize</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Glass size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">1100000,1300000</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_threshold</field>
+			<field name="complete_name">crack.threshold</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">15,15</field>
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_searchtol">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_searchtol</field>
+			<field name="complete_name">crack.searchtol</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Search tol</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="20" />
+            <field name="sequence">4</field>
+    </record> 
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_searchrange"> 
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_searchrange</field>
+			<field name="complete_name">crack.searchrange</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Search range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="500" />
+            <field name="sequence">5</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_inspectrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_inspectrange</field>
+			<field name="complete_name">crack.inspectrange</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Inspect range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="400" />
+            <field name="sequence">6</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_filtersize">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_filtersize</field>
+			<field name="complete_name">crack.filtersize</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Filter size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">7,7</field>
+            <field name="sequence">7</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_cornerskipwidth"> 
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_cornerskipwidth</field>
+			<field name="complete_name">crack.cornerskipwidth</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Corner skip width</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="600" />
+            <field name="sequence">8</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_crack_cornerskipheight">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_crack_cornerskipheight</field>
+			<field name="complete_name">crack.cornerskipheight</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Crack.</field>
+            <field name="field_description">Corner skip height</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="600" />
+            <field name="sequence">9</field>
+    </record>     
+    
+    
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_maxdefectnum">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_maxdefectnum</field>
+			<field name="complete_name">global.maxdefectnum</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Common</field>
+            <field name="field_description">Max defect num</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="2000" />
+            <field name="sequence">1</field>
+    </record>   
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_inspectmode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_inspectmode</field>
+			<field name="complete_name">global.inspectmode</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Common</field>
+            <field name="field_description">Inspect mode</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="15" />
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectdistance">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectdistance</field>
+			<field name="complete_name">global.defectdistance</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Common</field>
+            <field name="field_description">Defect distance</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="500" />
+            <field name="sequence">3</field>
+    </record>   
+    
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_enablenofiltermode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_enablenofiltermode</field>
+			<field name="complete_name">global.enablenofiltermode</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Enable no filter mode</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False" />
+            <field name="sequence">1</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_block_overlap">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_block_overlap</field>
+			<field name="complete_name">global.block.overlap</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Block overlap</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="512" />
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_block_inspectnumber">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_block_inspectnumber</field>
+			<field name="complete_name">global.block.inspectnumber</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Block inspect number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="500" />
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectimage_number">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectimage_number</field>
+			<field name="complete_name">global.defectimage.number</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Defect image number</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="500" />
+            <field name="sequence">4</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectimage_size">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectimage_size</field>
+			<field name="complete_name">global.defectimage.size</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Defect image size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">128, 128</field>
+            <field name="sequence">5</field>
+    </record>   
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_mark_autothresoldrate">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_mark_autothresoldrate</field>
+			<field name="complete_name">global.mark.autothresoldrate</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Mark auto thresold rate</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.9500,0.9500</field>
+            <field name="sequence">6</field>
+    </record> 
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_mark_searchrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_mark_searchrange</field>
+			<field name="complete_name">global.mark.searchrange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Mark search range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">400,400</field>
+            <field name="sequence">7</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectfilter_sizerange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectfilter_sizerange</field>
+			<field name="complete_name">global.defectfilter.sizerange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Defect filter size range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">8</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectfilter_widthrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectfilter_widthrange</field>
+			<field name="complete_name">global.defectfilter.widthrange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Defect filter width range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">9</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_defectfilter_heightrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_defectfilter_heightrange</field>
+			<field name="complete_name">global.defectfilter.heightrange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.Extra</field>
+            <field name="field_description">Defect filter height range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">10</field>
+    </record>
+</odoo>

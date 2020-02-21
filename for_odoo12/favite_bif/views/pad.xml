@@ -8,6 +8,8 @@
 				<field name="camera_path" invisible="1"/>
 				<field name="camera_ini" invisible="1"/>
 				<field name="geo" />
+				<field name="gmd_id" invisible="1"/>
+				<field name="src_panel_id" invisible="1"/>
 				<notebook>					
 				</notebook>
 			</form>
@@ -36,8 +38,9 @@
 		<field name="name">favite_bif.pad.kanban</field>
 		<field name="model">favite_bif.pad</field>
 		<field name="arch" type="xml">
-			<kanban class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
+			<kanban create="false" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
 				<field name="src_panel_id" />
+				<field name="gmd_id" />
 				<field name="description" />
 				<field name="write_uid"/>
 				<field name="write_date"/>
@@ -66,13 +69,15 @@
                                     <div class="text-muted o_kanban_record_subtitle">
                                         <span>Source Panel: <t t-esc="record.src_panel_id.value"/></span>
                                     </div>
+                                    <div class="text-muted o_kanban_record_subtitle">
+                                        <span>Gmd: <t t-esc="record.gmd_id.value"/></span>
+                                    </div>
                                     
                                     <div>
-                                        <strong class="o_kanban_record_title">Modified by:</strong>
+                                        <strong class="o_kanban_record_title">Modified by:<t t-esc="record.write_uid.value" /></strong>
                                     </div>
                                     <div>
                                         <span>
-											<t t-esc="record.write_uid.value" />
 											<t t-esc="record.write_date.value" />
 										</span>
                                     </div>
@@ -84,5 +89,14 @@
 			</kanban>
 		</field>
 	</record>      
+	
+	<record id="open_kanban_pad" model="ir.actions.act_window">
+		<field name="name">Pad</field>
+		<field name="res_model">favite_bif.pad</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,form</field>
+		<field name="target">current</field>
+	</record>
+	<menuitem name="Pad" id="favite_bif.pad" parent="favite_common.menu_root" action="favite_bif.open_kanban_pad"/>
   </data>
 </odoo>

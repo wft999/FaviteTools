@@ -198,6 +198,17 @@ class Pad(models.Model):
         return pad
     
     @api.multi
+    def unlink(self):
+        dirs = self.env['padtool.directory'].with_context(active_test=False).search([('model','=','padtool.pad')])
+        for dir in dirs:  
+            for pad in self:
+                if os.path.isfile(dir.name +'/'+ pad.name+'.pad'):
+                    os.remove(dir.name +'/'+ pad.name+'.pad')
+                if os.path.isfile(dir.name +'/'+ pad.name+'.cur'):
+                    os.remove(dir.name +'/'+ pad.name+'.cur')
+        return super(Pad, self).unlink()
+    
+    @api.multi
     def copy(self, default=None):
         if default is None:
             default = {}
@@ -563,7 +574,7 @@ class Pad(models.Model):
                 region['points'][0]['uy'] = regionBottom + content['dPanelCenterY']
                 region['points'][1]['ux'] = regionRight + content['dPanelCenterX']
                 region['points'][1]['uy'] = regionTop + content['dPanelCenterY']
-                region['iFrameNo'] = i
+                region['iFrameNo'] = int(par.get(('Region%d.iFrameNo' % i).lower(),0))
                 content['objs'].append(region)
                 
             MainMarkNumber = int(par.get('MainMarkNumber'.lower(),0))
@@ -685,17 +696,21 @@ class Pad(models.Model):
                 if b is None or b['bHasIntersection'] == False:
                     continue;
                 
-                imgFile = '%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
-                with Image.open(imgFile) as im:
-                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                    region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
-                    dest.paste(region, (left,top))
-                    if y == 0:
-                        left += region.width
-                        top = 0
-                    else:
-                        top += region.height
-
+                try:
+                    imgFile = '%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    with Image.open(imgFile) as im:
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                        region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                        dest.paste(region, (left,top))
+                        if y == 0:
+                            left += region.width
+                            top = 0
+                        else:
+                            top += region.height
+                except:
+                    raise UserError("No such file:%s"% (imgFile))
+        
+        dest = dest.transpose(Image.FLIP_TOP_BOTTOM)
         pSrcStart = dest.tobytes()
         step = width
         nVertices = len(points['x'])

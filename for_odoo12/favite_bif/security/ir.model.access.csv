@@ -4,3 +4,9 @@ access_favite_bif_panel,favite_bif.panel,model_favite_bif_panel,,1,1,1,1
 
 access_favite_bif_pad,favite_bif.pad,model_favite_bif_pad,,1,1,1,1
 access_favite_bif_gsp,favite_bif.gsp,model_favite_bif_gsp,,1,1,1,1
+
+access_favite_bif_mark,favite_bif.mark,model_favite_bif_mark,,1,1,1,1
+access_favite_bif_frame,favite_bif.frame,model_favite_bif_frame,,1,1,1,1
+access_favite_bif_measure,favite_bif.measure,model_favite_bif_measure,,1,1,1,1
+access_favite_bif_fixpoint,favite_bif.fixpoint,model_favite_bif_fixpoint,,1,1,1,1
+access_favite_bif_lut,favite_bif.lut,model_favite_bif_lut,,1,1,1,1

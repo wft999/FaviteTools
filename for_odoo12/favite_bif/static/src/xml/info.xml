@@ -12,66 +12,9 @@
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
             <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
         </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        </div>
     </div>
-</t>
-
-
-<t t-name="favite_bif.info_panel">
-		<tr>
-			<td><div class="o_horizontal_separator">Panel</div></td>
-			<td style="vertical-align: bottom;"><button class="btn btn-xs btn-secondary o_button_apply" type="button">Apply to block</button></td>	
-		</tr>
-		<t t-call="favite_bif.radio_item"></t>
-       	<tr>
-           	<td class="o_td_label"><label for="sort_start_pos" class="o_form_label">Gsp</label></td>
-           	<td width="50%">
-       			<select  class="o_field_widget o_input o_glass_data" name="sort_start_pos">
-					<option value ="0">TopLeft</option>
-					<option value ="1">TopRight</option>
-					<option value="2">BottomLeft</option>
-					<option value="3">BottomRight</option>
-				</select>
-			</td>
-       	</tr>
-       	<tr>
-           	<td class="o_td_label"><label for="sort_start_pos" class="o_form_label">Pad</label></td>
-           	<td width="50%">
-       			<select  class="o_field_widget o_input o_glass_data" name="sort_start_pos">
-					<option value ="0">TopLeft</option>
-					<option value ="1">TopRight</option>
-					<option value="2">BottomLeft</option>
-					<option value="3">BottomRight</option>
-				</select>
-			</td>
-       	</tr>
-</t>
-
-<t t-name="favite_bif.radio_item">
-	<t t-foreach="widget.radios" t-as="r">
-		<tr t-att-class="r.name">
-    		<td class="o_td_label"><label class="o_form_label"><t t-esc='r.label'/></label></td>
-    		<td>
-    			<div class="o_field_radio o_horizontal o_field_widget">
-    				<t t-foreach="r.items" t-as="item">
-       				<div  class="custom-control custom-radio o_radio_item">
-						<input class="custom-control-input o_radio_input" t-attf-data-value="{{item.value}}" t-attf-name="{{r.name}}" t-attf-id="{{item.id}}" type="radio"/>
-						<label class="custom-control-label o_form_label" t-attf-for="{{item.id}}"><t t-esc='item.label'/></label>
-					</div>
-					</t>
-				</div>
-    		</td>
-    	</tr>
-    </t>
-</t>
-
-<t t-name="favite_bif.info_block">
-    	
-    	<t t-foreach="widget.curPolyline.panels" t-as="panel">
-			<t t-if="panel.obj.selected">
-				<t t-call="favite_bif.info_panel"></t>
-			</t>
-		</t>
-
 </t>
 
 

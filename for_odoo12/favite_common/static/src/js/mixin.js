@@ -74,6 +74,8 @@ var MapMouseHandle = {
 				this.map.polylines[i].focus(false);
 				if(!this.map.polylines[i].visible)
 					continue;
+				if(this.map.polylines[i].readonly)
+					continue;
 
 				if(isClick){
 					var sel = this.map.polylines[i].containsPoint(newPointer);
@@ -115,7 +117,7 @@ var MapMouseHandle = {
 			this._showMode('crosshair',this.map.curPolyline);
 			this.$('a.dropdown-toggle').toggleClass('o_hidden',!!this.map.curPolyline);
 			
-			core.bus.trigger('map_select_change', this.map.curPolyline?this.map.curPolyline : null);
+			core.bus.trigger('map_select_change', this);
 		}else if(this.map.hoverCursor == this.CROSSHAIR && this.map.curPolyline){
 			if(this.map.curPolyline.checkPoint(newPointer)){
 				var obj = this.map.curPolyline.obj;
@@ -132,9 +134,22 @@ var MapMouseHandle = {
 			
 		}
 
-    	this.map.renderAll();
-    	
+    	//this.map.renderAll();
+    	this.map.requestRenderAll();
 	},
+	
+    _onMouseDblclick:function(opt){
+    	var newPointer = this.map.getPointer(opt.e);
+ 	    this.hawkeye.set({ 
+     			top: newPointer.y, 
+     			left: newPointer.x,
+     			visible:true,
+     		});
+ 	    this.hawkeye.setCoords();
+     	this.hawkeye.bringToFront();
+     	
+    	this._changeHawkeye(newPointer);
+    },
 
 };
 
@@ -159,17 +174,22 @@ var MapEventHandle = {
     	opt.e.stopPropagation();
         opt.e.preventDefault();
     },
+    
+    _changeHawkeye:function(pt){
+    	var p = this._map2geo(pt);
+   	 	var range = 10000;
+    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(p.x - range,p.y - range,p.x + range,p.y + range,true);
+    	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
+    		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
+    	}else{
+    		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
+    	}
+    },
+    
     _onObjectMoved: function(opt){
     	var self = this;
    	 	if(opt.target.type == "hawkeye"){
-   	 		var p = self._map2geo({x:opt.target.left,y:opt.target.top});
-	   	 	var range = 10000;
-	    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(p.x - range,p.y - range,p.x + range,p.y + range,true);
-	    	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
-	    		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
-	    	}else{
-	    		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
-	    	}	
+   	 		this._changeHawkeye({x:opt.target.left,y:opt.target.top});	
     	}else if(opt.target.type == "cross"){
     		if(opt.target.mouseMove()){
     			var obj = opt.target.polyline.obj;

@@ -116,7 +116,7 @@ var FieldArrayNumeric = basic_fields.DebouncedField.extend({
      * @returns {jQuery} the prepared this.$input element
      */
     _prepareInput: function ($input) {
-    	this.$el = $input || $("<span></span>")
+    	//this.$el = $input || $("<span></span>")
 
     	this.$input = $("<input/>")
     	this.$input.addClass('o_input o_input_double o_field_integer o_field_number');
@@ -126,8 +126,8 @@ var FieldArrayNumeric = basic_fields.DebouncedField.extend({
                 autocomplete: this.attrs.autocomplete,
             });
     	this.$input.val(this.value.join(', '));
-        this.$el.append(this.$input)
-            
+        //this.$el.append(this.$input)
+    	this.$el =  this.$input;   
         return this.$el;
     },
     

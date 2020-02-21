@@ -106,39 +106,82 @@
 	</record>
 	
 	
-	<record id="favite_bif_geo_map" model="ir.ui.view">
+	<record id="favite_bif_bif_map" model="ir.ui.view">
 		<field name="name">favite_bif.bif.map.parameter</field>
 		<field name="model">favite_bif.bif</field>
 		<field name="arch" type="xml">
-			<form string="Fields"  duplicate="false">
+			<map string="Fields"  duplicate="false">
 				<field name="camera_path" invisible="1"/>
 				<field name="camera_ini" invisible="1"/>
 				<field name="geo"  invisible="1"/>
-
-                <button class="btn btn-sm btn-primary float-right"  name="open_gsp_list" type="object">Gsp</button>
+				<field name="gmd_id"  invisible="1"/>
 				<notebook>	
+					<page string="Gsp">
+                        <field name="gsp_ids">
+                        <kanban class="o_kanban_small_column"  quick_create="true" create="0">
+                        	<field name="gmd_id" />
+							<field name="description" />
+							<field name="write_uid"/>
+							<field name="write_date"/>
+                            <templates>
+                                <t t-name="kanban-box">
+									<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+										<div class="o_dropdown_kanban dropdown">
+		                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+		                                        <span class="fa fa-ellipsis-v"/>
+		                                    </a>
+		                                    <div class="dropdown-menu" role="menu">
+		                                    	<a type="edit" role="menuitem" class="dropdown-item o_hidden">Setting</a>
+		                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item">View</a>
+		           								<a type="delete" role="menuitem"  class="dropdown-item">Delete</a>
+		                                    </div>
+		                                </div>
+		                                
+		                                <div class="oe_kanban_content">
+		                                    <div>
+		                                        <strong><field name="name"/></strong>
+		                                    </div>
+		                                    <div class="text-muted o_kanban_record_subtitle">
+		                                        <span> <t t-esc="record.description.value"/></span>
+		                                    </div>
+		                                    <div>
+		                                        <strong class="o_kanban_record_title">Modified by:<t t-esc="record.write_uid.value" /></strong>
+		                                    </div>
+		                                    <div>
+		                                        <span>
+													<t t-esc="record.write_date.value" />
+												</span>
+		                                    </div>
+		                                </div>
+		                                <div class="oe_clear"/>
+									</div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        </field>
+					</page>					
 					<page string="Panel">
                         <field name="panel_ids" widget="one2many_list">
                             <tree editable="bottom" string="Panel Items" create="0" delete="0">
                                 <field name="name" readonly="1"/>
                                 <field name="bif_id" invisible="1"/>
-                                <field name="gsp_id" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="gsp_id" context="{'default_bif_id': bif_id,'default_src_panel_id':id}" options="{'no_create_edit': True, 'no_quick_create': False}"/>
                                 <field name="active"/>
                             </tree>
                         </field>
 					</page>			
 					<page string="Subbif">
 						<group>
-							<field name="frame_id" />
-							<field name="mark_id" />
-							<field name="measure_id" />
-							<field name="fixpoint_id" />
-							<field name="lut_id" />
+							<field name="frame_id" context="{'default_gmd_id': gmd_id}"/>
+							<field name="mark_id"  context="{'default_gmd_id': gmd_id}"/>
+							<field name="measure_id"  context="{'default_gmd_id': gmd_id}"/>
+							<field name="fixpoint_id"  context="{'default_gmd_id': gmd_id}"/>
+							<field name="lut_id"  context="{'default_gmd_id': gmd_id}"/>
 						</group>
 					</page>
 				</notebook>
 				
-			</form>
+			</map>
 		</field>
 	</record>
 

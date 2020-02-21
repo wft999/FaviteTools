@@ -39,6 +39,7 @@ var Glassmap = Map.extend(ControlPanelMixin,{
                 	self.coordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
                 	self.tmpCoordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
                 	self.src = '/glassdata/'+self.glassName +'/' + self.padConf.GLASS_INFORMATION.glass_map;
+                	self.isSupportCurl = !!(res.padConf['RESIZE_SCAN_INFORMATION']);
             	}
             });
     },
@@ -51,9 +52,11 @@ var Glassmap = Map.extend(ControlPanelMixin,{
     		return;
 
     	$.when(self.defImage).then(function ( ) { 	
-    		
     		self._loadPad();
-    		self._drawHawk();
+    		if(self.isSupportCurl){
+        		self._drawHawk();
+    		}
+    		
     		
     		self._renderButtons();
     		self._updateControlPanel();
@@ -83,6 +86,10 @@ var Glassmap = Map.extend(ControlPanelMixin,{
 	},
     _onButtonSave:function(){
     	var self = this;
+    	if(!self.isSupportCurl){
+    		self.do_warn(_t('Operation Result'),_t('Curling pad is not supported !'),false);
+    		return;
+    	}
     	var pad = new Object();
 
     	pad.dGlassCenterX = this.glass_center_x;
@@ -99,7 +106,6 @@ var Glassmap = Map.extend(ControlPanelMixin,{
     			return;
     		}
     		
-    		
     		var o = {
     			padType: obj.padType,
     			points:obj.points,
@@ -114,6 +120,12 @@ var Glassmap = Map.extend(ControlPanelMixin,{
     },
     _onButtonTrash:function(){
     	var self = this;
+    	if(!self.isSupportCurl){
+    		self.do_warn(_t('Operation Result'),_t('Curling pad is not supported !'),false);
+    		return;
+    	}
+    	
+    	
     	var objs = _.filter(this.map.pads,function(pad){return pad.selected && pad.padType == self.pad.curType});
     	if(objs.length == 0){
     		this.do_warn(_t('Incorrect Operation'),_t('Please select one object!'),false);
@@ -255,7 +267,15 @@ var Glassmap = Map.extend(ControlPanelMixin,{
    	},   
     
     _onMouseDblclick:function(opt){
-   	 if(this.hawkeye && this.map.hoverCursor == 'default'){
+   	 if(this.map.hoverCursor == 'default'){
+   		if(!this.isSupportCurl){
+    		this.do_warn(_t('Operation Result'),_t('Curling pad is not supported !'),false);
+    		return;
+    	}
+   		
+   		if(!this.hawkeye)
+   			return;
+   		
    		 var zoom = this.map.getZoom();
 	 	    this.hawkeye.set({ 
 	     			top: opt.pointer.y/zoom, 

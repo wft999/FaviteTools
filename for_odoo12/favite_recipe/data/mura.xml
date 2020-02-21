@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_recipe_mura_threshold_size">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_threshold_size</field>
+			<field name="complete_name">threshold.size</field>
+			<field name="ttype">integer</field>
+            <field name="locate">threshold.</field>
+            <field name="field_description">size</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="30" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_mura_threshold_width">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_threshold_width</field>
+			<field name="complete_name">threshold.width</field>
+			<field name="ttype">integer</field>
+            <field name="locate">threshold.</field>
+            <field name="field_description">width</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="5" />
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_recipe_mura_threshold_height">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_threshold_height</field>
+			<field name="complete_name">threshold.height</field>
+			<field name="ttype">integer</field>
+            <field name="locate">threshold.</field>
+            <field name="field_description">height</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="5" />
+            <field name="sequence">3</field>
+    </record>        
+    
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_left_enable">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_left_enable</field>
+			<field name="complete_name">direction.left.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">direction.left</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>    
+     <record  model="ir.model.fields"  id="favite_recipe_mura_direction_left_threshold">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_left_threshold</field>
+			<field name="complete_name">direction.left.threshold</field>
+			<field name="ttype">float</field>
+            <field name="locate">direction.left</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="1.8" />
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_left_period_range">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_left_period_range</field>
+			<field name="complete_name">direction.left.period_range</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">direction.left</field>
+            <field name="field_description">period range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">3,5</field>
+            <field name="sequence">3</field>
+    </record> 
+    
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_top_enable">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_top_enable</field>
+			<field name="complete_name">direction.top.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">direction.top</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>    
+     <record  model="ir.model.fields"  id="favite_recipe_mura_direction_top_threshold">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_top_threshold</field>
+			<field name="complete_name">direction.top.threshold</field>
+			<field name="ttype">float</field>
+            <field name="locate">direction.top</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="1.8" />
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_top_period_range">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_top_period_range</field>
+			<field name="complete_name">direction.top.period_range</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">direction.top</field>
+            <field name="field_description">period range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">3,5</field>
+            <field name="sequence">3</field>
+    </record> 
+    
+     <record  model="ir.model.fields"  id="favite_recipe_mura_direction_right_enable">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_right_enable</field>
+			<field name="complete_name">direction.right.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">direction.right</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>    
+     <record  model="ir.model.fields"  id="favite_recipe_mura_direction_right_threshold">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_right_threshold</field>
+			<field name="complete_name">direction.right.threshold</field>
+			<field name="ttype">float</field>
+            <field name="locate">direction.right</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="1.8" />
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_right_period_range">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_right_period_range</field>
+			<field name="complete_name">direction.right.period_range</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">direction.right</field>
+            <field name="field_description">period range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">3,5</field>
+            <field name="sequence">3</field>
+    </record> 
+    
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_bottom_enable">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_bottom_enable</field>
+			<field name="complete_name">direction.bottom.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">direction.bottom</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>    
+     <record  model="ir.model.fields"  id="favite_recipe_mura_direction_bottom_threshold">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_bottom_threshold</field>
+			<field name="complete_name">direction.bottom.threshold</field>
+			<field name="ttype">float</field>
+            <field name="locate">direction.bottom</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="1.8" />
+            <field name="sequence">2</field>
+    </record>  
+    <record  model="ir.model.fields"  id="favite_recipe_mura_direction_bottom_period_range">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_mura" />
+            <field name="name">x_direction_bottom_period_range</field>
+			<field name="complete_name">direction.bottom.period_range</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">direction.bottom</field>
+            <field name="field_description">period range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">3,5</field>
+            <field name="sequence">3</field>
+    </record>        
+        
+</odoo>

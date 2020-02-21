@@ -1,0 +1,103 @@
+<odoo>
+  <data>
+        
+	<!-- bif -->
+	<record id="device_form" model="ir.ui.view">
+		<field name="name">lm_gate.gate.form</field>
+		<field name="model">lm_gate.device</field>
+		<field name="arch" type="xml">
+			<form string="Device" title="Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" readonly="1" />
+						</h1>
+						<div>
+							<field name="description" placeholder="Device summary..." />
+						</div>
+					</div>
+					<group>
+						<group>
+							<field name="address"/>
+						</group>
+						<group>
+							<field name="period"/>
+						</group>
+					</group>
+					<group string="Points">
+						<field name="point_ids" widget="one2many_list" nolabel="1">
+	                        <tree editable="bottom"  string="point Items">
+	                            <field name="name"/>
+	                            <field name="description"/>
+	                            <field name="type"/>
+                                <field name="address"/>
+                                <field name="value_type"/>
+	                        </tree>
+	                    </field>
+					</group>  					
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<record id="device_view_kanban" model="ir.ui.view">
+		<field name="name">lm_gate.device.kanban</field>
+		<field name="model">lm_gate.device</field>
+		<field name="arch" type="xml">
+			<kanban default_group_by="collector_id" class="o_kanban_small_column " group_create="0" group_edit="0" group_delete="0" create="0" import="0">
+				<field name="description" />
+				<field name="write_uid"/>
+				<field name="write_date"/>
+				<templates>
+					<t t-name="kanban-box">
+						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+							<div class="o_dropdown_kanban dropdown">
+                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
+                                        <span class="fa fa-ellipsis-v"/>
+                                    </a>
+                                    <div class="dropdown-menu" role="menu">
+<!--                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a> -->
+           								<a type="edit" class="dropdown-item">Setting</a>
+           								<a type="edit" class="dropdown-item">Export</a>
+           								<a type="delete" class="dropdown-item">Delete</a>
+                                    </div>
+                                </div>
+                                
+                                <div class="oe_kanban_content">
+                                    <div>
+                                        <strong><field name="name"/></strong>
+                                    </div>
+                                    <div class="text-muted o_kanban_record_subtitle">
+                                        <span> <t t-esc="record.description.value"/></span>
+                                    </div>
+                                    
+                                    <div>
+                                        <strong class="o_kanban_record_title">Modified by:</strong>
+                                    </div>
+                                    <div>
+                                        <span>
+											<t t-esc="record.write_uid.value" />
+											<t t-esc="record.write_date.value" />
+										</span>
+                                    </div>
+                                </div>
+                                <div class="oe_clear"/>
+						</div>
+					</t>
+				</templates>
+			</kanban>
+		</field>
+	</record>
+	
+	<record id="open_kanban_device" model="ir.actions.act_window">
+		<field name="name">Device</field>
+		<field name="res_model">lm_gate.device</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,form</field>
+		<field name="target">current</field>
+	</record>
+   
+	<menuitem sequence="100" name="Device" id="lm_gate.device" parent="lm_gate.menu_main_gm" action="lm_gate.open_kanban_device"/>
+   
+  </data>
+</odoo>

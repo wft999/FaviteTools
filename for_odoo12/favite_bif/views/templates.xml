@@ -3,8 +3,8 @@
         <template id="assets_common" name="favite assets" inherit_id="web.assets_common">
         	<xpath expr="." position="inside">
         	
-				<script type="text/javascript" src="/favite_bif/static/src/js/bif_canvas.js"></script>
-                <script type="text/javascript" src="/favite_bif/static/src/js/info_block.js"></script>
+<!-- 				<script type="text/javascript" src="/favite_bif/static/src/js/bif_canvas.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/info_block.js"></script> -->
 		
                
                 <script type="text/javascript" src="/favite_bif/static/src/js/bif_widget_map.js"></script>
@@ -12,7 +12,21 @@
                 <script type="text/javascript" src="/favite_bif/static/src/js/bif_widget_map_thumb.js"></script>
                 <script type="text/javascript" src="/favite_bif/static/src/js/bif_widget_info.js"></script>
                 
-                 
+                <script type="text/javascript" src="/favite_bif/static/src/js/gsp_widget_map.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/gsp_widget_map_raw.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/gsp_widget_map_thumb.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/gsp_widget_info.js"></script> 
+                
+                <script type="text/javascript" src="/favite_bif/static/src/js/pad_widget_map.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/pad_widget_map_raw.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/pad_widget_map_thumb.js"></script>
+                <script type="text/javascript" src="/favite_bif/static/src/js/pad_widget_info.js"></script> 
+                
+                <script type="text/javascript" src="/favite_bif/static/src/js/frame_widget.js"></script> 
+                <script type="text/javascript" src="/favite_bif/static/src/js/mark_widget.js"></script> 
+                <script type="text/javascript" src="/favite_bif/static/src/js/measure_widget.js"></script> 
+                <script type="text/javascript" src="/favite_bif/static/src/js/fixpoint_widget.js"></script> 
+                <script type="text/javascript" src="/favite_bif/static/src/js/lut_widget.js"></script> 
                 
             </xpath>
         </template>

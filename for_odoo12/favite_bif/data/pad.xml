@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_sizefilter_sizerange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_sizefilter_sizerange</field>
+			<field name="complete_name">sizefilter.sizerange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">SizeFilter.</field>
+            <field name="field_description">Size range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_sizefilter_widthrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_sizefilter_widthrange</field>
+			<field name="complete_name">sizefilter.widthrange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">SizeFilter.</field>
+            <field name="field_description">Width range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_sizefilter_heightrange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_sizefilter_heightrange</field>
+			<field name="complete_name">sizefilter.heightrange</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">SizeFilter.</field>
+            <field name="field_description">Height range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,1000000</field>
+            <field name="sequence">3</field>
+    </record>
+    
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_regular_successindent">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_regular_successindent</field>
+			<field name="complete_name">regular.successindent</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Regular.</field>
+            <field name="field_description">Success indent</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">15,15,15,15</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_regular_failindent">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_regular_failindent</field>
+			<field name="complete_name">regular.failindent</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Regular.</field>
+            <field name="field_description">Fail indent</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">250,250,250,250</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_regular_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_regular_threshold</field>
+			<field name="complete_name">regular.threshold</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Regular.</field>
+            <field name="field_description">Threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">10,10</field>
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_regular_dynamictolerance">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_regular_dynamictolerance</field>
+			<field name="complete_name">regular.dynamictolerance</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Regular.</field>
+            <field name="field_description">Dynamic tolerance</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.1,0.1</field>
+            <field name="sequence">4</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_regular_indent">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_regular_indent</field>
+			<field name="complete_name">regular.indent</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Regular.</field>
+            <field name="field_description">Indent</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">50,50</field>
+            <field name="sequence">3</field>
+    </record>
+    
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_inspectmode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_inspectmode</field>
+			<field name="complete_name">unregular.inspectmode</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(0,'no regular'),(1,'glass to golden ')]</field>
+            <field name="default" eval="0" />
+            
+            <field name="locate">Unregular.</field>
+            <field name="field_description">Inspect mode</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_defectnumberlimit_enable">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_defectnumberlimit_enable</field>
+			<field name="complete_name">unregular.defectnumberlimit.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Unregular.</field>
+            <field name="field_description">Defect number limit enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_rejudge_range">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_rejudge_range</field>
+			<field name="complete_name">unregular.rejudge.range</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Unregular.</field>
+            <field name="field_description">Rejudge range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="200"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_threshold</field>
+			<field name="complete_name">unregular.threshold</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Unregular.</field>
+            <field name="field_description">Threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">10,10</field>
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_indent">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_indent</field>
+			<field name="complete_name">unregular.indent</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Unregular.</field>
+            <field name="field_description">Indent</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">10,10</field>
+            <field name="sequence">3</field>
+    </record>
+    
+    
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_search_range_initial">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_search_range_initial</field>
+			<field name="complete_name">unregular.search.range.initial</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Unregular.SearchRange</field>
+            <field name="field_description">Initial</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">40,40</field>
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_search_range_near">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_search_range_near</field>
+			<field name="complete_name">unregular.search.range.near</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Unregular.SearchRange</field>
+            <field name="field_description">Near</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">8,8</field>
+            <field name="sequence">4</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_barkground_enlargerange">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_barkground_enlargerange</field>
+			<field name="complete_name">unregular.barkground.enlargerange</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Unregular.Barkground</field>
+            <field name="field_description">Enlarge range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="2"></field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_barkground_enhancerate">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_barkground_enhancerate</field>
+			<field name="complete_name">unregular.barkground.enhancerate</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Unregular.Barkground</field>
+            <field name="field_description">Enhance rate</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="2"></field>
+            <field name="sequence">2</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_brim_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_brim_threshold</field>
+			<field name="complete_name">unregular.brim.threshold</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Unregular.Brim</field>
+            <field name="field_description">Threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="40"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_brim_range">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_brim_range</field>
+			<field name="complete_name">unregular.brim.range</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Unregular.Brim</field>
+            <field name="field_description">Range</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="25000"></field>
+            <field name="sequence">2</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_bmmode_enable">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_bmmode_enable</field>
+			<field name="complete_name">unregular.bmmode.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Unregular.Bmmode</field>
+            <field name="field_description">Enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="False"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_bmmode_period_0">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_bmmode_period_0</field>
+			<field name="complete_name">unregular.bmmode.period.0</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Unregular.Bmmode</field>
+            <field name="field_description">Period.0</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_unregular_bmmode_period_1">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_unregular_bmmode_period_1</field>
+			<field name="complete_name">unregular.bmmode.period.1</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Unregular.Bmmode</field>
+            <field name="field_description">Period.1</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">2</field>
+    </record>
+
+</odoo>

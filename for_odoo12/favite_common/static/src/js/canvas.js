@@ -45,11 +45,15 @@ var Cross = fabric.util.createClass(fabric.Object, {
     },
 
 	_render: function(ctx) {
-		this.width = this.w/this.canvas.getZoom(),
-		this.height = this.w/this.canvas.getZoom(),
+		var zoom = this.canvas.getZoom();
+		this.width = this.w/zoom;
+		this.height = this.w/zoom;
+		this.strokeWidth = 1/zoom;
+		
+		console.log("this.strokeWidth:%f\n",zoom);
 		
 		ctx.beginPath(); 
-		ctx.lineWidth= Math.round(2/this.canvas.getZoom());
+		//ctx.lineWidth= Math.round(1/this.canvas.getZoom());
 		//ctx.strokeStyle="yellow"; 
 		ctx.moveTo(-this.width/2,0);
 		ctx.lineTo(this.width/2,0);
@@ -195,6 +199,7 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 	
     initialize: function(options) {
     	this.callSuper('initialize', options);
+    	
     	this.w=30;
     },
     
@@ -229,7 +234,8 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
     _render: function(ctx) {
 		this.width = this.w/this.canvas.getZoom();
 		this.height = this.w/this.canvas.getZoom();
-		ctx.lineWidth= Math.round(1/this.canvas.getZoom());
+		this.strokeWidth = 1/this.canvas.getZoom();
+		//ctx.lineWidth= Math.round(1/this.canvas.getZoom());
 		
 		switch(this.coord){
 		case 0:
@@ -427,9 +433,10 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 
 
 var Polyline = Class.extend({
-	init: function(widget,type,obj,color){
+	init: function(widget,type,obj,color,readonly=false){
 		this.widget = widget;
 		this.strokeDash = false;
+		this.readonly = readonly;
 		
 		this.obj = obj;
 		this.type = type;
@@ -457,8 +464,9 @@ var Polyline = Class.extend({
 	
 	select: function(selected){
 		this.obj.selected = selected;
+		var dash = 10 / this.widget.map.getZoom();
 		_.each(this.lines,function(l){
-			l.strokeDashArray = selected? [20,20] : [];
+			l.strokeDashArray = selected? [dash,dash] : [];
 			l.dirty=true
 		})
 	},
@@ -489,7 +497,7 @@ var Polyline = Class.extend({
 	},
 	
 	checkPoint:function(point){
-		if(this.points.length >= 3 && this._checkIntersection(point)){
+		if(this.points && this.points.length >= 3 && this._checkIntersection(point)){
 			return false;
 		}
 		return true;
@@ -688,6 +696,9 @@ var Polyline = Class.extend({
 				}
 			}
 			
+			if(this.readonly)
+				continue;
+			
 			var cross = new Cross({ 
 				id:i,
 				top: this.points[i].y, 
@@ -702,14 +713,14 @@ var Polyline = Class.extend({
 			this.widget.map.add(cross);
 		}
 		
-		if(this.obj.name && this.points.length >= 2){
+/*		if(this.obj.name && this.points.length >= 2){
 			this.text = new fabric.Text(this.obj.name, { 
 				left:  _.reduce(this.points, function(memo, p){ return memo + p.x; }, 0) / this.points.length, 
 				top: _.reduce(this.points, function(memo, p){ return memo + p.y; }, 0) / this.points.length,
 				fill: this.color }
 			);
 			this.widget.map.add(this.text);
-		}
+		}*/
 	}
 });
 

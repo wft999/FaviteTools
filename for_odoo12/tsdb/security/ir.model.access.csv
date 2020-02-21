@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tsdb_server,tsdb.server,model_tsdb_server,,1,1,1,1
+access_tsdb_database,tsdb.database,model_tsdb_database,,1,1,1,1
+access_tsdb_modbus,tsdb.modbus,model_tsdb_modbus,,1,1,1,1

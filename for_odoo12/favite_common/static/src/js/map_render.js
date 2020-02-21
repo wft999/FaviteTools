@@ -28,6 +28,10 @@ return BasicRenderer.extend({
         this._super.apply(this, arguments);
     },
     
+    destroy: function(){	
+    	this._super.apply(this, arguments);
+    },
+    
     /**
      * @param {string} layout
      */
@@ -91,19 +95,28 @@ return BasicRenderer.extend({
 
     _renderView: function () {
         var self = this;
-        this.$el
-        .addClass('o_dashboard')
-//        .removeClass('table-responsive')
-        .empty();
-        
-
         var baseKey = this.getParent().getBaseKey();
         var layout = local_storage.getItem(baseKey+'layout') || "1-1-1";
-        var $board = $(QWeb.render('favite_common.DashBoard', {layout}));
-        this.$el.append($board);
+        var modelName = this.getParent().modelName;
+        var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:modelName}];
+        var $board;
         
+        if(this.widgets.length){
+        	var subviews = [{id:'info',string:modelName}];
+        	self.infoWidget.destroy();
+        	$board = this.$('.oe_dashboard');
+        }else{
+            this.$el
+            .addClass('o_dashboard')
+//            .removeClass('table-responsive')
+            .empty();
+            
+            $board = $(QWeb.render('favite_common.DashBoard', {layout}));
+            this.$el.append($board);
+        }
+
         var defs = [];
-        var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:'Detail'}];
+        var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:modelName}];
         local_storage.clear();
         _.each([0,1,2],function(col_id){
         	var str = local_storage.getItem(baseKey + col_id) || "";
@@ -150,7 +163,6 @@ return BasicRenderer.extend({
     	w.fold = eval(w.fold.toLowerCase())
     	
     	this.widgets.push(w);
-    	
 
         if(subview.id == 'info'){
         	self.infoWidget = w;
@@ -162,7 +174,8 @@ return BasicRenderer.extend({
 
             return $.when.apply($, defs).then(function () {
             	return w.appendTo(parent).then(function(){
-            		self.infoWidget.$el.append($form);
+            		self.infoWidget.$el.find('div.o_form_view.oe_content').append($form.removeClass('o_form_view oe_content'));
+            		//self.infoWidget.$el.append($form);
                     self._updateView($form);
                     if (self.state.res_id in self.alertFields) {
                         self.displayTranslationAlert();

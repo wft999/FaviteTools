@@ -6,69 +6,26 @@
 		<field name="name">lm_gate.gate.form</field>
 		<field name="model">lm_gate.gate</field>
 		<field name="arch" type="xml">
-			<form string="Gate" title="Bif Parameter" duplicate="false" create="false" delete="false">
+			<form string="Gateway" title="Bif Parameter" duplicate="false" create="false" delete="false">
 				<sheet>
 					<div class="oe_title">
 						<h1>
-							<field name="name" placeholder="Gate name..." />
+							<field name="name" placeholder="Gateway name..." />
 						</h1>
 						<div>
-							<field name="description" placeholder="Gate summary..." />
+							<field name="description" placeholder="Gateway summary..." />
 						</div>
 					</div>
-					<notebook>
-						<page string="Modbus TCP">
-                            <field name="modbus_tcp_ids" widget="one2many_list">
-                                <tree editable="bottom" string="modbus tcp Items">
-                                    <field name="name"/>
-                                    <field name="active"/>
-                                    <field name="description"/>
-                                    <field name="byte_timeout_sec"/>
-                                    <field name="byte_timeout_usec"/>
-                                    <field name="response_timeout_sec"/>
-                                    <field name="response_timeout_usec"/>
-                                    <field name="ip"/>
-                                    <field name="port"/>
-                                </tree>
-                            </field>							
-						</page>
-						<page string="Modbus RTU">
-                            <field name="modbus_rtu_ids" widget="one2many_list">
-                                <tree editable="bottom" string="modbus rtu Items">
-                                    <field name="name"/>
-                                    <field name="active"/>
-                                    <field name="description"/>
-                                    <field name="byte_timeout_sec"/>
-                                    <field name="byte_timeout_usec"/>
-                                    <field name="response_timeout_sec"/>
-                                    <field name="response_timeout_usec"/>
-                                    <field name="mode"/>
-                                    <field name="rts"/>
-                                    <field name="rts_delay"/>
-                                    <field name="device"/>
-                                    <field name="baud"/>
-                                    <field name="parity"/>
-                                    <field name="data_bit"/>
-                                    <field name="stop_bit"/>
-                                </tree>
-                            </field>							
-						</page>		
-						<page string="Modbus PI">
-                            <field name="modbus_pi_ids" widget="one2many_list">
-                                <tree editable="bottom" string="modbus pi Items">
-                                    <field name="name"/>
-                                    <field name="active"/>
-                                    <field name="description"/>
-                                    <field name="byte_timeout_sec"/>
-                                    <field name="byte_timeout_usec"/>
-                                    <field name="response_timeout_sec"/>
-                                    <field name="response_timeout_usec"/>
-                                    <field name="node"/>
-                                    <field name="service"/>
-                                </tree>
-                            </field>							
-						</page>												
-					</notebook>
+					<group string="Collectors">
+						<field name="collector_ids" widget="one2many_list" nolabel="1">
+	                        <tree editable="bottom"  string="collector Items">
+	                            <field name="name"/>
+	                            <field name="type"/>
+	                            <field name="description"/>
+	                        </tree>
+	                    </field>
+					</group>
+					
 				</sheet>
 			</form>
 		</field>
@@ -78,7 +35,7 @@
 		<field name="name">lm_gate.gate.form.simplified</field>
 		<field name="model">lm_gate.gate</field>
 		<field name="arch" type="xml">
-			<form string="Gate">
+			<form string="Gateway">
 				<sheet>
 					<group>
 						<field name="name" string="Name" />
@@ -149,7 +106,7 @@
 	</record>
 
 	<record id="open_create_gate" model="ir.actions.act_window">
-		<field name="name">Create a Gate</field>
+		<field name="name">Create a Gateway</field>
 		<field name="res_model">lm_gate.gate</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">form</field>
@@ -158,7 +115,7 @@
 	</record>
 	
 	<record id="open_kanban_gate" model="ir.actions.act_window">
-		<field name="name">Gate</field>
+		<field name="name">Gateway</field>
 		<field name="res_model">lm_gate.gate</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">kanban,form</field>
@@ -186,8 +143,12 @@
             </field>
         </record> -->
    
-
-	<menuitem name="test" id="lm_gate.gate" parent="favite_common.menu_root" action="lm_gate.open_kanban_gate"/>
+		<!-- Top menu item -->
+    <menuitem name="Gateway"
+        id="menu_main_gm"
+        web_icon="project,static/description/icon.png"
+        sequence="50"/>
+	<menuitem name="Gateways" id="lm_gate.gate" parent="menu_main_gm" action="lm_gate.open_kanban_gate"/>
    
   </data>
 </odoo>

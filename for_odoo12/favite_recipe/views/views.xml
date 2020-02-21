@@ -1,6 +1,137 @@
 <odoo>
   <data>
-        
+	<!-- judge_defect -->
+	<record id="judge_defect_form" model="ir.ui.view">
+		<field name="name">favite_recipe.judge_defect.form.parameter</field>
+		<field name="model">favite_recipe.judge_defect</field>
+		<field name="arch" type="xml">
+			<form string="judge_defect" title="judge_defect Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<label for="index" string="id"/>
+						<h1>
+							<field name="index" placeholder="defect type id..." />
+						</h1>
+						<label for="defectcode" string="defectcode"/>
+						<div>
+							<field name="defectcode" placeholder="defect type code..." />
+						</div>
+					</div>
+					<notebook>		
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>  
+  
+	<!-- judge -->
+	<record id="judge_form" model="ir.ui.view">
+		<field name="name">favite_recipe.judge.form.parameter</field>
+		<field name="model">favite_recipe.judge</field>
+		<field name="arch" type="xml">
+			<form string="judge" title="judge Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" placeholder="judge name..." />
+						</h1>
+						<div>
+							<field name="description" placeholder="judge summary..." />
+						</div>
+					</div>
+					<notebook>
+						<page string="defecttype">
+						    <field name="defect_ids" widget="one2many_list">
+                            <tree string="defect Items" create="1" delete="1">
+								<field name="index"/>
+                                <field name="defectcode"/>
+                            </tree>
+                        	</field>
+						</page>					
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>  
+  
+	<!-- mura -->
+	<record id="mura_form" model="ir.ui.view">
+		<field name="name">favite_recipe.mura.form.parameter</field>
+		<field name="model">favite_recipe.mura</field>
+		<field name="arch" type="xml">
+			<form string="mura" title="mura Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" placeholder="mura name..." />
+						</h1>
+						<div>
+							<field name="description" placeholder="mura summary..." />
+						</div>
+					</div>
+					<notebook>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>    
+  
+  
+	<!-- filter -->
+	<record id="filter_form" model="ir.ui.view">
+		<field name="name">favite_recipe.filter.form.parameter</field>
+		<field name="model">favite_recipe.filter</field>
+		<field name="arch" type="xml">
+			<form string="filter" title="filter Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" placeholder="filter name..." />
+						</h1>
+						<div>
+							<field name="description" placeholder="filter summary..." />
+						</div>
+					</div>
+					<notebook>
+						<page string="Ranges">
+						    <field name="range_ids" widget="one2many_list">
+                            <tree editable="bottom" string="range Items" create="1" delete="1">
+								<field name="sequence" widget="handle"/>
+                                <field name="center_x"/>
+                                <field name="center_y"/>
+                                <field name="width" />
+                                <field name="height" />
+                            </tree>
+                        	</field>
+						</page>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>  
+  
+	<!-- decode -->
+	<record id="decode_form" model="ir.ui.view">
+		<field name="name">favite_recipe.decode.form.parameter</field>
+		<field name="model">favite_recipe.decode</field>
+		<field name="arch" type="xml">
+			<form string="decode" title="decode Parameter" duplicate="false" create="false" delete="false">
+				<sheet>
+					<div class="oe_title">
+						<h1>
+							<field name="name" placeholder="decode name..." />
+						</h1>
+						<div>
+							<field name="description" placeholder="decode summary..." />
+						</div>
+					</div>
+					<notebook>
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>
+	        
 	<!-- recipe -->
 	<record id="recipe_form" model="ir.ui.view">
 		<field name="name">favite_recipe.recipe.form.parameter</field>
@@ -17,8 +148,18 @@
 						</div>
 					</div>
 					<notebook>
-						<page string="Camera ini">
+						<page string="Sub Recipe">
+							<group>
+								<group string="Sub Recipe">
+									<field name="gmd_id" options="{'no_create_edit': True, 'no_quick_create': False}"/>
+									<field name="judge_id" />
+									<field name="filter_id" />
+									<field name="mura_id" />
+									<field name="decode_id" />
+								</group>
 							
+							</group>
+						
 						</page>
 					</notebook>
 				</sheet>
@@ -38,7 +179,7 @@
 						<div name="summary_def">
 							<field name="description" />
 						</div>
-						<field name="gmd"/>
+						<field name="gmd_id"/>
 					</group>
 					<footer>
 						<button string="Create" name="close_dialog" type="object"
@@ -57,7 +198,7 @@
 		<field name="model">favite_recipe.recipe</field>
 		<field name="arch" type="xml">
 			<kanban  on_create="favite_recipe.open_create_recipe" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
-				<field name="gmd" />
+				<field name="gmd_id" />
 				<field name="description" />
 				<field name="write_uid"/>
 				<field name="write_date"/>
@@ -69,10 +210,9 @@
                                         <span class="fa fa-ellipsis-v"/>
                                     </a>
                                     <div class="dropdown-menu" role="menu">
-                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
-           							<a type="edit" class="dropdown-item">Setting</a>
-           							<a type="edit" class="dropdown-item">Export</a>
-           							<a type="delete" class="dropdown-item">Delete</a>
+           								<a type="edit" class="dropdown-item">Setting</a>
+           								<a type="edit" class="dropdown-item">Export</a>
+           								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
                                 </div>
                                 
@@ -84,7 +224,7 @@
                                         <span> <t t-esc="record.description.value"/></span>
                                     </div>
                                     <div class="text-muted o_kanban_record_subtitle">
-                                        <span> <t t-esc="record.gmd.value"/></span>
+                                        <span> <t t-esc="record.gmd_id.value"/></span>
                                     </div>
                                     
                                     <div>
