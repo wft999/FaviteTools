@@ -101,19 +101,21 @@ return BasicRenderer.extend({
         var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:modelName}];
         var $board;
         
-        if(this.widgets.length){
+/*        if(this.widgets.length){
         	var subviews = [{id:'info',string:modelName}];
         	self.infoWidget.destroy();
         	$board = this.$('.oe_dashboard');
         }else{
-            this.$el
-            .addClass('o_dashboard')
-//            .removeClass('table-responsive')
-            .empty();
             
-            $board = $(QWeb.render('favite_common.DashBoard', {layout}));
-            this.$el.append($board);
-        }
+        }*/
+        
+        this.$el
+        .addClass('o_dashboard')
+//        .removeClass('table-responsive')
+        .empty();
+        
+        $board = $(QWeb.render('favite_common.DashBoard', {layout}));
+        this.$el.append($board);
 
         var defs = [];
         var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:modelName}];

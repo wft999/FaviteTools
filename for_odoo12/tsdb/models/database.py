@@ -40,7 +40,7 @@ class Database(models.Model):
             else:
                 table = self.env['tsdb.table'].create({'type':'super','name':name,'database_id':self.id})  
                 
-            table.sync_col()  
+            table.sync_field()  
         
         
         self.server_id.exec_sql('USE ' + self.name)
@@ -62,7 +62,7 @@ class Database(models.Model):
                     table = self.env['tsdb.table'].create({'type':'sub','name':name,'database_id':self.id,'super_id':stable.id})  
                 else:
                     table = self.env['tsdb.table'].create({'type':'normal','name':name,'database_id':self.id})
-            table.sync_col()  
+            table.sync_field()  
 
         all.unlink()
             

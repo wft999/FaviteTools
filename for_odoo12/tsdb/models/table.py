@@ -27,9 +27,15 @@ class Table(models.Model):
     super_id = fields.Many2one('tsdb.table',domain=[('type', '=', 'super')],ondelete='cascade')
     
     col_ids = fields.One2many('tsdb.field', 'table_id', string='Col lines',domain=[('note', '=', False)])
-    tag_ids = fields.One2many('tsdb.field', 'table_id', string='Tag lines',domain=[('note', '=', 'tag')])
+    tag_ids = fields.One2many('tsdb.field', 'table_id', string='Tag lines',domain=[('note', '!=', False)])
     
-    def sync_col(self):
+    @api.one
+    @api.constrains('type','super_id')
+    def _check_amount(self):
+        if self.type == 'sub' and not super_id:
+            raise ValidationError(_('super_id is null.'))
+    
+    def sync_field(self):
         all = self.env['tsdb.field'].search([('table_id', '=', self.id)])
         
         info = self.server_id.exec_sql('DESCRIBE %s.%s' %(database_id.name, self.name))
@@ -39,15 +45,18 @@ class Table(models.Model):
         note_pos = info['head'].index('Note')
         for i in range(info['rows']):
             name = info['data'][i][name_pos]
-            type = info['data'][i][type_pos]
-            length = info['data'][i][length_pos]
-            note = info['data'][i][note_pos]
-            
+
             field = self.env['tsdb.field'].search([('name', '=', field), ('table_id', '=', self.id)])
             if field:
                 all -= field
             else:
-                field = self.env['tsdb.field'].create({'name':name,'table_id':self.id})  
+                vals = {'name':name,
+                        'table_id':self.id,
+                        'type' : info['data'][i][type_pos],
+                        'length': info['data'][i][length_pos],
+                        'note' : info['data'][i][note_pos],
+                        }
+                field = self.env['tsdb.field'].create(vals)  
             
         all.unlink() 
         
@@ -63,6 +72,8 @@ class Table(models.Model):
     @api.model
     def create(self, vals):
         res = super(Table, self).create(vals)
+        if res.type == 'sub' and  super_id:
+            res.server_id.exec_sql('CREATE TABLE %s.%s USING %s.%s TAGS ()' % (res.database_id.name,res.name,res.database_id.name,res.super_id.name))
         
         return res   
     

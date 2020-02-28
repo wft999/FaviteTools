@@ -66,7 +66,7 @@
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
             <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
         </div>
-        <div  t-if="widget.id != 'info'" t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        <div  t-if="widget.map_type == 'thumb' || widget.map_type == 'raw'" t-att-class="'oe_content' + (widget.fold ? ' oe_folded' : '')" >
         	<canvas></canvas>
         </div>
         

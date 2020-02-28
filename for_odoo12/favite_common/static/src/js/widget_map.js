@@ -157,6 +157,8 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     updateState: function(state){
     	var self = this;
+    	if(!this.getParent())
+    		return;
     	
     	if(!this.getParent().state.data.geo.no_render_map){
     		this._drawObjects();

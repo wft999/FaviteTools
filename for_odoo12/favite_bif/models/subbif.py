@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os       
+import sympy
 
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 
@@ -113,10 +114,34 @@ class Lut(models.Model):
     _inherit = ['favite_common.geometry']  
     
     @api.model
+    def calc_lut(self,x1,y1):
+        x=sympy.Symbol('x')
+        y=sympy.Symbol('y')
+        t=sympy.Symbol('t')
+        
+        fx = 2*x1*t*(1-t)+2048*(t**2) - x
+        fy = 2*y1*t*(1-t)+2048*(t**2) - y
+        
+        lut = []
+        t1 = 2048.0 / 256.0
+        t2 = 256.0 / 2048.0
+        for p in range(256):
+            lut.append(p)
+            f = x - p*t1
+            res = sympy.solve([fx,fy,f],[x,y,t])
+            for r in res:
+                if r[2] >= 0 and r[2] <= 1:
+                    lut[p] = r[1] * t2
+                    break
+                    
+
+        return lut
+    
+    @api.model
     def _default_geo(self):
         gmd = self.env['favite_gmd.gmd'].browse(self._context['default_gmd_id'])
         geo = {
-        "controlpoint":{"objs":[]},
+        "controlpoint":[{'x':1000,'y':1000}],
         "glass":gmd.geo['glass']
         }
         return geo

@@ -36,7 +36,7 @@ var WidgetMapRaw = WidgetMap.extend({
         var self = this;
         
         return this._super.apply(this, arguments).then(function () {
-        	core.bus.on('hawkeye_change', self, self._onHawkeyeChange);
+        	core.bus.on('hawkeye_change', self, self._onHawkeyeChange.bind(self));
 
         	return $.when();
         });
@@ -160,7 +160,10 @@ var WidgetMapRaw = WidgetMap.extend({
 
     },
     
-    _onHawkeyeChange(obj){
+    _onHawkeyeChange:function(obj){
+    	if(this.getParent() !== obj.src.getParent())
+    		return
+    		
     	this.hawkeyeObj = obj;
     	this.showMap();
     	console.log(obj.blocks)

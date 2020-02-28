@@ -182,7 +182,7 @@ var MapEventHandle = {
     	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
     		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
     	}else{
-    		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p});
+    		core.bus.trigger('hawkeye_change', {blocks:this.coord.bmpBlockMapPara.m_BlockMap,point:p,src:this});
     	}
     },
     

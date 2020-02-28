@@ -15,25 +15,35 @@ _logger = logging.getLogger(__name__)
 class Field(models.Model):
     _name = 'tsdb.field'
     _inherit = ['tsdb.common']
-     
+    _order = 'create_date asc'
+    
     server_id = fields.Many2one('tsdb.server',related='table_id.server_id')
     database_id = fields.Many2one('tsdb.database',related='table_id.database_id')
     
     table_id = fields.Many2one('tsdb.table',ondelete='cascade', required=True)
-    type = fields.Selection(selection=[(ord('N'),'none'),(ord('E'),'even'),(ord('O'),'odd')],compute='_compute_vals')
-    length = fields.Integer(compute='_compute_vals')
-    note = fields.Char(compute='_compute_vals',inverse="_set_vals")
-    is_first = fields.Boolean(compute='_compute_vals')
+    type = fields.Selection(selection=[('TIMESTAMP','TIMESTAMP')
+                                            ('INT','INT'),
+                                            ('BIGINT','BIGINT'),
+                                            ('FLOAT','FLOAT'),
+                                            ('DOUBLE','DOUBLE'),
+                                            ('BINARY','BINARY'),
+                                            ('SMALLINT','SMALLINT'),
+                                            ('TINYINT','TINYINT'),
+                                            ('BOOL','BOOL')
+                                            ('NCHAR','NCHAR')],required=True)
+    length = fields.Integer()
+    note = fields.Char()
             
     _sql_constraints = [
         ('name_uniq', 'unique (table_id,name)', "Field already exists !"),
     ]
+
     
     @api.multi
     def unlink(self):
         for f in self:
             if f.table_id.type == 'sub':
-                continue
+                raise UserError("Could not unlink field")
             elif f.note == 'tag':  
                 f.server_id.exec_sql('ALTER TABLE %s.%s DROP TAG %s' % (database_id.name,table_id.name,f.name))
             else:
@@ -46,43 +56,41 @@ class Field(models.Model):
     @api.model
     def create(self, vals):
         res = super(Field, self).create(vals)
+        if res.table_id.type == 'sub':
+            raise UserError("Could not create field")
         
-        if res.table_id.type == 'super': 
-            if res.note == 'tag':  
-                res.server_id.exec_sql('ALTER TABLE %s.%s DROP TAG %s' % (database_id.name,table_id.name,f.name))
+        if len(res.table_id.col_ids) < 2:
+            if res.type != 'TIMESTAMP':
+                raise UserError("First col must be TIMESTAMP")
+            return res
+        elif len(res.table_id.col_ids) == 2:
+            if res.table_id.type == 'super':
+                if len(res.table_id.tag_ids) == 1: 
+                    res.server_id.exec_sql('CREATE TABLE %s.%s TAGS %s' % (res.database_id.name,res.table_id.name,res.name))
+            elif res.table_id.type == 'normal':
+                res.server_id.exec_sql('CREATE TABLE %s.%s  %s' % (res.database_id.name,res.table_id.name,res.name))
+        else:        
+            if res.table_id.type == 'super': 
+                if res.note == 'tag':  
+                    res.server_id.exec_sql('ALTER TABLE %s.%s ADD TAG %s' % (res.database_id.name,res.table_id.name,res.name))
+                else:
+                    res.server_id.exec_sql('ALTER TABLE %s.%s ADD COLUMN %s' % (res.database_id.name,res.table_id.name,res.name))
             else:
-                res.server_id.exec_sql('ALTER TABLE %s.%s DROP TAG %s' % (database_id.name,table_id.name,f.name))
-        else:
-            f.server_id.exec_sql('ALTER TABLE %s.%s DROP COLUMN %s' % (database_id.name,table_id.name,f.name))        
+                res.server_id.exec_sql('ALTER TABLE %s.%s ADD COLUMN %s' % (res.database_id.name,res.table_id.name,res.name))
+                    
         return res   
     
     @api.multi
     def write(self, vals):
+        for f in self:
+            if f.table_id.type != 'sub' or 'type' in vals or 'length' in vals or not f.note:
+                raise UserError("Could not modify type or length or note")
+
         res = super(Field, self).write(vals)
-        return res  
-    
-    @api.one
-    def _compute_vals(self):        
-        info = self.server_id.exec_sql('DESCRIBE %s.%s' % (database_id.name,table_id.name) )
-        name_pos = info['head'].index('Field')
-        type_pos = info['head'].index('Type')
-        length_pos = info['head'].index('Length')
-        note_pos = info['head'].index('Note')
-        for i in range(info['rows']):
-            name = info['data'][i][name_pos]
-            
-            if name != self.name:
-                continue
-            
-            self.is_first = (i == 0)
-            self.type = info['data'][i][type_pos]
-            self.length = info['data'][i][length_pos]
-            self.note = info['data'][i][note_pos]
         
-    
-    @api.one
-    def _set_vals(self):
-        if self.table_id.type == 'sub':
-            self.server_id.exec_sql('ALTER TABLE %s.%s SET TAG %s=%s' % (database_id.name,table_id.name,self.name,self.note) 
+        for f in self:
+            f.server_id.exec_sql('ALTER TABLE %s.%s SET TAG %s=%s' % (database_id.name,table_id.name,f.name,f.note)) 
+            
+        return res  
         
         
