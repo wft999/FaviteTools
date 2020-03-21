@@ -167,35 +167,35 @@ return BasicRenderer.extend({
     	this.widgets.push(w);
 
         if(subview.id == 'info'){
+        	if(self.infoWidget){
+        		self.infoWidget.destroy();
+        	}
         	self.infoWidget = w;
-        	
-            var defs = [];
-            this.defs = defs;
             var $form = this._renderNode(this.arch).addClass(this.className + ' oe_content');
-            delete this.defs;
-
-            return $.when.apply($, defs).then(function () {
-            	return w.appendTo(parent).then(function(){
-            		self.infoWidget.$el.find('div.o_form_view.oe_content').append($form.removeClass('o_form_view oe_content'));
-            		//self.infoWidget.$el.append($form);
-                    self._updateView($form);
-                    if (self.state.res_id in self.alertFields) {
-                        self.displayTranslationAlert();
-                    }
-            	})
-            	
-            }, function () {
-                $form.remove();
-            }).then(function(){
+            
+            return w.appendTo(parent).then(function(){
+        		self.infoWidget.$el.find('div.o_form_view.oe_content').append($form.removeClass('o_form_view oe_content'));
+        		//self.infoWidget.$el.append($form);
+                self._updateView($form);
+                if (self.state.res_id in self.alertFields) {
+                    self.displayTranslationAlert();
+                }
+                
                 if (self.lastActivatedFieldIndex >= 0) {
                     self._activateNextFieldWidget(self.state, self.lastActivatedFieldIndex);
                 }
-            });
+        	})
         	
         }else if(subview.id == 'raw'){
+        	if(self.rawWidget){
+        		self.infoWidget.destroy();
+        	}
         	this.rawWidget = w;
         	return w.appendTo(parent);
         }else if(subview.id == 'thumb'){
+        	if(self.thumbWidget){
+        		self.infoWidget.destroy();
+        	}
         	this.thumbWidget = w;
         	return w.appendTo(parent);
         }

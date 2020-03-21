@@ -134,7 +134,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     showMap: function(){
     	var self = this;
-    	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true});
+    	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true,imageSmoothingEnabled:false});
     	self.map.add(self.image);
 
 		self.resetMap();
@@ -155,21 +155,22 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 		self._drawObjects();
     },
     
-    updateState: function(state){
-    	var self = this;
-    	if(!this.getParent())
-    		return;
-    	
-    	if(!this.getParent().state.data.geo.no_render_map){
-    		this._drawObjects();
+    updateState: function(state){    	
+    	if(state){
+    		this._drawObjects(state);
     	}
-    		
     },
     
-    _drawObjects:function(){
-    	var self = this;
+    _get_geo: function(state){
     	this.geo = {};
-    	$.extend(true,this.geo,this.getParent().state.data.geo);
+    	state = state || this.getParent().state;
+    	$.extend(true,this.geo,state.data.geo);
+    },
+    
+    _drawObjects:function(state){
+    	var self = this;
+    	this._get_geo(state);
+    	
     	if(this.map){
     		while(this.map.polylines && this.map.polylines.length){
     			var p = this.map.polylines.pop()
@@ -213,6 +214,10 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 				var sel = new fabric.ActiveSelection(selected, {canvas: this.map,hasControls: false,hoverCursor:"move",hasBorders:false});
 				this.map.setActiveObject(sel);
 			}
+        	
+        	this.map.polylines.forEach(function(p){
+        		p.crosses.forEach(c=>c.bringToFront())
+        	})
     	}
     },
     

@@ -25,7 +25,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/panel.xml',
+#         'views/panel.xml',
         'views/pad.xml',
         'views/gsp.xml',
         'views/bif.xml',

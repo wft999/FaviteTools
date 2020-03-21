@@ -14,7 +14,7 @@
         	<t t-call="favite_common.ControlPanel.SwitchButton"/>
     	</div>
     </t>
-    <div class="btn-group btn-group-md" role="group">
+<!--     <div class="btn-group btn-group-md" role="group">
     	<button type="button" class="btn btn-secondary fa fa-lg fa-th-large" title="Layout" tabindex="-1" data-toggle="dropdown" aria-expanded="false"/>
         <ul class="dropdown-menu dropdown-menu-right">
         	<li t-foreach="'1 1-1 1-1-1 1-2 2-1'.split(' ')" t-as="layout" t-att-data-layout="layout" class="width_long">
@@ -25,7 +25,7 @@
             </li>
 			       					
 		</ul>
-    </div>
+    </div> -->
 </t>
     
 <t t-name="favite_common.DashBoard">

@@ -393,7 +393,7 @@
             <field name="name">x_zone_enabletbz</field>
 			<field name="complete_name">zone.enabletbz</field>
 			<field name="ttype">boolean</field>
-            <field name="locate">Zone.</field>
+            <field name="locate">Domain.Zone</field>
             <field name="field_description">Enable tbz</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="True"></field>
@@ -407,7 +407,7 @@
             <field name="name">x_domain_threshold</field>
 			<field name="complete_name">domain.threshold</field>
 			<field name="ttype">boolean</field>
-            <field name="locate">Domain.</field>
+            <field name="locate">Domain.Domain</field>
             <field name="field_description">Threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="0"></field>
@@ -418,7 +418,7 @@
             <field name="name">x_domain_contrastratio</field>
 			<field name="complete_name">domain.contrastratio</field>
 			<field name="ttype">float</field>
-            <field name="locate">Domain.</field>
+            <field name="locate">Domain.Domain</field>
             <field name="field_description">Contrast ratio</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="0.0"></field>

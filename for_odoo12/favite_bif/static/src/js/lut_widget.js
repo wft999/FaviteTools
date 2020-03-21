@@ -48,13 +48,19 @@ var WidgetInfo = Widget.extend({
     },
     
     updateState: function(state){
+    	if(!this.getParent())
+    		return;
+    	
     	var self = this;
     	self.geo = {};
     	$.extend(true,self.geo,this.getParent().state.data.geo);
     },
 
-    _onMapSelectChange:function(curPolyline){
-
+    _onMapSelectChange:function(src){
+    	if(this.getParent() !== src.getParent())
+    		return
+    		
+    	var curPolyline = src.map.curPolyline;
     },
     
 });

@@ -12,9 +12,59 @@ var widgetRegistry = require('web.widget_registry');
 var QWeb = core.qweb;
 var _t = core._t;
 
+var WidgetZone = Widget.extend({
+	template: 'favite_gsp.info_zone',
+    events: {
+    	'change input': '_onDataChange',
+    	
+    },
+    
+
+    
+    _onDataChange: function(e){
+    	var name = $(e.currentTarget).attr('name');
+    	this.geo[this.curPolyline.type].objs[this.obj_id][name] = $(e.currentTarget)[0].value;
+    	
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    },
+
+    init: function(parent,curPolyline, geo,obj_id,readonly){
+    	this.geo = geo;
+    	this.obj_id = obj_id;
+    	this.curPolyline = curPolyline;
+    	this.readonly = readonly;
+
+        return this._super.apply(this, arguments);
+    },
+   
+    willStart: function () {
+    	var self = this;
+        return this._super.apply(this, arguments).then(function () {
+            return $.when();
+        });
+    },
+    
+    start: function () {
+        var self = this;
+        return this._super.apply(this, arguments).then(function () {
+        	self.$('input[name="level"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['level'] || 15;
+        	self.$('input[name="darktol"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['darktol'] || 15;
+        	self.$('input[name="brighttol"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['brighttol'] || 15;
+        	self.$('input[name="longedgeminsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['longedgeminsize'] || 0;
+        	self.$('input[name="longedgemaxsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['longedgemaxsize'] || 0;
+        	self.$('input[name="shortedgeminsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['shortedgeminsize'] || 0;
+        	self.$('input[name="shortedgemaxsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['shortedgemaxsize'] || 0;
+        	return $.when();
+        });
+    },
+});
 
 var WidgetInfo = Widget.extend({
-	template: 'favite_bif.info',
+	template: 'favite_gsp.info',
     events: {
 
     },
@@ -47,6 +97,9 @@ var WidgetInfo = Widget.extend({
     },
     
     updateState: function(state){
+    	if(!this.getParent())
+    		return;
+    	
     	var self = this;
     	self.geo = {};
     	$.extend(true,self.geo,this.getParent().state.data.geo);
@@ -82,11 +135,23 @@ var WidgetInfo = Widget.extend({
             });
     },
     
-    _onMapSelectChange:function(curPolyline){
+    _onMapSelectChange:function(src){
+    	if(this.getParent() !== src.getParent())
+    		return;
+    		
+    	var readonly = this.getParent().mode == 'readonly'
+    	var curPolyline = src.map.curPolyline;
+    	this.geo = {};
+    	$.extend(true,this.geo,this.getParent().state.data.geo);
+    	
+    	this.widget_info && this.widget_info.destroy();
+    	this.widget_info = null;
+    	this.$('.gsp_info').empty();
     	if(curPolyline){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
-    		if(curPolyline.type == 'panel'){
-    			//this._openPanel();
+    		if(curPolyline.type == 'zone'){
+    			this.widget_info = new WidgetZone(this, curPolyline,this.geo,oid,readonly);
+    			this.widget_info.appendTo('.gsp_info');
     		}
     	}
     },

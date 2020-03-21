@@ -53,7 +53,7 @@
                                     </a>
                                     <div class="dropdown-menu" role="menu">
                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
-           								<a type="edit" class="dropdown-item">Setting</a>
+<!--            								<a type="edit" class="dropdown-item">Setting</a> -->
            								<a type="edit" class="dropdown-item">Export</a>
            								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>

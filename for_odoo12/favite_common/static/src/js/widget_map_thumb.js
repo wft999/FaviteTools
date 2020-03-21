@@ -54,7 +54,7 @@ var WidgetMapThumb = WidgetMap.extend({
     showMap: function(){
     	var self = this;
 
-    	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true});
+    	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true,imageSmoothingEnabled:false});
     	self.map.add(self.image);
 
 		self.resetMap();

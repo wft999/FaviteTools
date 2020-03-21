@@ -71,7 +71,8 @@ class Measure(models.Model):
     def _default_geo(self):
         gmd = self.env['favite_gmd.gmd'].browse(self._context['default_gmd_id'])
         geo = {
-        "region":{"objs":[]},
+        "film_region":{"objs":[]},
+        "mark_region":{"objs":[]},
         "glass":gmd.geo['glass']
         }
         return geo

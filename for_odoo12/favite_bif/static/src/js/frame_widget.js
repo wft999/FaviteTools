@@ -48,22 +48,19 @@ var WidgetInfo = Widget.extend({
     },
     
     updateState: function(state){
+    	if(!this.getParent())
+    		return;
+    	
     	var self = this;
     	self.geo = {};
     	$.extend(true,self.geo,this.getParent().state.data.geo);
     },
 
     _onMapSelectChange:function(src){
-    	if(this.getParent()!== src.getParent())
+    	if(this.getParent() !== src.getParent())
     		return
     		
     	var curPolyline = src.map.curPolyline;
-    	if(curPolyline){
-    		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
-    		if(curPolyline.type == 'panel'){
-    			//this._openPanel();
-    		}
-    	}
     },
     
 });

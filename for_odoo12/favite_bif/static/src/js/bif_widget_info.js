@@ -17,7 +17,7 @@ var _t = core._t;
 var WidgetInfo = Widget.extend({
 	template: 'favite_bif.info',
     events: {
-
+    	'click tbody td.o_data_cell': '_onCellClick',
     },
 
     init: function(){
@@ -43,6 +43,7 @@ var WidgetInfo = Widget.extend({
         return this._super.apply(this, arguments).then(function () {
         	core.bus.on('map_select_change', self, self._onMapSelectChange);
         	
+        	
         	return $.when();
         });
     },
@@ -59,6 +60,7 @@ var WidgetInfo = Widget.extend({
     		return;
     	self.geo = {};
     	$.extend(true,self.geo,this.getParent().state.data.geo);
+    	self.$('td.o_data_cell').prop('special_click', true);
     },
     
     _openPanel: function () {
@@ -102,6 +104,28 @@ var WidgetInfo = Widget.extend({
     			//this._openPanel();
     		}
     	}
+    },
+    
+    _onCellClick: function (event) {
+        // The special_click property explicitely allow events to bubble all
+        // the way up to bootstrap's level rather than being stopped earlier.
+//        if (this.getParent().mode == 'readonly' || $(event.target).prop('special_click')) {
+//            return;
+//        }
+    	event.stopPropagation();
+        var $td = $(event.currentTarget);
+        var $tr = $td.parent();
+        var rowIndex = this.$('.o_data_row').index($tr);
+        var fieldIndex = Math.max($tr.find('.o_data_cell').not('.o_list_button').index($td), 0);
+
+        var record = this.getParent().state.data.panel_ids.data[rowIndex];
+        
+        this.getParent().thumbWidget.map.polylines.forEach(function(p){
+        	var sel = p.obj.name == record.data.name;
+        	p.focus(sel);
+        	p.select(sel);
+        })
+        this.getParent().thumbWidget.map.renderAll();
     },
     
 });

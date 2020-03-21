@@ -122,20 +122,38 @@ var MapMouseHandle = {
 			if(this.map.curPolyline.checkPoint(newPointer)){
 				var obj = this.map.curPolyline.obj;
 				obj.points.push(this._map2geo(newPointer));
-				this.map.curPolyline.specialHandle();
 				
-				this.trigger_up('field_changed', {
-		            dataPointID: this.getParent().state.id,
-		            changes:{geo:this.geo},
-		        });
+				if(this.map.curPolyline.specialHandle()){
+					this.trigger_up('field_changed', {
+			            dataPointID: this.getParent().state.id,
+			            changes:{geo:this.geo},
+			        });
+				}else{
+					obj.points.pop();
+					this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
+				}
 			}else{
 				this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
 			}
-			
+		}else if(this.map.hoverCursor == 'move'){
+/*			if(this._isSelectCross){
+				this._isSelectCross = false;
+				return;
+			}
+			if(this._isObjectMoving){
+				this._isObjectMoving = false;
+				return;
+			}
+				
+			this.map.discardActiveObject();
+			if(this.map.curPolyline){
+				this.map.curPolyline.focus(false);
+				this.map.curPolyline = null;
+			}*/
 		}
 
-    	//this.map.renderAll();
-    	this.map.requestRenderAll();
+    	this.map.renderAll();
+    	//this.map.requestRenderAll();
 	},
 	
     _onMouseDblclick:function(opt){
@@ -144,6 +162,7 @@ var MapMouseHandle = {
      			top: newPointer.y, 
      			left: newPointer.x,
      			visible:true,
+     			strokeWidth : 1/this.map.getZoom()
      		});
  	    this.hawkeye.setCoords();
      	this.hawkeye.bringToFront();

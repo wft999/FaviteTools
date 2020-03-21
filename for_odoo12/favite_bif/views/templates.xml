@@ -27,6 +27,7 @@
                 <script type="text/javascript" src="/favite_bif/static/src/js/measure_widget.js"></script> 
                 <script type="text/javascript" src="/favite_bif/static/src/js/fixpoint_widget.js"></script> 
                 <script type="text/javascript" src="/favite_bif/static/src/js/lut_widget.js"></script> 
+                <script type="text/javascript" src="/favite_bif/static/src/js/submark.js"></script> 
                 
             </xpath>
         </template>

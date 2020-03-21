@@ -1,5 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+	<record  model="ir.model.fields"  id="favite_bif_pad_submark_type">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_submark_type</field>
+			<field name="complete_name">submark.type</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(0,'Normal'),(1,'Plygon')]</field>
+            <field name="default" eval="0" />
+            
+            <field name="locate">Common.</field>
+            <field name="field_description">submark type</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">0</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_submark_size">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_submark_size</field>
+            <field name="complete_name">submark.size</field>
+            <field name="field_description">Submark Size</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer_array</field>
+            <field name="locate">Common.</field>
+            <field name="default_value">1000,1000</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_submark_offset">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_submark_offset</field>
+            <field name="complete_name">submark.offset</field>
+            <field name="field_description">Submark offset</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer_array</field>
+            <field name="locate">Common.</field>
+            <field name="default_value">2000,2000</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_region_overlap">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_region_overlap</field>
+            <field name="complete_name">region.overlap</field>
+            <field name="field_description">region overlap</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="locate">Common.</field>
+            <field name="default_value" eval="1000"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_pad_region_height">
+            <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
+            <field name="name">x_region_height</field>
+            <field name="complete_name">region.height</field>
+            <field name="field_description">region height</field>
+            <field name="help">it is a help</field>
+            <field name="ttype">integer</field>
+            <field name="locate">Common.</field>
+            <field name="default_value" eval="10000"></field>
+            <field name="sequence">3</field>
+    </record>
+    
+    
     
     <record  model="ir.model.fields"  id="favite_bif_pad_sizefilter_sizerange">
             <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
@@ -101,7 +160,7 @@
             <field name="selection">[(0,'no regular'),(1,'glass to golden ')]</field>
             <field name="default" eval="0" />
             
-            <field name="locate">Unregular.</field>
+            <field name="locate">Unregular.common</field>
             <field name="field_description">Inspect mode</field>
             <field name="help">it is a help</field>
             <field name="sequence">1</field>
@@ -111,7 +170,7 @@
             <field name="name">x_unregular_defectnumberlimit_enable</field>
 			<field name="complete_name">unregular.defectnumberlimit.enable</field>
 			<field name="ttype">boolean</field>
-            <field name="locate">Unregular.</field>
+            <field name="locate">Unregular.common</field>
             <field name="field_description">Defect number limit enable</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="False"></field>
@@ -122,33 +181,33 @@
             <field name="name">x_unregular_rejudge_range</field>
 			<field name="complete_name">unregular.rejudge.range</field>
 			<field name="ttype">integer</field>
-            <field name="locate">Unregular.</field>
+            <field name="locate">Unregular.common</field>
             <field name="field_description">Rejudge range</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="200"></field>
-            <field name="sequence">2</field>
+            <field name="sequence">3</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_pad_unregular_threshold">
             <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
             <field name="name">x_unregular_threshold</field>
 			<field name="complete_name">unregular.threshold</field>
 			<field name="ttype">integer_array</field>
-            <field name="locate">Unregular.</field>
+            <field name="locate">Unregular.common</field>
             <field name="field_description">Threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value">10,10</field>
-            <field name="sequence">3</field>
+            <field name="sequence">4</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_pad_unregular_indent">
             <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
             <field name="name">x_unregular_indent</field>
 			<field name="complete_name">unregular.indent</field>
 			<field name="ttype">integer_array</field>
-            <field name="locate">Unregular.</field>
+            <field name="locate">Unregular.common</field>
             <field name="field_description">Indent</field>
             <field name="help">it is a help</field>
             <field name="default_value">10,10</field>
-            <field name="sequence">3</field>
+            <field name="sequence">5</field>
     </record>
     
     
@@ -231,7 +290,7 @@
             <field name="field_description">Enable</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="False"></field>
-            <field name="sequence">2</field>
+            <field name="sequence">1</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_pad_unregular_bmmode_period_0">
             <field name="model_id" ref="favite_bif.model_favite_bif_pad" />
@@ -253,7 +312,7 @@
             <field name="field_description">Period.1</field>
             <field name="help">it is a help</field>
             <field name="default_value">0.0,0.0</field>
-            <field name="sequence">2</field>
+            <field name="sequence">3</field>
     </record>
 
 </odoo>

@@ -6,24 +6,54 @@ from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 
 
 _logger = logging.getLogger(__name__)
+
+# class Zone(models.Model):
+#     _name = 'favite_bif.gsp_zone'   
+#     
+#     gsp_id = fields.Many2one('favite_bif.gsp',ondelete='cascade')
+#     
+#     darktol = fields.Integer(string='Dark Tol',default=15)
+#     brighttol = fields.Integer(string='Bright Tol',default=15)
+#     longedgeminsize = fields.Integer(string='Long edge min size',default=0)
+#     longedgemaxsize = fields.Integer(string='Long edge max size',default=0)
+#     shortedgeminsize = fields.Integer(string='Short edge min size',default=0)
+#     shortedgemaxsize = fields.Integer(string='Short edge max size',default=0)
     
 class Gsp(models.Model):
     _name = 'favite_bif.gsp'   
     _inherit = ['favite_common.geometry']
     
-    @api.one
-    @api.depends('gmd_id','gmd_id.geo','bif_id','src_panel_id')
-    def _compute_geo(self):
-        self.geo['glass'] = self.gmd_id.geo['glass']
-        objs = self.bif_id.geo['panel']['objs']
-        self.geo['panel'] = {"readonly":True,'objs':[obj for obj in objs if obj['name'] == self.src_panel_id.name]}
+#     zone_enabletbz =  fields.Boolean(string='Enable tbz')  
+#     zone_ids = fields.One2many('favite_bif.gsp_zone', 'gsp_id', string='Zone')
     
-    geo = fields.Jsonb(string = "geometry value",compute='_compute_geo',store=True)   
+    @api.model    
+    def _default_geo(self):
+        bif = self.env['favite_bif.bif'].browse(self._context['default_bif_id'])
+        panel = self.env['favite_bif.panel'].browse(self._context['default_src_panel_id'])
+        gmd = bif.gmd_id
+        objs = bif.geo['panel']['objs']
+        geo = {
+        "domain":{"objs":[]},
+        "domain_bright":{"objs":[]},
+        "domain_dark":{"objs":[]},
+        "zone":{"objs":[]},
+        
+        "polygon":{"objs":[]},
+        "circle":{"objs":[]},
+        "bow":{"objs":[]},
+        
+        "glass":gmd.geo['glass'],
+        "panel":{"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
+        }
+        return geo
+    
+    
+    
+    geo = fields.Jsonb(string = "geometry value",default=_default_geo)   
     bif_id = fields.Many2one('favite_bif.bif',ondelete='cascade')  
     gmd_id = fields.Many2one('favite_gmd.gmd',related='bif_id.gmd_id')
     pad_id = fields.Many2one('favite_bif.pad',ondelete='set null',domain="[('gmd_id', '=', gmd_id),('src_panel_id', '=', src_panel_id)]")  
     src_panel_id = fields.Many2one('favite_bif.panel',ondelete='cascade', domain="[('gmd_id', '=', gmd_id)]")  
-    panel_polygon_file = fields.Char()
 
     camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True) 

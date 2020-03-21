@@ -132,7 +132,7 @@
 		                                    </a>
 		                                    <div class="dropdown-menu" role="menu">
 		                                    	<a type="edit" role="menuitem" class="dropdown-item o_hidden">Setting</a>
-		                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item">View</a>
+		                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item">Edit</a>
 		           								<a type="delete" role="menuitem"  class="dropdown-item">Delete</a>
 		                                    </div>
 		                                </div>

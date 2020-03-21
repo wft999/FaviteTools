@@ -103,10 +103,22 @@ var WidgetInfo = Widget.extend({
         });
     },
     
+    destroy: function(){	
+    	core.bus.off('map_select_change', this, this._onMapSelectChange);
+    	if(this.widget_info) {
+    		this.widget_info.destroy();
+    		this.widget_info.$el.remove();
+    	}
+    	this._super.apply(this, arguments);
+    },
+    
     updateState: function(state){
     	var self = this;
-    	self.geo = {};
-    	$.extend(true,self.geo,this.getParent().state.data.geo);
+    	if(self.geo,this.getParent()){
+    		self.geo = {};
+        	$.extend(true,self.geo,this.getParent().state.data.geo);
+    	}
+    	
     },
     
     _onResort: function(){
@@ -224,7 +236,7 @@ var WidgetInfo = Widget.extend({
             changes:{geo:this.geo},
             noundo:true
         });
-    	this.geo.no_render_map = false;
+
     	
     	var src = $el.find('img').attr('src');
     	this.$el.find('.o_corner_type_list .o_corner_type_img').attr('src',src);
@@ -267,17 +279,25 @@ var WidgetInfo = Widget.extend({
             changes:{geo:this.geo},
             noundo:true
         });
-    	this.geo.no_render_map = false;
+
     	
     	var src = $el.find('img').attr('src');
     	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',src);
     },
     
-    _onMapSelectChange:function(curPolyline){
+    _onMapSelectChange:function(src){
+    	
+    	if(this.getParent() !== src.getParent())
+    		return
+    		
+    	var curPolyline = src.map.curPolyline;
     	this.geo = {};
     	$.extend(true,this.geo,this.getParent().state.data.geo);
     	
-    	this.widget_info && this.widget_info.destroy();
+    	if(this.widget_info) {
+    		this.widget_info.destroy();
+    		this.widget_info.$el.remove();
+    	}
     	this.widget_info = null;
     	if(curPolyline){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});

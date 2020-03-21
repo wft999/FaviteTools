@@ -56,6 +56,8 @@ var Block = Canvas.Polyline.extend({
 			}
 			
 		}
+    	
+    	return true;
 	},
     
     focus: function(focused){

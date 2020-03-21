@@ -97,8 +97,12 @@ class Gmd(http.Controller):
                     else:
                         top += region.height
                     imgs.move_to_end(imgFile)
-                else:        
-                    im = Image.open(imgFile)
+                else: 
+                    try:       
+                        im = Image.open(imgFile)
+                    except Exception as e:
+                        im = Image.new('L',(b['iInterSectionWidth'],b['iInterSectionHeight']))
+                        
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                     region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
                     dest.paste(region, (left,top))
@@ -149,7 +153,10 @@ class Gmd(http.Controller):
                         top += region.height
                     imgs.move_to_end(imgFile)
                 else:        
-                    im = Image.open(imgFile)
+                    try:       
+                        im = Image.open(imgFile)
+                    except Exception as e:
+                        im = Image.new('L',(b['iInterSectionWidth'],b['iInterSectionHeight']))
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                     region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
                     dest.paste(region, (left,top))

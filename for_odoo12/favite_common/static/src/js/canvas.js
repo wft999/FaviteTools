@@ -22,6 +22,34 @@ var Line = fabric.util.createClass(fabric.Line, {
     }
   });
 
+var Arc = fabric.util.createClass(fabric.Circle, {
+    selectable: false,
+    originX:"center",
+	originY:"center",
+	fill: 'yellow',
+    stroke: 'yellow',
+    
+    objectCaching:true,
+    hasControls: false,
+	hasBorders:false,
+    initialize: function(options) {
+    	this.callSuper('initialize', options);
+    },
+
+	_render: function(ctx) {
+		this.strokeWidth = 1/this.canvas.getZoom();
+		ctx.beginPath();
+		ctx.arc(
+		        0,
+		        0,
+		        this.radius,
+		        this.startAngle,
+		        this.endAngle, true);
+		ctx.stroke(); 
+    }
+  });
+
+
 var Cross = fabric.util.createClass(fabric.Object, {
 	type:'cross',
     fill:false,
@@ -41,14 +69,14 @@ var Cross = fabric.util.createClass(fabric.Object, {
     	this.id = options.id;
     	
     	this.animDirection = 'up';
-        this.w=10;
+        this.w=20;
     },
 
 	_render: function(ctx) {
 		var zoom = this.canvas.getZoom();
 		this.width = this.w/zoom;
 		this.height = this.w/zoom;
-		this.strokeWidth = 1/zoom;
+		this.strokeWidth = 2/zoom;
 		
 		console.log("this.strokeWidth:%f\n",zoom);
 		
@@ -87,7 +115,7 @@ var Cross = fabric.util.createClass(fabric.Object, {
       },
       
     mouseMove: function(){
-    	if(this.inner){
+/*    	if(this.inner){
     		if((this.left>= this.inner[0].left && this.left<= this.inner[1].left) || 
     				(this.top>= this.inner[1].top && this.top<= this.inner[0].top) ||
     				this.left < 10 || this.left > (this.canvas.width - 10)/this.canvas.getZoom() ||
@@ -107,9 +135,16 @@ var Cross = fabric.util.createClass(fabric.Object, {
     			this.setCoords();
     			return false;
     		}
+    	}*/
+    	
+    	if(this.polyline.checkCross()){
+    		return true;
+    	}else{
+    		this.left = this.polyline.points[this.id].x;
+			this.top = this.polyline.points[this.id].y;
+			this.setCoords();
+			return false;
     	}
-
-    	return true;
 	}
   });
 
@@ -141,7 +176,7 @@ var Corner = fabric.util.createClass(fabric.Object, {
     _render: function(ctx) {
 		this.width = this.w/this.canvas.getZoom();
 		this.height = this.w/this.canvas.getZoom();
-		ctx.lineWidth= Math.round(2/this.canvas.getZoom());
+		ctx.lineWidth= 2/this.canvas.getZoom();
 		
 		switch(this.cornerType){
 		case 1:
@@ -450,24 +485,27 @@ var Polyline = Class.extend({
 	},
 	
 	specialHandle: function(){
-		
+		return true;
 	},
 	
 	focus: function(focused){
 		var self = this;
 		this.obj.focused = focused;
 		this.widget.map.curPolyline = focused ? this : this.widget.map.curPolyline;
+		var edit = this.widget.getParent().mode == 'edit';
 		_.each(this.crosses,function(c){
-			c.visible = focused && self.visible;
+			c.visible = edit && (focused || self.showCross);// && self.visible;
 		})
 	},
 	
 	select: function(selected){
 		this.obj.selected = selected;
-		var dash = 10 / this.widget.map.getZoom();
+		var dash = 20 / this.widget.map.getZoom();
 		_.each(this.lines,function(l){
 			l.strokeDashArray = selected? [dash,dash] : [];
-			l.dirty=true
+			//l.stroke = 'red';
+			l.dirty=true;
+			l.setCoords();
 		})
 	},
 	
@@ -475,8 +513,9 @@ var Polyline = Class.extend({
 		var self = this;
 		this.visible = visible;
 		this.color = color;
+		var edit = this.widget.getParent().mode == 'edit';
 		_.each(this.crosses,function(c){
-			c.visible = visible && c.visible;
+			c.visible = edit && visible && (c.visible || self.showCross);
 		})
 		_.each(this.lines,function(l){
 			l.visible =  visible;
@@ -493,6 +532,10 @@ var Polyline = Class.extend({
 	render:function(){
 		var self = this;
 		this._render();
+		return true;
+	},
+	
+	checkCross:function(){
 		return true;
 	},
 	
@@ -658,7 +701,7 @@ var Polyline = Class.extend({
 
 	},
 	
-	_render: function(){
+	_render: function(ctx){
 		while(this.crosses.length)
 		{
 			var cross = this.crosses.pop()
@@ -713,14 +756,14 @@ var Polyline = Class.extend({
 			this.widget.map.add(cross);
 		}
 		
-/*		if(this.obj.name && this.points.length >= 2){
+		if(this.obj.name && this.points.length >= 2 &&( this.type == 'block' ||  this.type == 'panel')){
 			this.text = new fabric.Text(this.obj.name, { 
 				left:  _.reduce(this.points, function(memo, p){ return memo + p.x; }, 0) / this.points.length, 
 				top: _.reduce(this.points, function(memo, p){ return memo + p.y; }, 0) / this.points.length,
 				fill: this.color }
 			);
 			this.widget.map.add(this.text);
-		}*/
+		}
 	}
 });
 
@@ -729,7 +772,8 @@ return {
 	Cross,
 	Hawkeye,
 	Polyline,
-	Corner
+	Corner,
+	Arc
 };
 
 });

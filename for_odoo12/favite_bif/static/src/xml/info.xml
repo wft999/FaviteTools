@@ -17,5 +17,139 @@
     </div>
 </t>
 
+<t t-name="favite_gsp.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<table class="o_group o_inner_group o_label_nowrap gsp_info">
+        	</table>
+        </div>
+    </div>
+</t>
+
+<t t-name="favite_gsp.info_zone">
+		<tr>
+			<td><div class="o_horizontal_separator">Zone</div></td>
+		</tr>
+		<tr>
+           	<td class="o_td_label"><label for="level" class="o_form_label">level</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="level" placeholder="0"/></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="darktol" class="o_form_label">dark tol</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="darktol" placeholder="0"/></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="brighttol" class="o_form_label">bright tol</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="brighttol" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="longedgeminsize" class="o_form_label">long edge min size</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="longedgeminsize" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="longedgemaxsize" class="o_form_label">long edge max size</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="longedgemaxsize" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="shortedgeminsize" class="o_form_label">short edge min size</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="shortedgeminsize" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="shortedgemaxsize" class="o_form_label">short edge max size</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="shortedgemaxsize" /></td>
+       	</tr>
+</t>
+
+<t t-name="favite_measure.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<table class="o_group o_inner_group o_label_nowrap measure_info">
+        	</table>
+        </div>
+    </div>
+</t>
+
+<t t-name="favite_measure.info_mark">
+		<tr>
+			<td><div class="o_horizontal_separator">Mark Region</div></td>
+		</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="regionindex" class="o_form_label">region index</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" name="regionindex" placeholder="0"/></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_size_x" class="o_form_label">mark size x</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="mark_size_x" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_size_y" class="o_form_label">mark size y</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="mark_size_y" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_thresholdrate" class="o_form_label">mark thresholdrate</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="mark_thresholdrate" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="brim_index" class="o_form_label">brim index</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="brim_index" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="brim_threshold" class="o_form_label">brim threshold</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="brim_threshold" /></td>
+       	</tr>
+</t>
+
+<t t-name="favite_measure.info_film">
+		<tr>
+			<td><div class="o_horizontal_separator">Film Region</div></td>
+		</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="regionindex" class="o_form_label">region index</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" name="regionindex" placeholder="0"/></td>
+       	</tr>
+       	<tr class="sort_start_pos">
+           			<td class="o_td_label"><label for="line_direction" class="o_form_label">line direction</label></td>
+           			<td width="50%">
+           				<select  class="o_field_widget o_input o_glass_data" name="line_direction">
+  							<option value ="0">Left</option>
+  							<option value ="1">Top</option>
+  							<option value="2">Right</option>
+  							<option value="3">Bottom</option>
+						</select>
+					</td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="line_index" class="o_form_label">line index</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="line_index" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="line_threshold" class="o_form_label">line threshold</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="line_threshold" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="brim_index" class="o_form_label">brim index</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="brim_index" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="brim_threshold" class="o_form_label">brim threshold</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="brim_threshold" /></td>
+       	</tr>
+</t>
 
 </templates>

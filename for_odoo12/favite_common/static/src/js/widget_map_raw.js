@@ -57,7 +57,7 @@ var WidgetMapRaw = WidgetMap.extend({
     		this.map.clear();
     	}else{
     		var dim = {width:self.$('.oe_content').width(),height:self.$('.oe_content').height()};
-        	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true});
+        	self.map  = new fabric.Canvas(self.$el.find('canvas')[0],{hoverCursor:'default',stopContextMenu:true,imageSmoothingEnabled:false});
     		
     		self.map.setDimensions(dim);
     		self.map.on('mouse:move',self._onMouseMove.bind(self));    		
@@ -111,6 +111,7 @@ var WidgetMapRaw = WidgetMap.extend({
         		delete self.image;
 
     		self.image = img;
+    		self.image.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });
     		self.map.add(img);
     		var p = self._geo2map(self.hawkeyeObj.point);
 			self.map.viewportTransform[4] = (-p.x + dim.width/2)*self.map.getZoom();
