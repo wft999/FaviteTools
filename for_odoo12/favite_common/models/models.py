@@ -246,3 +246,33 @@ class FSWatchdog(object):
         _logger.info('watcher exit')
         self.observer.stop()
         self.observer.join()
+
+
+class Directory(models.Model):
+    _name = "favite_common.directory"
+    _description = "Export directory of recipe"
+
+    name = fields.Char(required=True,string = "directory")
+    active = fields.Boolean(string="Active", default=True)
+
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "Directory already exists !"),
+    ]     
+    
+    @api.multi
+    def write(self, vals):
+        if 'name' in vals:
+            vals['name'] = os.path.normpath(vals['name'])
+            if not os.path.exists(vals['name']):
+                raise ValidationError(_('Invalid export directory.'))
+            
+        return super(Directory, self).write(vals)
+
+    @api.model
+    def create(self, vals):
+        vals['name'] = os.path.normpath(vals['name'])
+        if not os.path.exists(vals['name']):
+            raise ValidationError(_('Invalid export directory.'))
+
+        dir = super(Directory, self).create(vals)
+        return dir  

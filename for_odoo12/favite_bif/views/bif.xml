@@ -71,7 +71,6 @@
                                     <div class="dropdown-menu" role="menu">
                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
            								<a type="edit" class="dropdown-item">Setting</a>
-           								<a type="edit" class="dropdown-item">Export</a>
            								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
                                 </div>
@@ -184,6 +183,18 @@
 			</map>
 		</field>
 	</record>
+	
+	<act_window
+            id="actions_act_window_export_bif"
+            res_model="favite_common.export.wizard"
+            src_model="favite_bif.bif"
+            target="new"
+            key2="client_action_multi"
+            view_type="form" view_mode="form"
+            context="{
+                'default_model_name': 'favite_bif.bif',
+            }"
+            name="Export"/>
 
 	<record id="open_create_bif" model="ir.actions.act_window">
 		<field name="name">Create a Bif</field>
@@ -198,7 +209,7 @@
 		<field name="name">Bif</field>
 		<field name="res_model">favite_bif.bif</field>
 		<field name="view_type">form</field>
-		<field name="view_mode">kanban,form</field>
+		<field name="view_mode">kanban,tree,form</field>
 		<field name="target">current</field>
 	</record>
 

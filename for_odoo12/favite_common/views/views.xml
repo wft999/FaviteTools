@@ -58,6 +58,27 @@
 			</tree>
 		</field>
 	</record>
+	
+	<record id="export_directory_view_tree" model="ir.ui.view">
+        	<field name="name">favite_common.directory.view.tree</field>
+        	<field name="model">favite_common.directory</field>
+        	<field name="arch" type="xml">
+            <tree string="Export directory Settings" editable="top"  create="1">
+                <field name="name"/>
+                <field name="active"/>
+            </tree>
+        	</field>
+    	</record>
+    	<record id="export_directory_view_search" model="ir.ui.view">
+        	<field name="name">favite_common.directory.view.search</field>
+        	<field name="model">favite_common.directory</field>
+        	<field name="arch" type="xml">
+            <search string="Directory">
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="unactive" string="Inactive" domain="[('active', '=', False)]"/>
+            </search>
+        	</field>
+    	</record>
         
     <!-- Top menu item -->
     <menuitem name="First" id="favite_common.menu_root"/>
@@ -70,8 +91,17 @@
 		<field name="domain">[('model', '=like', 'favite%'),('model', 'not like', '.mixin'),('model', 'not like', 'favite_common')]</field>
 		<field name="view_id" ref="model_view_kanban" />
 	</record>
+	<record id="favite_common.action_export_settings" model="ir.actions.act_window">
+        	<field name="name">Export directory Settings</field>
+        	<field name="res_model">favite_common.directory</field>
+        	<field name='view_mode'>tree</field>
+        	<field name="view_id" ref="export_directory_view_tree"/>
+        	<field name="target">current</field>
+    	</record>
 
-    <menuitem name="Config" id="favite_common_models_menu" action="favite_common.action_model_model" parent="favite_common.menu_root" sequence="10000" groups="base.group_system"/>
-
+    <menuitem name="Config" id="favite_common_config_menu"  parent="favite_common.menu_root" sequence="10000"/>
+	<menuitem name="Config Models" id="favite_common_models_menu" action="favite_common.action_model_model" parent="favite_common.favite_common_config_menu" sequence="10001"/>
+	<menuitem name="Export directory" id="favite_common_export_menu" action="favite_common.action_export_settings" parent="favite_common.favite_common_config_menu" sequence="10002" />
+   	
   </data>
 </odoo>

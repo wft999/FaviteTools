@@ -1,6 +1,6 @@
 <odoo>
     <data>
-        <template id="assets_common" name="favite assets" inherit_id="web.assets_common">
+        <template id="assets_common" name="favite assets" inherit_id="web.assets_backend">
         	<xpath expr="." position="inside">
         		<link rel="stylesheet" href="/favite_common/static/src/css/common.css"/>
         		<link rel="stylesheet" type="text/scss" href="/favite_common/static/src/scss/dashboard.scss"/>
@@ -19,6 +19,9 @@
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map_raw.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/widget_map_thumb.js"></script>
+                
+                <script type="text/javascript" src="/favite_common/static/src/js/import_action.js"></script>
+                <script type="text/javascript" src="/favite_common/static/src/js/import_buttons.js"></script>
                 
             </xpath>
         </template>

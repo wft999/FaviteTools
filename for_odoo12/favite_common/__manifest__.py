@@ -20,15 +20,16 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['web'],
 
     # always loaded
     'data': [
         'data/favite_data.xml',
-        # 'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
 
         'views/views.xml',
         'views/templates.xml',
+        'wizard/export_wizard_views.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
@@ -37,5 +38,6 @@
     'qweb': [
         "static/src/xml/menu.xml",
         "static/src/xml/dashboard.xml",
+        "static/src/xml/import.xml",
     ],
 }

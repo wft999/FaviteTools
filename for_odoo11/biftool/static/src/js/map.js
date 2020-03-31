@@ -155,7 +155,7 @@ var Map = Widget.extend({
     		}else if(String.fromCharCode(e.which).toLowerCase() === 's'){
     			this._onButtonSave();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'c'){
-    			this._onButtonCopy();
+    			//this._onButtonCopy();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'x'){
     			this._onButtonCut();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'h'){

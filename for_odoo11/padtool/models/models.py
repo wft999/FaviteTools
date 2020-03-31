@@ -202,10 +202,10 @@ class Pad(models.Model):
         dirs = self.env['padtool.directory'].with_context(active_test=False).search([('model','=','padtool.pad')])
         for dir in dirs:  
             for pad in self:
-                if os.path.isfile(dir.name +'/'+ pad.name+'.pad'):
-                    os.remove(dir.name +'/'+ pad.name+'.pad')
-                if os.path.isfile(dir.name +'/'+ pad.name+'.cur'):
-                    os.remove(dir.name +'/'+ pad.name+'.cur')
+                if os.path.isfile(os.path.normcase(dir.name) +'/'+ pad.name+'.pad'):
+                    os.remove(os.path.normcase(dir.name) +'/'+ pad.name+'.pad')
+                if os.path.isfile(os.path.normcase(dir.name) +'/'+ pad.name+'.cur'):
+                    os.remove(os.path.normcase(dir.name) +'/'+ pad.name+'.cur')
         return super(Pad, self).unlink()
     
     @api.multi

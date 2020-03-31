@@ -18,7 +18,21 @@ class Recipe(models.Model):
     mura_id = fields.Many2one('favite_recipe.mura',ondelete='set null')
     decode_id = fields.Many2one('favite_recipe.decode',ondelete='set null')
 
-    color = fields.Integer('Color Index', default=0)     
+    color = fields.Integer('Color Index', default=0)    
+    
+    def import_file(self,file):
+        written = True
+        message = 'Exception'
+
+        content = {'objs':[]}
+        pad = {'name':file.filename.split('.')[0]}
+        
+        try:
+            pass
+        except Exception as e:
+            written = False
+            message = str(e)
+        return {'success': False,'message':message} 
  
 class JudgeDefect(models.Model):
     _name = 'favite_recipe.judge_defect'
@@ -63,3 +77,5 @@ class Mura(models.Model):
 class Decode(models.Model):
     _name = 'favite_recipe.decode'
     _inherit = ['favite_common.geometry']    
+    
+    

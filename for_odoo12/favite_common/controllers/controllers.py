@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 from odoo import http
+from odoo.http import request
+from odoo.tools import misc
+import json
 
-# class Gmd(http.Controller):
-#     @http.route('/gmd/gmd/', auth='public')
-#     def index(self, **kw):
-#         return "Hello, world"
-
-#     @http.route('/gmd/gmd/objects/', auth='public')
-#     def list(self, **kw):
-#         return http.request.render('gmd.listing', {
-#             'root': '/gmd/gmd',
-#             'objects': http.request.env['gmd.gmd'].search([]),
-#         })
-
-#     @http.route('/gmd/gmd/objects/<model("gmd.gmd"):obj>/', auth='public')
-#     def object(self, obj, **kw):
-#         return http.request.render('gmd.object', {
-#             'object': obj
-#         })
+class Favite(http.Controller):
+    @http.route('/favite/import_file', methods=['POST'])
+    def import_file(self, file, model_name, jsonp='callback'):
+        result =  request.env[model_name].import_file(file)
+        return 'window.top.%s(%s)' % (misc.html_escape(jsonp), json.dumps(result))

@@ -10,6 +10,8 @@
 				<field name="geo" />
 				<field name="gmd_id" invisible="1"/>
 				<field name="src_panel_id" invisible="1"/>
+				<field name="subMark_attachment_id" invisible="1"/>
+				<field name="mainMark_attachment_id" invisible="1"/>
 				<notebook>					
 				</notebook>
 			</form>

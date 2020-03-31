@@ -98,7 +98,6 @@
                                     <div class="dropdown-menu" role="menu">
                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
            								<a type="edit" class="dropdown-item">Setting</a>
-           								<a type="edit" class="dropdown-item">Export</a>
            								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
                                 </div>
@@ -157,7 +156,7 @@
 		<field name="name">Gmd</field>
 		<field name="res_model">favite_gmd.gmd</field>
 		<field name="view_type">form</field>
-		<field name="view_mode">kanban,form</field>
+		<field name="view_mode">kanban,tree,form</field>
 		<field name="target">current</field>
 	</record>
 

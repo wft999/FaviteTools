@@ -82,10 +82,150 @@ var Frame = Canvas.Polyline.extend({
     
 });
 
+var Mark = Canvas.Polyline.extend({
+	checkPoint:function(point){
+		if(this.points && this.points.length >= 2){
+			return false;
+		}
+		return true;
+	},
+	specialHandle: function(){
+		if(this.obj.points.length == 2){
+			var uLeft = this.obj.points[0].x > this.obj.points[1].x ? this.obj.points[1].x : this.obj.points[0].x;
+			var uRight = this.obj.points[0].x < this.obj.points[1].x ? this.obj.points[1].x : this.obj.points[0].x;
+			var uTop = this.obj.points[0].y < this.obj.points[1].y ? this.obj.points[1].y : this.obj.points[0].y;
+			var uBottom = this.obj.points[0].y > this.obj.points[1].y ? this.obj.points[1].y : this.obj.points[0].y;
+				
+			this.widget.coord.GetRectIntersectionInfoInBlockMapMatrix(uLeft,uBottom,uRight,uTop,true);
+			this.obj.blocks = _.map(this.widget.coord.bmpBlockMapPara.m_BlockMap[0],function(item){
+	    		return {
+	    			iIPIndex:item.iIPIndex,
+	    			iScanIndex:item.iScanIndex,
+	    			iBlockIndex:item.iBlockIndex,
+	    			iInterSectionStartX:item.iInterSectionStartX,
+	    			iInterSectionStartY:item.iInterSectionStartY,
+	    			iInterSectionWidth:item.iInterSectionWidth,
+	    			iInterSectionHeight:item.iInterSectionHeight,
+	    			iBlockMapHeight:item.iBlockMapHeight
+	    			};
+	    		});
+				
+			this.widget.geo.mark.modified = true;
+		}
+		
+		return true;
+	},
+});
+
+var Goa = fabric.util.createClass(fabric.Object, {
+	type:'goa',
+    fill:false,
+    hasBorders:false,
+    transparentCorners: false,
+    cornerSize:5,
+	originX:"center",
+	originY:"center",
+	hoverCursor:"move",
+
+	D1G1:0,
+	period:20,
+	number:5,
+	width:100,
+	height:100,
+    initialize: function(options) {
+    	this.callSuper('initialize', options);
+    	this.regular = options.regular || null;
+    	this.period = options.period || 20;
+    	this.height = this.period * 5;
+    },
+
+	_render: function(ctx) {	
+		//this.strokeWidth = Math.round(1/this.canvas.getZoom()*this.scaleX*this.scaleY);
+		ctx.strokeStyle="red"; 
+		
+		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleY);
+
+		ctx.beginPath(); 
+		ctx.moveTo(-this.width/2,-this.height/2);
+		ctx.lineTo(this.width/2,-this.height/2);
+		ctx.stroke();
+		
+		var i;
+		ctx.strokeStyle="yellow";
+		for(i =1; i < this.number; i++){
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,-this.height/2+i*this.period);
+			ctx.lineTo(this.width/2,-this.height/2+i*this.period);
+			ctx.stroke();
+		}
+		
+		ctx.strokeStyle="red";
+		ctx.beginPath(); 
+		ctx.moveTo(-this.width/2,-this.height/2+i*this.period);
+		ctx.lineTo(this.width/2,-this.height/2+i*this.period);
+		ctx.stroke();
+		
+		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleX);
+		ctx.beginPath(); 
+		ctx.moveTo(-this.width/2,-this.height/2);
+		ctx.lineTo(-this.width/2,-this.height/2+i*this.period);
+		ctx.stroke();
+		
+    },
+});
+
+var Regular = Canvas.Polyline.extend({
+	clear:function(){
+		this._super.apply(this, arguments);
+		if(this.goa){
+			this.widget.map.remove(this.goa);
+		}
+	},
+
+	_render: function(ctx){
+		this._super.apply(this, arguments);
+
+		var angle,period;
+		if(!this.obj.periodY){
+			angle = fabric.util.degreesToRadians(90);
+			period = this.obj.periodX;
+		}else if(!this.obj.periodX){
+			angle = fabric.util.degreesToRadians(0);
+			period = this.obj.periodY;
+		}else{
+			angle = Math.atan(this.obj.periodX/this.obj.periodY);
+			period = this.obj.periodY / fabric.util.cos(angle);
+		}
+		period = period / this.widget.coord.mpMachinePara.aIPParaArray[0].aScanParaArray[0].dResolutionY;
+			
+		var minX,minY,maxX,maxY;
+		this.points.forEach(function(p){
+			minX = minX == undefined?p.x:(p.x>minX?minX:p.x);
+			minY = minY == undefined?p.y:(p.y>minY?minY:p.y);
+			maxX = maxX == undefined?p.x:(p.x<maxX?maxX:p.x);
+			maxY = maxY == undefined?p.y:(p.y<maxY?maxY:p.y);
+		});
+		var goa_left = (minX+maxX)/2;
+		var goa_top = (minY+maxY)/2;
+		
+		this.goa = new Goa({
+			left:goa_left,
+			top:goa_top,
+			regular:this,
+ 			period:period,
+			angle:fabric.util.radiansToDegrees(angle),
+			visible:this.widget.map_type=='raw',
+			hoverCursor:'move'});
+		this.widget.map.add(this.goa);
+	},
+});
+
+canvas_registry.add('favite_bif_pad_mark',Mark);
 canvas_registry.add('favite_bif_pad_frame',Frame);
+canvas_registry.add('favite_bif_pad_regular',Regular);
 
 var PadWidgetMap = {
-    
+
     _onTypeButtonClick: function(ev){
     	var key = $(ev.currentTarget).data('type');
 /*    	if(key == 'markoffset' && this.geo[key].objs.length>=1){
@@ -99,6 +239,8 @@ var PadWidgetMap = {
 		
 		return this._super.apply(this, arguments);
 	},
+	
+	
 	
 	_showObjsList(sel){
     	var self = this;

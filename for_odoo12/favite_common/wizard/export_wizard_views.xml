@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+        <record id="export_wizard_form" model="ir.ui.view">
+            <field name='name'>favite_common.export.wizard.form</field>
+            <field name='model'>favite_common.export.wizard</field>
+            <field name='arch' type='xml'>
+                <form string='Export'  class="export_form">
+                    <sheet>
+                        <group>
+                            <group>
+                            	<field name="model_name" readonly="1"/>
+                                <field name="model_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                            	<field name="directory_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                        
+                    </sheet>
+                    <footer>
+                        <button name='export' string='Export' class='oe_highlight' type='object'/>
+                        <button special="cancel" string="Cancel" type="object" class="btn btn-default oe_inline"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        
+</odoo>

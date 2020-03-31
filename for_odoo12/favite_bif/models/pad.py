@@ -21,12 +21,12 @@ class Pad(models.Model):
         geo = {
         "mark":{"objs":[]},
         "submark":{"objs":[],"no_add":True},
+        
         "regular":{"objs":[]},
-        "unregular":{"objs":[]},
+        "filterregion":{"objs":[]},
         
         "frame":{"objs":[],"no_add":True},
         "region":{"objs":[],"no_add":True,"readonly":True},
-        "filterregion":{"objs":[]},
         
         "glass":gmd.geo['glass'],
         "panel":{"readonly":True,'objs':[]}
@@ -156,20 +156,102 @@ class Pad(models.Model):
             mark.save(b, 'BMP')
             mainMark = base64.b64encode(b.getvalue())
 
-        return mainMark
+            return mainMark
             
     @api.multi
     def write(self, values):
         if 'geo' in values:
             geo = values['geo']
             if geo['mark'].get('modified',False):
+                del geo['mark']['modified']
                 mark = self.save_mark(geo['mark'])
                 if mark is not None:
                     values['mainMark'] = mark
                     
             if geo['submark'].get('modified',False):
+                del geo['submark']['modified']
                 mark = self.save_mark(geo['submark'])
                 if mark is not None:
                     values['subMark'] = mark
             
         return super(Pad, self).write(values)
+    
+    @api.multi
+    def search_goa(self,vals):
+        self.ensure_one()
+        try:
+            getattr(windll,"AutoPeriod")
+        except:
+            raise UserError("'auto search' not supported on goa")
+        
+        width = vals['width']
+        height = vals['height']
+        strBlocks = vals['strBlocks']
+        strPoints = vals['strPoints']
+        type = vals['type']
+        
+        blocks = json.loads(strBlocks)
+        points = json.loads(strPoints)
+         
+        dest = Image.new('L', (width,height))   
+        left = 0
+        top = 0 
+        for x in range(len(blocks)):
+            for y in range(len(blocks[x])-1,-1,-1):
+                b = blocks[x][y]    
+                if b is None or b['bHasIntersection'] == False:
+                    continue;
+                
+                try:
+                    imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    with Image.open(imgFile) as im:
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                        region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                        dest.paste(region, (left,top))
+                        if y == 0:
+                            left += region.width
+                            top = 0
+                        else:
+                            top += region.height
+                except:
+                    raise UserError("No such file:%s"% (imgFile))
+        
+        dest = dest.transpose(Image.FLIP_TOP_BOTTOM)
+        pSrcStart = dest.tobytes()
+        step = width
+        nVertices = len(points['x'])
+        aVerticesX = (c_int * nVertices)(*points['x'])
+        aVerticesY = (c_int * nVertices)(*points['y'])
+        periodX = c_int()
+        periodY = c_int()
+        periodType = c_int(type)
+        pMapStart = create_string_buffer(width*height*3)
+        nMapStep = 3*width
+        
+        with open('d:/src.bmp', 'wb') as f:
+            dest.save(f, format="BMP")
+            
+        with open('d:/src.txt', 'wt') as f:
+            f.write("width:%d\n"%width)
+            f.write("height:%d\n"%height)
+            f.write("step:%d\n"%step)
+            f.write("nVertices:%d\n"%nVertices)
+            f.write("aVerticesX:%s\n"%strPoints)
+        
+        
+        res = windll.AutoPeriod.GetPeriod(pSrcStart,width,height,step,nVertices,aVerticesX,aVerticesY,byref(periodX),byref(periodY),periodType,pMapStart,nMapStep)
+        if res == 1:
+            out = Image.frombytes('RGB', (width,height), pMapStart)
+            b = BytesIO()
+            out.save(b, 'JPEG')
+        
+            return {
+                'result': True,
+                "periodX":periodX.value,
+                "periodY":periodY.value,
+                'map':base64.b64encode(b.getvalue())
+            }
+        else:
+            return {
+                'result': False
+            }

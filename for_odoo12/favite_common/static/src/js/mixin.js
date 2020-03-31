@@ -62,7 +62,7 @@ var MapMouseHandle = {
 				return;
 			}
 				
-			this.map.discardActiveObject();
+			
 			if(this.map.curPolyline){
 				this.map.curPolyline.focus(false);
 				this.map.curPolyline = null;
@@ -108,6 +108,7 @@ var MapMouseHandle = {
 				}
 			}
 			if(selected.length > 0){
+				this.map.discardActiveObject();
 				var sel = new fabric.ActiveSelection(selected, {canvas: this.map,hasControls: false,hoverCursor:"move",hasBorders:false});
 				this.map.setActiveObject(sel);
 			}

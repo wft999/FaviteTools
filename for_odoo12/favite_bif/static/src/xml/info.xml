@@ -34,6 +34,53 @@
     </div>
 </t>
 
+<t t-name="favite_pad.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<table class="o_group o_inner_group o_label_nowrap pad_info">
+        	</table>
+        </div>
+        <div><img class="img-geo" src=""/></div>
+    </div>
+</t>
+
+<t t-name="favite_pad.info_regular">
+		<tr>
+			<td><div class="o_horizontal_separator">Regular</div></td>
+			<td style="vertical-align: bottom;"><button  t-if="!widget.readonly" class="btn btn-xs btn-secondary o_button_calc" type="button">Auto calc</button></td>	
+		</tr>
+		<tr>
+           <td class="o_td_label"><label for="enable_d1g1" class="o_form_label">Enable d1g1</label></td>
+           	<td width="100%"><input type="checkbox" name="enable_d1g1" class="o_glass_data" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="periodX" class="o_form_label">Period(horizontal)</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" name="periodX" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="periodY" class="o_form_label">Period(vertical)</label></td>
+           	<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" name="periodY" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="type" class="o_form_label">Type</label></td>
+           	<td width="100%">
+           		<select name="type" class="o_field_widget o_input o_panel_data" >
+					<option value="0" selected="selected">vertical</option>
+					<option value="1">horizontal</option>
+					<option value="2">lean</option>
+				</select>
+			</td>
+       	</tr>
+</t>
+
 <t t-name="favite_gsp.info_zone">
 		<tr>
 			<td><div class="o_horizontal_separator">Zone</div></td>

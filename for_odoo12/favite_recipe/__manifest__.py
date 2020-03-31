@@ -32,7 +32,8 @@
         'data/filter.xml',
         'data/mura.xml',
         'data/judge.xml',
-        'data/defect.xml'
+        'data/defect.xml',
+        
     ],
     # only loaded in demonstration mode
     'demo': [

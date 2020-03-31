@@ -171,7 +171,7 @@
 		<field name="name">favite_recipe.recipe.form.simplified</field>
 		<field name="model">favite_recipe.recipe</field>
 		<field name="arch" type="xml">
-			<form string="Recipe">
+			<form string="Recipe" export="0">
 				<sheet>
 					<group>
 						<field name="name" string="Name" />
@@ -192,12 +192,25 @@
 			</form>
 		</field>
 	</record>   
+	
+	<record id="directory_view_tree" model="ir.ui.view">
+        <field name="name">favite_recipe.recipe.tree</field>
+        <field name="model">favite_recipe.recipe</field>
+        <field name="arch" type="xml">
+            <tree string="recipe list" importEnabled="false">
+                <field name="name"/>
+                <field name="description"/>
+                <field name="write_uid"/>
+				<field name="write_date"/>
+            </tree>
+        </field>
+    </record>
 
 	<record id="recipe_view_kanban" model="ir.ui.view">
 		<field name="name">favite_recipe.recipe.kanban</field>
 		<field name="model">favite_recipe.recipe</field>
 		<field name="arch" type="xml">
-			<kanban  on_create="favite_recipe.open_create_recipe" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
+			<kanban  on_create="favite_recipe.open_create_recipe" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors"  export="0">
 				<field name="gmd_id" />
 				<field name="description" />
 				<field name="write_uid"/>
@@ -210,7 +223,6 @@
                                         <span class="fa fa-ellipsis-v"/>
                                     </a>
                                     <div class="dropdown-menu" role="menu">
-           								<a type="edit" class="dropdown-item">Setting</a>
            								<a type="edit" class="dropdown-item">Export</a>
            								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
@@ -259,7 +271,7 @@
 		<field name="name">Recipe</field>
 		<field name="res_model">favite_recipe.recipe</field>
 		<field name="view_type">form</field>
-		<field name="view_mode">kanban,form</field>
+		<field name="view_mode">tree,form</field>
 		<field name="target">current</field>
 	</record>
 
@@ -283,7 +295,21 @@
 				record.open_map()
             </field>
         </record> -->
-   
+        
+	<act_window
+            id="actions_act_window_export_recipe"
+            res_model="favite_common.export.wizard"
+            src_model="favite_recipe.recipe"
+            target="new"
+            key2="client_action_multi"
+            view_type="form" view_mode="form"
+            context="{
+                'default_model_name': 'favite_recipe.recipe'
+            }"
+            name="Export"/>
+
+
+	
 
 	<menuitem name="Recipe" id="favite_recipe.recipe" parent="favite_common.menu_root" action="favite_recipe.open_kanban_recipe"/>
    
