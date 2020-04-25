@@ -219,7 +219,7 @@ class Pad(models.Model):
     
     @api.multi
     def save_mark(self,pad):
-        root = odoo.tools.config['glass_root_path']    
+        root =  odoo.tools.config['glass_root_path']
         mainMark = None
         subMark = None
         mainMarkWidth = 0
@@ -243,7 +243,7 @@ class Pad(models.Model):
                         iInterSectionWidth = block['iInterSectionWidth']
                     
                     height += block['iInterSectionHeight']
-                    imgFile = root + '/'+ self.glassName+'/JpegFile/IP'+str(block['iIPIndex']+1)+'/'+'AoiL_IP'+str(block['iIPIndex'])+'_scan'+str(block['iScanIndex'])+'_block'+str(block['iBlockIndex'])+'.jpg'
+                    imgFile = os.path.normcase(root + '/'+ self.glassName+'/JpegFile/IP'+str(block['iIPIndex']+1)+'/'+'AoiL_IP'+str(block['iIPIndex'])+'_scan'+str(block['iScanIndex'])+'_block'+str(block['iBlockIndex'])+'.jpg')
                     with Image.open(imgFile) as im:
                         left = block['iInterSectionStartX']
                         right = block['iInterSectionStartX'] + block['iInterSectionWidth']
@@ -273,7 +273,7 @@ class Pad(models.Model):
                         iInterSectionWidth = block['iInterSectionWidth']
                     
                     height += block['iInterSectionHeight']
-                    imgFile = root + '/'+ self.glassName+'/JpegFile/IP'+str(block['iIPIndex']+1)+'/'+'AoiL_IP'+str(block['iIPIndex'])+'_scan'+str(block['iScanIndex'])+'_block'+str(block['iBlockIndex'])+'.jpg'
+                    imgFile = os.path.normcase(root + '/'+ self.glassName+'/JpegFile/IP'+str(block['iIPIndex']+1)+'/'+'AoiL_IP'+str(block['iIPIndex'])+'_scan'+str(block['iScanIndex'])+'_block'+str(block['iBlockIndex'])+'.jpg')
                     with Image.open(imgFile) as im:
                         left = block['iInterSectionStartX']
                         right = block['iInterSectionStartX'] + block['iInterSectionWidth']
@@ -381,8 +381,8 @@ class Pad(models.Model):
         
         _logger.info('cur menu:%s', menu.complete_name)
         
-        root = odoo.tools.config['glass_root_path']   
-        padConfFile = root + '/' + parts[2] + "/PadToolConfig.ini"
+        root =  odoo.tools.config['glass_root_path']
+        padConfFile = os.path.normcase(root + '/' + parts[2] + "/PadToolConfig.ini")
         if not os.path.isfile(padConfFile):
             raise UserError("File(%s) doesn't exist" % padConfFile)
     
@@ -392,11 +392,11 @@ class Pad(models.Model):
         except Exception as e:
             raise UserError("File(%s) format is not correct" % padConfFile)
         
-        mapFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GLASS_MAP']
+        mapFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GLASS_MAP'])
         if not os.path.isfile(mapFile):
             raise UserError("File(%s) doesn't exist" % mapFile)
         
-        bifFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE']
+        bifFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE'])
         if not os.path.isfile(bifFile):
             raise UserError("File(%s) doesn't exist" % bifFile)
         
@@ -404,7 +404,7 @@ class Pad(models.Model):
         with open(bifFile, 'r') as f:
             bifConf.read_string("[DEFAULT]\r\n" + f.read())
         
-        cameraFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE']
+        cameraFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE'])
         if not os.path.isfile(cameraFile):
             raise UserError("File(%s) doesn't exist" % cameraFile)
         
@@ -432,8 +432,8 @@ class Pad(models.Model):
         
         _logger.info('cur menu:%s', menu.complete_name)
         
-        root = odoo.tools.config['glass_root_path']   
-        padConfFile = root + '/' + parts[2] + "/PadToolConfig.ini"
+        root =  odoo.tools.config['glass_root_path']
+        padConfFile = os.path.normcase(root + '/' + parts[2] + "/PadToolConfig.ini")
         if not os.path.isfile(padConfFile):
             raise UserError("File(%s) doesn't exist" % padConfFile)
     
@@ -443,11 +443,11 @@ class Pad(models.Model):
         except Exception as e:
             raise UserError("File(%s) format is not correct" % padConfFile)
         
-        mapFile = root + '/' + parts[2]  +'/' +parts[3]+'/'+ padConf[parts[3]]['PANEL_MAP']
+        mapFile = os.path.normcase(root + '/' + parts[2]  +'/' +parts[3]+'/'+ padConf[parts[3]]['PANEL_MAP'])
         if not os.path.isfile(mapFile):
             raise UserError("File(%s) doesn't exist" % mapFile)
         
-        bifFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE']
+        bifFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE'])
         if not os.path.isfile(bifFile):
             raise UserError("File(%s) doesn't exist" % bifFile)
         
@@ -455,7 +455,7 @@ class Pad(models.Model):
         with open(bifFile, 'r') as f:
             bifConf.read_string("[DEFAULT]\r\n" + f.read())
         
-        cameraFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE']
+        cameraFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE'])
         if not os.path.isfile(cameraFile):
             raise UserError("File(%s) doesn't exist" % cameraFile)
         
@@ -465,7 +465,7 @@ class Pad(models.Model):
             
         gmdConf = None
         if 'GMD_FILE' in padConf['GLASS_INFORMATION']:
-            gmdFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GMD_FILE']
+            gmdFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GMD_FILE'])
             if os.path.isfile(gmdFile):
                 gmdConf = ConfigParser.ConfigParser()
                 with open(gmdFile, 'r') as f:
@@ -496,13 +496,13 @@ class Pad(models.Model):
             pad['glassName'] = parts[2]
             pad['panelName'] = parts[3]
             
-            root = odoo.tools.config['glass_root_path']   
-            padConfFile = root + '/' + parts[2] + "/PadToolConfig.ini"
+            root =  odoo.tools.config['glass_root_path']
+            padConfFile = os.path.normcase(root + '/' + parts[2] + "/PadToolConfig.ini")
             if not os.path.isfile(padConfFile):
                 raise UserError("File(%s) doesn't exist" % padConfFile)
             padConf = ConfigParser.ConfigParser()
             padConf.read(padConfFile)
-            cameraFile = root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE']
+            cameraFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE'])
             if not os.path.isfile(cameraFile):
                 raise UserError("File(%s) doesn't exist" % cameraFile)
             cameraConf = ConfigParser.RawConfigParser()
@@ -683,7 +683,7 @@ class Pad(models.Model):
         except:
             raise UserError("'auto search' not supported on goa")
         
-        root = odoo.tools.config['glass_root_path']
+        root =  odoo.tools.config['glass_root_path']
         blocks = json.loads(strBlocks)
         points = json.loads(strPoints)
          
@@ -697,7 +697,7 @@ class Pad(models.Model):
                     continue;
                 
                 try:
-                    imgFile = '%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    imgFile = os.path.normcase('%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex']))
                     with Image.open(imgFile) as im:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
                         region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))

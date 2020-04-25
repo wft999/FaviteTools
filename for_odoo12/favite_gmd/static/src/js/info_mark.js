@@ -45,7 +45,7 @@ return Widget.extend({
     start: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
-        	/*self.$('input[name="shift"]')[0].value = self.geo.mark['shift'] || '';*/
+//        	self.$('input[name="shift"]')[0].value = self.geo.mark['shift'] || '';
         	return $.when();
         });
     },

@@ -64,7 +64,7 @@ var MapMouseHandle = {
 				
 			
 			if(this.map.curPolyline){
-				this.map.curPolyline.focus(false);
+				//this.map.curPolyline.focus(false);
 				this.map.curPolyline = null;
 			}
 			
@@ -153,8 +153,8 @@ var MapMouseHandle = {
 			}*/
 		}
 
-    	this.map.renderAll();
-    	//this.map.requestRenderAll();
+    	//this.map.renderAll();
+    	this.map.requestRenderAll();
 	},
 	
     _onMouseDblclick:function(opt){

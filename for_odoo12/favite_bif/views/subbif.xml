@@ -161,5 +161,48 @@
 		</field>
 	</record>
 	
+	<record id="open_kanban_frame" model="ir.actions.act_window">
+		<field name="name">frame</field>
+		<field name="res_model">favite_bif.frame</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_mark" model="ir.actions.act_window">
+		<field name="name">mark</field>
+		<field name="res_model">favite_bif.mark</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_measure" model="ir.actions.act_window">
+		<field name="name">measure</field>
+		<field name="res_model">favite_bif.measure</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_fixpoint" model="ir.actions.act_window">
+		<field name="name">fixpoint</field>
+		<field name="res_model">favite_bif.fixpoint</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_lut" model="ir.actions.act_window">
+		<field name="name">lut</field>
+		<field name="res_model">favite_bif.lut</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">kanban,tree,form</field>
+		<field name="target">current</field>
+	</record>
+	
+	<menuitem name="Sub" id="favite_bif.sub" parent="favite_bif.bif"/>
+	<menuitem name="frame" id="favite_bif.frame" parent="favite_bif.sub" action="favite_bif.open_kanban_frame"/>
+	<menuitem name="mark" id="favite_bif.mark" parent="favite_bif.sub" action="favite_bif.open_kanban_mark"/>
+	<menuitem name="measure" id="favite_bif.measure" parent="favite_bif.sub" action="favite_bif.open_kanban_measure"/>
+	<menuitem name="fixpoint" id="favite_bif.fixpoint" parent="favite_bif.sub" action="favite_bif.open_kanban_fixpoint"/>
+	<menuitem name="lut" id="favite_bif.lut" parent="favite_bif.sub" action="favite_bif.open_kanban_lut"/>
+	
   </data>
 </odoo>

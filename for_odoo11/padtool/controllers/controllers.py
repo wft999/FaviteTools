@@ -3,6 +3,7 @@ import atexit
 import collections
 import json
 import io
+import os
 import random
 import imghdr
 from PIL import Image
@@ -24,7 +25,7 @@ class Padtool(http.Controller):
     #@profile
     def get_curl_image(self,glass_name,width,height,strBlocks, **k):
         global imgs
-        root = odoo.tools.config['glass_root_path']
+        root =  odoo.tools.config['glass_root_path']
         blocks = json.loads(strBlocks)
          
         dest = Image.new('L', (width,height))
@@ -36,7 +37,7 @@ class Padtool(http.Controller):
                 if b is None or b['bHasIntersection'] == False:
                     continue;
                 
-                imgFile = '%s/%s/ResizeScanJpegFile/IP%d/AoiL_IP%d_resize_small%d.jpeg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'])
+                imgFile = os.path.normcase('%s/%s/ResizeScanJpegFile/IP%d/AoiL_IP%d_resize_small%d.jpeg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex']))
                 if imgFile in imgs:
                     im = imgs[imgFile] #Image.frombytes('L', (imgs[imgFile]['width'],imgs[imgFile]['height']), imgs[imgFile]['img'])
                     region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
@@ -74,7 +75,7 @@ class Padtool(http.Controller):
     #@profile
     def get_image(self,glass_name,width,height,strBlocks, **k):
         global imgs
-        root = odoo.tools.config['glass_root_path']
+        root =  odoo.tools.config['glass_root_path']
         blocks = json.loads(strBlocks)
          
         dest = Image.new('L', (width,height))
@@ -86,7 +87,7 @@ class Padtool(http.Controller):
                 if b is None or b['bHasIntersection'] == False:
                     continue;
                 
-                imgFile = '%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                imgFile = os.path.normcase('%s/%s/JpegFile/IP%d/AoiL_IP%d_scan%d_block%d.jpg' % (root,glass_name,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex']))
                 if imgFile in imgs:
                     im = imgs[imgFile] #Image.frombytes('L', (imgs[imgFile]['width'],imgs[imgFile]['height']), imgs[imgFile]['img'])
                     region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))

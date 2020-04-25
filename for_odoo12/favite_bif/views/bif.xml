@@ -213,7 +213,8 @@
 		<field name="target">current</field>
 	</record>
 
-	<menuitem name="Bif" id="favite_bif.bif" parent="favite_common.menu_root" action="favite_bif.open_kanban_bif"/>
+	<menuitem name="Bif" id="favite_bif.bif" parent="favite_common.menu_root" />
+	<menuitem name="Main" id="favite_bif.main" parent="favite_bif.bif" action="favite_bif.open_kanban_bif"/>
    
   </data>
 </odoo>

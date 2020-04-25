@@ -73,31 +73,58 @@ var WidgetInfo = Widget.extend({
             return $.when();
         });
     },
-    
+
     start: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
         	core.bus.on('map_select_change', self, self._onMapSelectChange);
         	
+        	var disabled = self.getParent().mode != 'edit';
+        	self.$('a.dropdown-toggle').attr("data-toggle",!disabled?'dropdown':'#');
+        	
+        	self.$('input[name="galss_size"]')[0].value = self.geo.glass.size[0] + ',' + self.geo.glass.size[1];
+        	
+        	self.$('input.o_glass_data')[0].disabled = disabled;
+        	self.$('select.o_glass_data')[0].disabled = disabled;
+        	self.$('select.o_glass_data')[0].disabled = disabled;
+        	self.$('select.o_glass_data')[0].disabled = disabled;
+        	self.$('select.o_glass_data')[0].disabled = disabled;
+        	
         	self._showCoordList();
+        	self.$el.find('li.width_long')[0].disabled = disabled;
+        	self.$el.find('li.width_short')[0].disabled = disabled;
+        	
         	self.$('input[name="use_hsd"]')[0].checked = self.geo.glass.use_hsd == 1;
+        	self.$('input[name="use_hsd"]')[0].disabled = disabled;
 
         	
         	self.$('#sort_range_glass')[0].checked = self.geo.glass.sort_range == 1;
+        	self.$('#sort_range_glass')[0].disabled = disabled;
         	self.$('#sort_range_block')[0].checked = self.geo.glass.sort_range == 0;
+        	self.$('#sort_range_block')[0].disabled = disabled;
         	
         	
         	self.$('#sort_dir_x')[0].checked = self.geo.glass.sort_direction == 0;
+        	self.$('#sort_dir_x')[0].disabled = disabled;
         	self.$('#sort_dir_y')[0].checked = self.geo.glass.sort_direction == 1;
+        	self.$('#sort_dir_y')[0].disabled = disabled;
         	
         	self.$('#sort_tr_x_small')[0].checked = self.geo.glass.sort_trend_x == 0;
+        	self.$('#sort_tr_x_small')[0].disabled = disabled;
         	self.$('#sort_tr_x_big')[0].checked = self.geo.glass.sort_trend_x == 1;
+        	self.$('#sort_tr_x_big')[0].disabled = disabled;
         	
         	self.$('#sort_tr_y_small')[0].checked = self.geo.glass.sort_trend_y == 0;
+        	self.$('#sort_tr_y_small')[0].disabled = disabled;
         	self.$('#sort_tr_y_big')[0].checked = self.geo.glass.sort_trend_y == 1;
+        	self.$('#sort_tr_y_big')[0].disabled = disabled;
         	self.$('select[name="sort_start_pos"]')[0].value = self.geo.glass.sort_start_pos || 0;
+        	self.$('select[name="sort_start_pos"]')[0].disabled = disabled;
         	
         	self._useHsdChange();
+        	self.$('.sort_trend_x')[0].disabled = disabled;
+        	self.$('.sort_trend_y')[0].disabled = disabled;
+        	self.$('.sort_start_pos')[0].disabled = disabled;
         	
         	return $.when();
         });
@@ -122,6 +149,9 @@ var WidgetInfo = Widget.extend({
     },
     
     _onResort: function(){
+    	var disabled = this.getParent().mode != 'edit';
+    	if(disabled)
+    		return;
     	
     	this.geo.glass.sort_range = this.$('input[name="sort_range"]:checked').data('value');
     	this.geo.glass.sort_direction = this.$('input[name="sort_direction"]:checked').data('value');
@@ -164,8 +194,8 @@ var WidgetInfo = Widget.extend({
     
     _glassSizeChange: function(value){
     	value = value.toLowerCase();
-    	if(value.match(/^\d+x\d+$/)){
-    		var size = _.map(value.split('x'),v=>parseInt(v));
+    	if(value.match(/^\d+,\d+$/)){
+    		var size = _.map(value.split(','),v=>parseInt(v));
     		if(this.width_short && size[0]>size[1]){
     			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
     		}else{
@@ -227,6 +257,7 @@ var WidgetInfo = Widget.extend({
     },
     
     _onCornerTypeSelect: function(e){
+    	
     	var $el = $(e.currentTarget);
     	this.geo.glass.corner = $el.find('a').data('type');
     	this.geo.no_render_map = true;
@@ -302,8 +333,8 @@ var WidgetInfo = Widget.extend({
     	if(curPolyline){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
     		if(curPolyline.type == 'mark'){
-    			this.widget_info = new InfoMark(this, curPolyline,this.geo,oid);
-    			this.widget_info.appendTo('.gmd_info');
+    			//this.widget_info = new InfoMark(this, curPolyline,this.geo,oid);
+    			//this.widget_info.appendTo('.gmd_info');
     		}else if(curPolyline.type == 'mask'){
     			this.widget_info = new InfoMask(this, curPolyline,this.geo,oid);
     			this.widget_info.appendTo('.gmd_info');

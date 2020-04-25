@@ -23,7 +23,7 @@ return Widget.extend({
     _onMaskDataChange: function(e){
     	var name = $(e.currentTarget).attr('name');
     	if(name == 'threshold'){
-    		this.geo.mask.objs[this.oid][name] = $(e.currentTarget)[0].value;
+    		this.geo.mask.objs[this.oid][name] = parseInt($(e.currentTarget)[0].value);
     	}if(name == 'pseudopoint_enable'){
     		this.geo.mask[name] = $(e.currentTarget)[0].checked;
     	}else{

@@ -7,16 +7,6 @@
 		<field name="arch" type="xml">
 			<form string="judge_defect" title="judge_defect Parameter" duplicate="false" create="false" delete="false">
 				<sheet>
-					<div class="oe_title">
-						<label for="index" string="id"/>
-						<h1>
-							<field name="index" placeholder="defect type id..." />
-						</h1>
-						<label for="defectcode" string="defectcode"/>
-						<div>
-							<field name="defectcode" placeholder="defect type code..." />
-						</div>
-					</div>
 					<notebook>		
 					</notebook>
 				</sheet>
@@ -40,14 +30,32 @@
 						</div>
 					</div>
 					<notebook>
-						<page string="defecttype">
+						<page string="rtdc.defecttype">
 						    <field name="defect_ids" widget="one2many_list">
                             <tree string="defect Items" create="1" delete="1">
-								<field name="index"/>
-                                <field name="defectcode"/>
+                            	<field name="id"/>
+                                <field name="x_defectcode"/>
+                                <field name="x_ismasked"/>
+                                <field name="x_zone_list"/>
+                                <field name="x_ipflag"/>
+                                <field name="x_size"/>
+                                <field name="x_grey"/>
+                                <field name="x_grey_dif"/>
+                                <field name="x_lengthwidthratio"/>
+                                <field name="x_arearatio"/>
+                                <field name="x_location"/>
                             </tree>
                         	</field>
-						</page>					
+						</page>	
+						<page string="rtdc">
+						    <field name="rtdc_ids" widget="one2many_list">
+                            <tree string="rtdc Items" editable="bottom" create="1" delete="1">
+                            	<field name="defect_id" options="{'no_create_edit': True, 'no_open': True}"/>
+                            	<field name="x_glass_defectnumber"/>
+                                <field name="x_panel_defectnumber"/>
+                            </tree>
+                        	</field>
+						</page>								
 					</notebook>
 				</sheet>
 			</form>
@@ -274,27 +282,34 @@
 		<field name="view_mode">tree,form</field>
 		<field name="target">current</field>
 	</record>
-
-    <!-- server action to the one above -->
-    
-<!--     <record model="ir.actions.server" id="favite_gmd.action_server_kanban">
-      <field name="name">gmd server</field>
-      <field name="model_id" ref="model_favite_gmd_gmd"/>
-      <field name="state">code</field>
-      <field name="code">
-			action = model.open_kanban()
-      </field>
-    </record>
-    
-    <record id="action_mark_late_activities_done" model="ir.actions.server">
-            <field name="name">Mark Late Activities as Done</field>
-            <field name="model_id" ref="model_favite_gmd_gmd"/>
-            <field name="binding_model_id" ref="favite_gmd.model_favite_gmd_gmd"/>
-            <field name="state">code</field>
-            <field name="code">
-				record.open_map()
-            </field>
-        </record> -->
+	<record id="open_kanban_judge" model="ir.actions.act_window">
+		<field name="name">Judge</field>
+		<field name="res_model">favite_recipe.judge</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_filter" model="ir.actions.act_window">
+		<field name="name">Filter</field>
+		<field name="res_model">favite_recipe.filter</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_mura" model="ir.actions.act_window">
+		<field name="name">mura</field>
+		<field name="res_model">favite_recipe.mura</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="target">current</field>
+	</record>
+	<record id="open_kanban_decode" model="ir.actions.act_window">
+		<field name="name">decode</field>
+		<field name="res_model">favite_recipe.decode</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="target">current</field>
+	</record>
         
 	<act_window
             id="actions_act_window_export_recipe"
@@ -309,9 +324,13 @@
             name="Export"/>
 
 
-	
-
-	<menuitem name="Recipe" id="favite_recipe.recipe" parent="favite_common.menu_root" action="favite_recipe.open_kanban_recipe"/>
+	<menuitem name="Recipe" id="favite_recipe.recipe" parent="favite_common.menu_root"/>
+	<menuitem name="Main" id="favite_recipe.main" parent="favite_recipe.recipe" action="favite_recipe.open_kanban_recipe"/>
+	<menuitem name="Sub" id="favite_recipe.sub" parent="favite_recipe.recipe"/>
+	<menuitem name="Judge" id="favite_recipe.judge" parent="favite_recipe.sub" action="favite_recipe.open_kanban_judge"/>
+	<menuitem name="filter" id="favite_recipe.filter" parent="favite_recipe.sub" action="favite_recipe.open_kanban_filter"/>
+	<menuitem name="mura" id="favite_recipe.mura" parent="favite_recipe.sub" action="favite_recipe.open_kanban_mura"/>
+	<menuitem name="decode" id="favite_recipe.decode" parent="favite_recipe.sub" action="favite_recipe.open_kanban_decode"/>
    
   </data>
 </odoo>

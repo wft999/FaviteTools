@@ -69,19 +69,19 @@ var Cross = fabric.util.createClass(fabric.Object, {
     	this.id = options.id;
     	
     	this.animDirection = 'up';
-        this.w=20;
+        this.w=10;
     },
 
 	_render: function(ctx) {
 		var zoom = this.canvas.getZoom();
 		this.width = this.w/zoom;
 		this.height = this.w/zoom;
-		this.strokeWidth = 2/zoom;
+		//this.strokeWidth = 5/zoom;
 		
 		console.log("this.strokeWidth:%f\n",zoom);
 		
 		ctx.beginPath(); 
-		//ctx.lineWidth= Math.round(1/this.canvas.getZoom());
+		ctx.lineWidth= Math.round(2/zoom);
 		//ctx.strokeStyle="yellow"; 
 		ctx.moveTo(-this.width/2,0);
 		ctx.lineTo(this.width/2,0);
@@ -495,6 +495,7 @@ var Polyline = Class.extend({
 		var edit = this.widget.getParent().mode == 'edit';
 		_.each(this.crosses,function(c){
 			c.visible = edit && (focused || self.showCross);// && self.visible;
+	     	c.bringToFront();
 		})
 	},
 	

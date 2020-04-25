@@ -44,6 +44,23 @@ function jsonp(form, attributes, callback) {
     $(form).ajaxSubmit(attributes);
 }
 
+var fileSuffixMap = {
+		'favite_recipe.recipe':'.rcp',
+		'favite_recipe.judge':'.jdg',
+		'favite_recipe.filter':'.flt',
+		'favite_recipe.mura':'.mra',
+		'favite_recipe.decode':'.dco',
+		
+		'favite_gmd.gmd':'.gmd',
+		'favite_bif.bif':'.bif',
+		'favite_bif.pad':'.pad',
+		'favite_bif.frame':'.frm',
+		'favite_bif.mark':'.mrk',
+		'favite_bif.measure':'.msr',
+		'favite_bif.fixpoint':'.fxp',
+		'favite_bif.lut':'.lut',
+}
+
 var DataImport = AbstractAction.extend(ControlPanelMixin, {
     template: 'faviteImportView',
     events: {
@@ -60,6 +77,7 @@ var DataImport = AbstractAction.extend(ControlPanelMixin, {
         this.session = session;
         action.display_name = _t('Import a File'); // Displayed in the breadcrumbs
         this.do_not_change_match = false;
+        this.file_suffix = fileSuffixMap[this.res_model]
     },
     start: function () {
         var self = this;

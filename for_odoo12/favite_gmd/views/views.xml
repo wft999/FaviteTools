@@ -97,7 +97,7 @@
                                     </a>
                                     <div class="dropdown-menu" role="menu">
                                         <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
-           								<a type="edit" class="dropdown-item">Setting</a>
+           								
            								<a type="delete" class="dropdown-item">Delete</a>
                                     </div>
                                 </div>
@@ -139,6 +139,8 @@
 				<field name="geo" />
 				<field name="camera_path"  invisible="1"/>
 				<field name="camera_ini"  invisible="1"/>
+				<notebook>		
+				</notebook>
 			</map>
 		</field>
 	</record>
@@ -160,26 +162,17 @@
 		<field name="target">current</field>
 	</record>
 
-    <!-- server action to the one above -->
-    
-<!--     <record model="ir.actions.server" id="favite_gmd.action_server_kanban">
-      <field name="name">gmd server</field>
-      <field name="model_id" ref="model_favite_gmd_gmd"/>
-      <field name="state">code</field>
-      <field name="code">
-			action = model.open_kanban()
-      </field>
-    </record>
-    
-    <record id="action_mark_late_activities_done" model="ir.actions.server">
-            <field name="name">Mark Late Activities as Done</field>
-            <field name="model_id" ref="model_favite_gmd_gmd"/>
-            <field name="binding_model_id" ref="favite_gmd.model_favite_gmd_gmd"/>
-            <field name="state">code</field>
-            <field name="code">
-				record.open_map()
-            </field>
-        </record> -->
+	<act_window
+            id="actions_act_window_export_gmd"
+            res_model="favite_common.export.wizard"
+            src_model="favite_gmd.gmd"
+            target="new"
+            key2="client_action_multi"
+            view_type="form" view_mode="form"
+            context="{
+                'default_model_name': 'favite_gmd.gmd'
+            }"
+            name="Export"/>
     
     <menuitem name="Gmd" id="favite_gmd.gmd" parent="favite_common.menu_root" action="favite_gmd.open_kanban_gmd"/>
    

@@ -53,7 +53,7 @@
        			</tr>
        			<tr>
            			<td class="o_td_label"><label for="galss_size" class="o_form_label">Size(mm)</label></td>
-           			<td width="100%"><input type="text" class="o_field_widget o_input o_glass_data" name="galss_size" placeholder="e.g. 2000x1000" t-attf-value="{{widget.geo.glass.size[0]}}x{{widget.geo.glass.size[1]}}"></input></td>
+           			<td width="100%"><input type="text" class="o_field_widget o_input o_glass_data" name="galss_size" ></input></td>
        			</tr>
        			<tr>
     				<td><div class="o_horizontal_separator">Sort</div></td>
@@ -89,7 +89,7 @@
 
     	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mark</div></td></tr>
 <!--        	<tr>
-           	<td class="o_td_label"><label for="shift" class="o_form_label">Mark shift(pixel)</label></td>
+           	<td class="o_td_label"><label for="shift" class="o_form_label">shift(pixel)</label></td>
            	<td width="100%"><input type="number" class="o_field_widget o_input" name="shift" /></td>
        	</tr> -->
 

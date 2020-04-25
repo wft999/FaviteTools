@@ -39,7 +39,7 @@ var Block = Canvas.Polyline.extend({
 				for(var c = 0; c < col; c++){
 					var x = c * (width + offsetX) + obj.points[0].x;
 					var y = r * (height + offsetY) + obj.points[0].y;
-					var panel = {points:[],name:"panel" + (r * col + c)};
+					var panel = {points:[],name:"panel" + (r * col + c),d1g1:"1",pixelsize:"478.8000,159.6000"};
 					panel.points.push({x,y});
 					panel.points.push({x:x+width,y:y+height});
 					obj.panels.push(panel);
@@ -51,8 +51,8 @@ var Block = Canvas.Polyline.extend({
 				
 				var padx = 50/this.widget.ratio.x;
 				var pady = 50/this.widget.ratio.y;
-				obj.pad.points.push({x:obj.points[0].x - padx,y:obj.points[0].y + pady});
-				obj.pad.points.push({x:obj.points[1].x + padx,y:obj.points[1].y - pady});
+				obj.pad.points.push({x:obj.points[0].x - padx,y:obj.points[0].y - pady});
+				obj.pad.points.push({x:obj.points[1].x + padx,y:obj.points[1].y + pady});
 			}
 			
 		}
@@ -223,6 +223,29 @@ var Block = Canvas.Polyline.extend({
 	}
 });
 
+
+var LightRegion = Canvas.Polyline.extend({
+	
+	init: function() {
+		this.panels = [];
+		this._super.apply(this, arguments);
+    },
+    
+    checkPoint:function(point){
+		if(this.points.length >= 2){
+			return false;
+		}
+
+		return true;
+	},
+});
+
+canvas_registry.add('favite_gmd_gmd_mask',LightRegion);
+canvas_registry.add('favite_gmd_gmd_markoffset',LightRegion);
+canvas_registry.add('favite_gmd_gmd_lightRegion',LightRegion);
+canvas_registry.add('favite_gmd_gmd_mark',LightRegion);
+canvas_registry.add('favite_gmd_gmd_markoffset',LightRegion);
+canvas_registry.add('favite_gmd_gmd_lightRegion',LightRegion);
 canvas_registry.add('favite_gmd_gmd_block',Block);
 
 });

@@ -40,7 +40,7 @@ class Http(models.AbstractModel):
 
     def webclient_rendering_context(self):
         
-        root = odoo.tools.config['glass_root_path']    
+        root =  odoo.tools.config['glass_root_path'] 
         if not root or not os.path.isdir(root):
             return super(Http,self).webclient_rendering_context()
 
@@ -48,7 +48,7 @@ class Http(models.AbstractModel):
         Menu = request.env['ir.ui.menu'].with_context({'ir.ui.menu.full_list': True})
         for dir in os.listdir(root):   
 
-            iniFilePath = root + '/' + dir + "/PadToolConfig.ini"
+            iniFilePath = os.path.normcase(root + '/' + dir + "/PadToolConfig.ini")
             if not os.path.isfile(iniFilePath):
                 continue
             

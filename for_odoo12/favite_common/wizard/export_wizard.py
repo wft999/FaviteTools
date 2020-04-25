@@ -28,6 +28,9 @@ class ExportWizard(models.TransientModel):
     
     @api.multi
     def export(self):
-        pass
+        for w in self:
+            model = self.env[w.model_name].browse(w.model_id)
+            model.export_file(w.directory_ids)
+                
         
     

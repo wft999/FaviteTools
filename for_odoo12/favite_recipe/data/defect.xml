@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    
+    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_defectcode">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+            <field name="name">x_defectcode</field>
+			<field name="complete_name">defectcode</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">defect code</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="1" />
+            <field name="sequence">1</field>
+    </record>
     <record  model="ir.model.fields"  id="favite_recipe_judge_defect_ipflag">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
             <field name="name">x_ipflag</field>
@@ -102,8 +112,8 @@
             <field name="sequence">1</field>
     </record>
     
-    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_glass_defectnumber">
-            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+    <record  model="ir.model.fields"  id="favite_recipe_judge_rtdc_glass_defectnumber">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_rtdc" />
             <field name="name">x_glass_defectnumber</field>
 			<field name="complete_name">glass.defectnumber</field>
 			<field name="ttype">integer</field>
@@ -113,8 +123,8 @@
             <field name="default_value" eval="False" />
             <field name="sequence">1</field>
     </record>
-    <record  model="ir.model.fields"  id="favite_recipe_judge_defect_panel_defectnumber">
-            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_defect" />
+    <record  model="ir.model.fields"  id="favite_recipe_judge_rtdc_panel_defectnumber">
+            <field name="model_id" ref="favite_recipe.model_favite_recipe_judge_rtdc" />
             <field name="name">x_panel_defectnumber</field>
 			<field name="complete_name">panel.defectnumber</field>
 			<field name="ttype">integer</field>

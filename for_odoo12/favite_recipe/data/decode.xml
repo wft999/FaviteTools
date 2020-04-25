@@ -4,9 +4,9 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_mode">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_mode</field>
-			<field name="complete_name">mode</field>
+			<field name="complete_name">decode.mode</field>
 			<field name="ttype">selection</field>
-            <field name="selection">[('0','no decode'),('1','glassid'),('2','glass and panel id')]</field>
+            <field name="selection">[(0,'no decode'),(1,'glassid'),(2,'glass and panel id')]</field>
             <field name="default" eval="0" />
             
             <field name="locate">Global.</field>
@@ -17,7 +17,7 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_timeout">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_timeout</field>
-			<field name="complete_name">timeout</field>
+			<field name="complete_name">decode.timeout</field>
 			<field name="ttype">integer</field>
             <field name="default" eval="5" />
             
@@ -29,7 +29,7 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_angle_threshold">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_angle_threshold</field>
-			<field name="complete_name">angle.threshold</field>
+			<field name="complete_name">decode.angle.threshold</field>
 			<field name="ttype">float</field>
             <field name="default" eval="3.0" />
             
@@ -42,10 +42,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_glassid_boundsize">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_glassid_boundsize</field>
-			<field name="complete_name">glassid.boundsize</field>
+			<field name="complete_name">decode.glassid.boundsize</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Glassid.</field>
-            <field name="field_description">bound size</field>
+            <field name="field_description">glass bound size</field>
             <field name="help">it is a help</field>
             <field name="default_value">9400,2500</field>
             <field name="sequence">1</field>
@@ -53,10 +53,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_glassid_centershift_threshold">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_glassid_centershift_threshold</field>
-			<field name="complete_name">glassid.centershift.threshold</field>
+			<field name="complete_name">decode.glassid.centershift.threshold</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Glassid.</field>
-            <field name="field_description">center shift threshold</field>
+            <field name="field_description">glass center shift threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value">300,300</field>
             <field name="sequence">2</field>
@@ -64,10 +64,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_glassid_width_range">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_glassid_width_range</field>
-			<field name="complete_name">glassid.width.range</field>
+			<field name="complete_name">decode.glassid.width.range</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Glassid.</field>
-            <field name="field_description">width range</field>
+            <field name="field_description">glass width range</field>
             <field name="help">it is a help</field>
             <field name="default_value">200,3000</field>
             <field name="sequence">3</field>
@@ -75,10 +75,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_glassid_height_range">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_glassid_height_range</field>
-			<field name="complete_name">glassid.height.range</field>
+			<field name="complete_name">decode.glassid.height.range</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Glassid.</field>
-            <field name="field_description">height range</field>
+            <field name="field_description">glass height range</field>
             <field name="help">it is a help</field>
             <field name="default_value">200,3000</field>
             <field name="sequence">4</field>
@@ -86,12 +86,12 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_glassid_lengthwidthratio_threshold">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_glassid_lengthwidthratio_threshold</field>
-			<field name="complete_name">glassid.lengthwidthratio.threshold</field>
+			<field name="complete_name">decode.glassid.lengthwidthratio.threshold</field>
 			<field name="ttype">float</field>
             <field name="default" eval="3.0" />
             
             <field name="locate">Glassid.</field>
-            <field name="field_description">lengthwidth ratio threshold</field>
+            <field name="field_description">glass lengthwidth ratio threshold</field>
             <field name="help">it is a help</field>
             <field name="sequence">5</field>
     </record>   
@@ -99,10 +99,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_panelid_boundsize">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_panelid_boundsize</field>
-			<field name="complete_name">panelid.boundsize</field>
+			<field name="complete_name">decode.panelid.boundsize</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Panelid.</field>
-            <field name="field_description">bound size</field>
+            <field name="field_description">panel bound size</field>
             <field name="help">it is a help</field>
             <field name="default_value">9400,2500</field>
             <field name="sequence">1</field>
@@ -110,10 +110,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_panelid_centershift_threshold">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_panelid_centershift_threshold</field>
-			<field name="complete_name">panelid.centershift.threshold</field>
+			<field name="complete_name">decode.panelid.centershift.threshold</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Panelid.</field>
-            <field name="field_description">center shift threshold</field>
+            <field name="field_description">panel center shift threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value">300,300</field>
             <field name="sequence">2</field>
@@ -121,10 +121,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_panelid_width_range">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_panelid_width_range</field>
-			<field name="complete_name">panelid.width.range</field>
+			<field name="complete_name">decode.panelid.width.range</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Panelid.</field>
-            <field name="field_description">width range</field>
+            <field name="field_description">panel width range</field>
             <field name="help">it is a help</field>
             <field name="default_value">200,3000</field>
             <field name="sequence">3</field>
@@ -132,10 +132,10 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_panelid_height_range">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_panelid_height_range</field>
-			<field name="complete_name">panelid.height.range</field>
+			<field name="complete_name">decode.panelid.height.range</field>
 			<field name="ttype">integer_array</field>
             <field name="locate">Panelid.</field>
-            <field name="field_description">height range</field>
+            <field name="field_description">panel height range</field>
             <field name="help">it is a help</field>
             <field name="default_value">200,3000</field>
             <field name="sequence">4</field>
@@ -143,12 +143,12 @@
     <record  model="ir.model.fields"  id="favite_recipe_decode_panelid_lengthwidthratio_threshold">
             <field name="model_id" ref="favite_recipe.model_favite_recipe_decode" />
             <field name="name">x_panelid_lengthwidthratio_threshold</field>
-			<field name="complete_name">panelid.lengthwidthratio.threshold</field>
+			<field name="complete_name">decode.panelid.lengthwidthratio.threshold</field>
 			<field name="ttype">float</field>
             <field name="default" eval="3.0" />
             
             <field name="locate">Panelid.</field>
-            <field name="field_description">lengthwidth ratio threshold</field>
+            <field name="field_description">panel lengthwidth ratio threshold</field>
             <field name="help">it is a help</field>
             <field name="sequence">5</field>
     </record>    

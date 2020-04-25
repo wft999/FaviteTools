@@ -29,6 +29,11 @@ class Jsonb(fields.Field):
 class NumericArray(fields.Field):
     type = 'float_array'
     column_type = ('_numeric', 'NUMERIC[]')
+    
+    def convert_to_export(self, value, record):
+        if value is None or value is False:
+            return ''
+        return ','.join(map(lambda v:str(v),value))
 
     def convert_to_cache(self, value, record, validate=True):
         if value is None or value is False:

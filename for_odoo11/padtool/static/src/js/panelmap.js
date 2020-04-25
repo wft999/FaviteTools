@@ -500,7 +500,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         	}
         	else{
         		self.jsonpad = new Array();
-        		self.submarkSize = [500,500];
+        		self.submarkSize = [1000,1000];
         	}
         		
         	self._drawPad();

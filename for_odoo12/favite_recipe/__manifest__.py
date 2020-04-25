@@ -25,8 +25,7 @@
     # always loaded
     'data': [
         'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
+        
         'data/recipe.xml',
         'data/decode.xml',
         'data/filter.xml',
@@ -34,13 +33,16 @@
         'data/judge.xml',
         'data/defect.xml',
         
+        'views/views.xml',
+        'views/templates.xml',
+        
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
     'qweb': [
-        "static/src/xml/info.xml",
+        #"static/src/xml/info.xml",
     ],
 
     'installable': True,

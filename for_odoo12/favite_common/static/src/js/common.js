@@ -68,6 +68,14 @@ field_utils.format.jsonb = function(value, field, options){
 	return JSON.stringify(value);
 };
 
+field_utils.format.integer_array = function(value, field, options){
+	if (value === false) {
+        return "";
+    }
+	
+	return value.join(', ');
+};
+
 
 });
 

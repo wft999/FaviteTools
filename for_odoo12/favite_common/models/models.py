@@ -51,6 +51,14 @@ class GeometryModel(models.AbstractModel):
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
     
+    def _export_coord(self):
+        return self.geo
+    
+    def _import_coord(self):
+        geo = self.geo
+        
+        self.write({'geo': geo})
+    
     @api.one
     @api.constrains('name')
     def _check_name(self):
@@ -162,7 +170,10 @@ class GeometryModel(models.AbstractModel):
                 
         return result   
     
-
+    def export_file(self,dir):
+        pass
+    
+    
 class Camera(models.Model):
     _name = 'favite_common.camera'
 

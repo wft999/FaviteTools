@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record  model="ir.model.fields"  id="favite_gmd_gmd_mask_pseudopoint_enable">
+            <field name="model_id" ref="favite_gmd.model_favite_gmd_gmd" />
+            <field name="name">x_mask_pseudopoint_enable</field>
+			<field name="complete_name">mask.pseudopoint.enable</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">Mask enable</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True" />
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_gmd_gmd_mask_position_distance">
+            <field name="model_id" ref="favite_gmd.model_favite_gmd_gmd" />
+            <field name="name">x_mask_position_distance</field>
+			<field name="complete_name">mask.position.distance</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">Mask distance</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0,0</field>
+            <field name="sequence">2</field>
+    </record>
+    
+    <record  model="ir.model.fields"  id="favite_gmd_gmd_mark_shift">
+            <field name="model_id" ref="favite_gmd.model_favite_gmd_gmd" />
+            <field name="name">x_mark_shift</field>
+			<field name="complete_name">mark.shift</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.</field>
+            <field name="field_description">Mark shift</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0" />
+            <field name="sequence">3</field>
+    </record> 
+    
+</odoo>
