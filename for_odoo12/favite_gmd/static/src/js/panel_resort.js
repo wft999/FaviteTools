@@ -491,7 +491,7 @@ function ResortPanelID(geo,first_panel_mode, dir ,range ,iStartPos){
 			temp = temp + IntIndexToStrIndex(n + 1);
 			
 			panels[index_list[j]].panel_index = temp;
-			panels[index_list[j]].name = temp.toString();
+			panels[index_list[j]].name = 'P'+temp.toString();
 			
 			//m_pGlassInformation->m_PanelExtraData[index_list[j]].panel_id = temp;
 			//m_pGlassInformation->m_PanelExtraData[index_list[j]].panel_index = j + 1;
@@ -697,7 +697,7 @@ function ResortPanelIndex(geo,first_panel_mode, dir, range){
 		for(var j = 0; j < panel_count; j ++)
 		{
 			panels[index_list[j].id].panel_index = j + parseInt(panel_start_id);
-			panels[index_list[j].id].name = (panels[index_list[j].id].panel_index).toString();
+			panels[index_list[j].id].name = 'P'+(panels[index_list[j].id].panel_index).toString();
 		}
 	}
 	

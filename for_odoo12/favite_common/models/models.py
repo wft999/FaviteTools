@@ -47,14 +47,10 @@ class GeometryModel(models.AbstractModel):
     name = fields.Char(required=True,)
     description = fields.Text()
     
-    _sql_constraints = [
-        ('name_uniq', 'unique (name)', "Name already exists !"),
-    ]
-    
-    def _export_coord(self):
+    def _export_geo(self):
         return self.geo
     
-    def _import_coord(self):
+    def _import_geo(self):
         geo = self.geo
         
         self.write({'geo': geo})

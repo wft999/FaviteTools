@@ -12,6 +12,9 @@ _logger = logging.getLogger(__name__)
 class Pad(models.Model):
     _name = 'favite_bif.pad'   
     _inherit = ['favite_common.geometry']
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "Name already exists !"),
+    ]
     
     @api.model  
     def _default_geo(self):

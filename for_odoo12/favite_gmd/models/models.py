@@ -19,6 +19,9 @@ _logger = logging.getLogger(__name__)
 class Gmd(models.Model):
     _name = 'favite_gmd.gmd'
     _inherit = ['favite_common.geometry']
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "Name already exists !"),
+    ]
     
     @api.model
     def _default_geo(self):
@@ -378,7 +381,7 @@ class Gmd(models.Model):
         strCoordtransform += 'coordtransform.dm.longedge = %d\n' % iLongEdge
         strCoordtransform += 'coordtransform.dm.minquadrant = %d\n' % iStartQuandrant
         
-        geo = self._export_coord()
+        geo = self._export_geo()
         strMark = ''
         if len(geo['markoffset']['objs']):
             p1 = geo['markoffset']['objs'][0]['points'][0]
@@ -433,7 +436,7 @@ class Gmd(models.Model):
             for p in b['panels']:
                 strPanel += 'panel.%d.pixelsize = %s\n' % (panelNum,p['pixelsize'])
                 strPanel += 'panel.%d.d1g1 = %s\n' % (panelNum,p['d1g1'])
-                strPanel += 'panel.%d.id = %s\n' % (panelNum,p['name'])
+                strPanel += 'panel.%d.id = %s\n' % (panelNum,p['panel_index'])
                 
                 p1 = p['points'][0]
                 p2 = p['points'][1]
@@ -463,8 +466,11 @@ class Gmd(models.Model):
             else:
                 strParameter += '%s = %s\n' % (fields_data[name]['complete_name'],field.convert_to_export(self[name],self))
                 
-        for d in directory_ids:  
-            dir = os.path.join(d.name ,'gmd')
+        for d in directory_ids: 
+            dir = os.path.join(d.name ,'recipe')
+            if not os.path.isdir(dir):
+                os.makedirs(dir) 
+            dir = os.path.join(d.name ,'recipe','gmd')
             if not os.path.isdir(dir):
                 os.makedirs(dir)
             path = os.path.join(dir,self.name+'.gmd')
@@ -556,8 +562,7 @@ class Gmd(models.Model):
                         obj[name] = value == '1' 
                         
             obj['geo'] = geo 
-            gmd = self.create(obj)     
-            gmd._import_coord()      
+            self.create(obj)._import_geo()         
         except Exception as e:
             written = False
             message = str(e)

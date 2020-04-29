@@ -27,7 +27,7 @@ var DomainZone = Canvas.Polyline.extend({
     specialHandle: function(){
     	var obj = this.obj;
     	
-    	if(this.points && this.points.length == 1){
+    	if(obj.points && obj.points.length == 1){
     		obj.points.push({x:obj.points[0].x + DOMAIN_WIDTH,y:obj.points[0].y + DOMAIN_HEIGHT});
     		obj.points[0].x -= DOMAIN_WIDTH;
     		obj.points[0].y -= DOMAIN_HEIGHT;
@@ -54,12 +54,12 @@ var Zone = Canvas.Polyline.extend({
 		var point = this.widget._map2geo(point);
     	var dz = this.widget.geo["domain"];
     	if(dz && dz.objs.length > 0){
-    		var left = dz.objs[0].points[0].x;
-    		var right = dz.objs[0].points[1].x;
-    		var top = dz.objs[0].points[0].y;
-    		var bottom = dz.objs[0].points[1].y;
+    		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+    		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+    		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+    		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
     		
-    		return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom; 
+    		return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom; 
     	}else{
     		return false;
     	}
@@ -68,13 +68,15 @@ var Zone = Canvas.Polyline.extend({
 	
 	specialHandle: function(){
 		var dz = this.widget.geo["domain"];
-		var org = this.widget._geo2map(dz.objs[0].points[0]);
+		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x)
+		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y)
+		var org = this.widget._geo2map({x,y});
 		
 		var self = this;
     	this.obj.points.forEach(function(p){
     		var tmp = self.widget._geo2map(p);
     		p.offsetX = tmp.x - org.x;
-    		p.offsetY = tmp.y - org.y;
+    		p.offsetY = -tmp.y + org.y;
     	})
     	
     	return true;

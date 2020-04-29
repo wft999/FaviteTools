@@ -39,7 +39,7 @@ var Block = Canvas.Polyline.extend({
 				for(var c = 0; c < col; c++){
 					var x = c * (width + offsetX) + obj.points[0].x;
 					var y = r * (height + offsetY) + obj.points[0].y;
-					var panel = {points:[],name:"panel" + (r * col + c),d1g1:"1",pixelsize:"478.8000,159.6000"};
+					var panel = {points:[],name:"P" + (r * col + c),d1g1:"1",pixelsize:"478.8000,159.6000"};
 					panel.points.push({x,y});
 					panel.points.push({x:x+width,y:y+height});
 					obj.panels.push(panel);
@@ -239,7 +239,7 @@ var LightRegion = Canvas.Polyline.extend({
 		return true;
 	},
 });
-
+canvas_registry.add('favite_bif_panel_filter',LightRegion);
 canvas_registry.add('favite_gmd_gmd_mask',LightRegion);
 canvas_registry.add('favite_gmd_gmd_markoffset',LightRegion);
 canvas_registry.add('favite_gmd_gmd_lightRegion',LightRegion);
