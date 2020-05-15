@@ -28,13 +28,9 @@ class Panel(models.Model):
         "filter":{"objs":[]},
         }
         return geo
-        
-    @api.one
-    @api.onchange('gmd_id','gmd_id.geo')
-    def _compute_geo(self):
-        self.geo['glass'] = self.gmd_id.geo['glass']
     
     geo = fields.Jsonb(string = "geometry value",default=_default_geo)   
+    glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
        
     bif_id = fields.Many2one('favite_bif.bif',ondelete='cascade')  
     gsp_id = fields.Many2one('favite_bif.gsp',ondelete='set null',domain="[('bif_id', '=', bif_id)]")
@@ -65,13 +61,6 @@ class Bif(models.Model):
         
         bif_geo = dict(self.geo)
         
-        if self.frame_id:
-            if 'frame_filter' in self.geo:
-                self.frame_id.geo['filter'] = self.geo['frame_filter']
-            if 'frame_inspect' in self.geo:
-                self.frame_id.geo['inspect'] = self.geo['frame_inspect']
-            self.frame_id.write({'geo':self.frame_id.geo})
-        
         for p in  bif_geo['panel']['objs']:
             geo = {
                 "filter":{"objs":[]},
@@ -91,9 +80,8 @@ class Bif(models.Model):
             panel.write({'geo':geo})
 
     @api.one
-    @api.depends('gmd_id','gmd_id.geo','frame_id','frame_id.geo','panel_ids.geo')
+    @api.depends('gmd_id','gmd_id.geo','panel_ids.geo')
     def _compute_geo(self):
-        self.geo['glass'] = self.gmd_id.geo['glass']
         self.geo['mark'] = self.gmd_id.geo['mark']
         self.geo['mark']['readonly'] = True
         self.geo['panel'] = {"objs":[],"readonly":True}
@@ -103,16 +91,15 @@ class Bif(models.Model):
         cur = self.env['favite_bif.panel'].sudo().search([('name','in',names)])
         (total - cur).unlink()
         
+        objs = []
         for b in self.gmd_id.geo['block']['objs']:
             for p in b['panels']:
-                self.geo['panel']['objs'].append(p)
-                panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name'])]);
+                objs.append(p)
+                panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)]);
                 if not panel:
                     self.env['favite_bif.panel'].sudo().create({'bif_id': self.id,'name':p['name']})
-         
-        self.geo['frame_filter'] = self.frame_id.geo['filter'] if self.frame_id else  {"objs":[]}
-        self.geo['frame_inspect'] = self.frame_id.geo['inspect'] if self.frame_id else  {"objs":[]}
-        
+        self.geo['panel']['objs'] = list(objs)
+
         self.geo['panel_filter'] = {"objs":[]}
         for panel in self.panel_ids:
             for obj in panel.geo['filter']['objs']:
@@ -121,6 +108,7 @@ class Bif(models.Model):
                 self.geo['panel_filter']['objs'].append(filter)
         
     geo = fields.Jsonb(string = "geometry value",compute='_compute_geo',inverse='_inverse_geo')
+    glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     
     camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
@@ -298,7 +286,7 @@ class Bif(models.Model):
                 if gmd:
                     obj['gmd_id'] = gmd.id
                 else:
-                    raise UserError("File(%s) must first be imported!" % par['recipe.subrecipe.gmd'])
+                    raise UserError("File(%s) must first be imported!" % par['panel.gmd'])
             else:
                 raise UserError("File(%s) must contain gmd!" % file.filename)
             
@@ -354,7 +342,7 @@ class Bif(models.Model):
                     if isinstance(obj[name], bool):
                         obj[name] = value == '1' 
                          
-            bif = self.create(obj)      
+            bif = self.create(obj) 
             
             n = int(par.get('panel.number',0))
             for i in range(0, n):
@@ -364,22 +352,21 @@ class Bif(models.Model):
                 gspname = par['panel.%d.gspname'%i]
                 gspindex = par['panel.%d.gspindex'%i]
                 gsp = self.env['favite_bif.gsp'].sudo().search([('name','=',gspname),('bif_id','=',bif.id)]);
-                if gsp:
-                    gsp_id = gsp.id
-                else:
-                    gsp_id = self.env['favite_bif.gsp'].sudo().import_string(par,gspname,gspindex,bif,panel).id
+                if not gsp:
+                    gsp = self.env['favite_bif.gsp'].sudo().import_string(par,gspname,gspindex,bif,panel)
+
                 geo = {"filter":{"objs":[]},}
                 
                 m = int(par.get('panel.%d.filternumber'%i,0))
                 for j in range(0, m):
                     left,top = (float(s) for s in par['panel.%d.filter.%d.topleft'%(i,j)].split(','))
                     right,bottom = (float(s) for s in par['panel.%d.filter.%d.bottomright'%(i,j)].split(','))
-                    obj = {'points':[]}
-                    obj['points'].append({'x':left,'y':top})
-                    obj['points'].append({'x':right,'y':bottom})
-                    geo['filter']['objs'].append(obj)
+                    o = {'points':[]}
+                    o['points'].append({'x':left,'y':top})
+                    o['points'].append({'x':right,'y':bottom})
+                    geo['filter']['objs'].append(o)
                     
-                panel.create({'name':name,'bif_id':bif.id,'gsp_id':gsp_id,'geo':geo})
+                panel.write({'gsp_id':gsp.id,'geo':geo})
 
         except Exception as e:
             written = False

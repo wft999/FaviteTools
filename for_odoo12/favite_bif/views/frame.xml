@@ -1,0 +1,76 @@
+<odoo>
+  <data>
+	
+	<record id="frame_form_simplified" model="ir.ui.view">
+		<field name="name">favite_bif.frame.form.simplified</field>
+		<field name="model">favite_bif.frame</field>
+		<field name="arch" type="xml">
+			<form string="frame">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<field name="gmd_id" string="Gmd" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>	
+	<record id="favite_bif_frame_map" model="ir.ui.view">
+		<field name="name">favite_bif.frame.map</field>
+		<field name="model">favite_bif.frame</field>
+		<field name="arch" type="xml">
+			<form string="Fields"  duplicate="false">
+				<field name="camera_path" invisible="1"/>
+				<field name="camera_ini" invisible="1"/>
+				<field name="gmd_id"  invisible="1"/>
+				<field name="geo" />
+				<field name="glass"/>
+				<notebook>					
+				</notebook>
+			</form>
+		</field>
+	</record>
+
+	<record id="frame_view_tree" model="ir.ui.view">
+        <field name="name">favite_bif.frame.tree</field>
+        <field name="model">favite_bif.frame</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="gmd_id"/>
+                <field name="write_uid"/>
+				<field name="write_date"/>
+            </tree>
+        </field>
+    </record>
+	
+	<record id="open_kanban_frame" model="ir.actions.act_window">
+		<field name="name">frame</field>
+		<field name="res_model">favite_bif.frame</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="target">current</field>
+	</record>
+
+	<act_window
+            id="actions_act_window_export_frame"
+            res_model="favite_common.export.wizard"
+            src_model="favite_bif.frame"
+            target="new"
+            key2="client_action_multi"
+            view_type="form" view_mode="form"
+            context="{
+                'default_model_name': 'favite_bif.frame'
+            }"
+            name="Export"/>
+
+	
+	<menuitem name="frame" id="favite_bif.frame" parent="favite_bif.sub" action="favite_bif.open_kanban_frame"/>
+	
+	
+  </data>
+</odoo>

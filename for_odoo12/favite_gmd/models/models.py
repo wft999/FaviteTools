@@ -26,7 +26,6 @@ class Gmd(models.Model):
     @api.model
     def _default_geo(self):
         geo = {
-        "glass":{"corner":1,"size":[2200,2500],"coord":0},
         "lightregion":{"objs":[]},
         "markoffset":{"objs":[]},
         "mark":{"objs":[]},
@@ -34,10 +33,15 @@ class Gmd(models.Model):
         "block":{"objs":[]},
         }
         return geo
+    @api.model
+    def _default_glass(self):
+        glass = {"corner":1,"size":[2200,2500],"coord":0}
+        return glass
     
     camera_path = fields.Selection(selection='_list_all_camers', string='Camera data path', required=True)
     camera_ini = fields.Text(compute='_compute_ini')
     geo = fields.Jsonb(required=True,string = "geometry value",default=_default_geo)
+    glass = fields.Jsonb(required=True,string = "glass value",default=_default_glass)
     color = fields.Integer('Color Index', default=0)
  
     _sql_constraints = [
@@ -254,67 +258,67 @@ class Gmd(models.Model):
         iCenterMode = 1
         iLongEdge = 1
         iStartQuandrant = 1
-        if self.geo['glass']['coord'] == 0:
+        if self.glass['coord'] == 0:
             iCenterMode = 1
             iLongEdge = 1
             iStartQuandrant = 1
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 1
             iLongEdge = 1
             iStartQuandrant = 2
-        elif self.geo['glass']['coord'] == 2:
+        elif self.glass['coord'] == 2:
             iCenterMode = 1
             iLongEdge = 1
             iStartQuandrant = 3
-        elif self.geo['glass']['coord'] == 3:
+        elif self.glass['coord'] == 3:
             iCenterMode = 1
             iLongEdge = 1
             iStartQuandrant = 4
-        elif self.geo['glass']['coord'] == 4:
+        elif self.glass['coord'] == 4:
             iCenterMode = 1
             iLongEdge = 0
             iStartQuandrant = 1
-        elif self.geo['glass']['coord'] == 5:
+        elif self.glass['coord'] == 5:
             iCenterMode = 1
             iLongEdge = 0
             iStartQuandrant = 2
-        elif self.geo['glass']['coord'] == 6:
+        elif self.glass['coord'] == 6:
             iCenterMode = 1
             iLongEdge = 0
             iStartQuandrant = 3
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 1
             iLongEdge = 0
             iStartQuandrant = 4
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 1
             iStartQuandrant = 1
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 1
             iStartQuandrant = 2
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 1
             iStartQuandrant = 3
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 1;
             iStartQuandrant = 4
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 0
             iStartQuandrant = 1
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 0
             iStartQuandrant = 2
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 0
             iStartQuandrant = 3
-        elif self.geo['glass']['coord'] == 1:
+        elif self.glass['coord'] == 1:
             iCenterMode = 0
             iLongEdge = 0
             iStartQuandrant = 4
@@ -373,8 +377,8 @@ class Gmd(models.Model):
            
     @api.one
     def export_file(self,directory_ids):
-        strCoordtransform = 'coordtransform.customer.glasssize = %d,%d\n' % tuple(self.geo['glass']['size'])
-        strCoordtransform += 'coordtransform.dm.cutcorner = %d\n' % self.geo['glass']['corner']
+        strCoordtransform = 'coordtransform.customer.glasssize = %d,%d\n' % tuple(self.glass['size'])
+        strCoordtransform += 'coordtransform.dm.cutcorner = %d\n' % self.glass['corner']
         
         iCenterMode,iLongEdge,iStartQuandrant = self.export_coord()
         strCoordtransform += 'coordtransform.centermode =  %d\n' % iCenterMode
@@ -491,13 +495,13 @@ class Gmd(models.Model):
         message = 'Success'
 
         geo = {
-        "glass":{"corner":1,"size":[0,0],"coord":0},
         "lightregion":{"objs":[]},
         "markoffset":{"objs":[]},
         "mark":{"objs":[]},
         "mask":{"objs":[]},
         "block":{"objs":[]},
         }
+        glass = {"corner":1,"size":[0,0],"coord":0}
         obj = {'name':file.filename.split('.')[0]}
         
         try:
@@ -510,10 +514,10 @@ class Gmd(models.Model):
                 geo['block'] = json.loads(par['block'])  
             
             if 'coordtransform.customer.glasssize' in par:
-                geo['glass']['size'] = [int(s) for s in par['coordtransform.customer.glasssize'].split(',')]
+                glass['size'] = [int(s) for s in par['coordtransform.customer.glasssize'].split(',')]
             if 'coordtransform.dm.cutcorner' in par:
-                geo['glass']['corner'] = int(par['coordtransform.dm.cutcorner'])
-            geo['glass']['coord'] = self.import_coord(par)   
+                glass['corner'] = int(par['coordtransform.dm.cutcorner'])
+            glass['coord'] = self.import_coord(par)   
             
             p = {'points':[]}
             x,y = (float(s) for s in par['mark.offset.p1'].split(','))
@@ -562,6 +566,7 @@ class Gmd(models.Model):
                         obj[name] = value == '1' 
                         
             obj['geo'] = geo 
+            obj['glass'] = glass 
             self.create(obj)._import_geo()         
         except Exception as e:
             written = False

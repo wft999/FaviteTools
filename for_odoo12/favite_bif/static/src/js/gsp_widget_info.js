@@ -18,9 +18,7 @@ var WidgetZone = Widget.extend({
     	'change input': '_onDataChange',
     	
     },
-    
 
-    
     _onDataChange: function(e){
     	var name = $(e.currentTarget).attr('name');
     	this.geo[this.curPolyline.type].objs[this.obj_id][name] = $(e.currentTarget)[0].value;

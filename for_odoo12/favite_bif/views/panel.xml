@@ -26,6 +26,7 @@
 				<field name="camera_ini" invisible="1"/>
 				<field name="bif_id" invisible="1"/>
 				<field name="geo" invisible="1" />
+				<field name="glass" invisible="1"/>
 				<notebook>	
 					<page string="Global">
 						<group>

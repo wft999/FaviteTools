@@ -63,7 +63,9 @@ var WidgetInfo = Widget.extend({
     	var self = this;
         return this._super.apply(this, arguments).then(function () {
         	self.geo = {};
+        	self.glass = {};
         	$.extend(true,self.geo,self.getParent().state.data.geo);
+        	$.extend(true,self.glass,self.getParent().state.data.glass);
         	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
             var pos = self.cameraConf['glass.center.position.0'].split(',');
         	var x = parseInt(pos[0]);
@@ -82,7 +84,7 @@ var WidgetInfo = Widget.extend({
         	var disabled = self.getParent().mode != 'edit';
         	self.$('a.dropdown-toggle').attr("data-toggle",!disabled?'dropdown':'#');
         	
-        	self.$('input[name="galss_size"]')[0].value = self.geo.glass.size[0] + ',' + self.geo.glass.size[1];
+        	self.$('input[name="galss_size"]')[0].value = self.glass.size[0] + ',' + self.glass.size[1];
         	
         	self.$('input.o_glass_data')[0].disabled = disabled;
         	self.$('select.o_glass_data')[0].disabled = disabled;
@@ -94,31 +96,31 @@ var WidgetInfo = Widget.extend({
         	self.$el.find('li.width_long')[0].disabled = disabled;
         	self.$el.find('li.width_short')[0].disabled = disabled;
         	
-        	self.$('input[name="use_hsd"]')[0].checked = self.geo.glass.use_hsd == 1;
+        	self.$('input[name="use_hsd"]')[0].checked = self.glass.use_hsd == 1;
         	self.$('input[name="use_hsd"]')[0].disabled = disabled;
 
         	
-        	self.$('#sort_range_glass')[0].checked = self.geo.glass.sort_range == 1;
+        	self.$('#sort_range_glass')[0].checked = self.glass.sort_range == 1;
         	self.$('#sort_range_glass')[0].disabled = disabled;
-        	self.$('#sort_range_block')[0].checked = self.geo.glass.sort_range == 0;
+        	self.$('#sort_range_block')[0].checked = self.glass.sort_range == 0;
         	self.$('#sort_range_block')[0].disabled = disabled;
         	
         	
-        	self.$('#sort_dir_x')[0].checked = self.geo.glass.sort_direction == 0;
+        	self.$('#sort_dir_x')[0].checked = self.glass.sort_direction == 0;
         	self.$('#sort_dir_x')[0].disabled = disabled;
-        	self.$('#sort_dir_y')[0].checked = self.geo.glass.sort_direction == 1;
+        	self.$('#sort_dir_y')[0].checked = self.glass.sort_direction == 1;
         	self.$('#sort_dir_y')[0].disabled = disabled;
         	
-        	self.$('#sort_tr_x_small')[0].checked = self.geo.glass.sort_trend_x == 0;
+        	self.$('#sort_tr_x_small')[0].checked = self.glass.sort_trend_x == 0;
         	self.$('#sort_tr_x_small')[0].disabled = disabled;
-        	self.$('#sort_tr_x_big')[0].checked = self.geo.glass.sort_trend_x == 1;
+        	self.$('#sort_tr_x_big')[0].checked = self.glass.sort_trend_x == 1;
         	self.$('#sort_tr_x_big')[0].disabled = disabled;
         	
-        	self.$('#sort_tr_y_small')[0].checked = self.geo.glass.sort_trend_y == 0;
+        	self.$('#sort_tr_y_small')[0].checked = self.glass.sort_trend_y == 0;
         	self.$('#sort_tr_y_small')[0].disabled = disabled;
-        	self.$('#sort_tr_y_big')[0].checked = self.geo.glass.sort_trend_y == 1;
+        	self.$('#sort_tr_y_big')[0].checked = self.glass.sort_trend_y == 1;
         	self.$('#sort_tr_y_big')[0].disabled = disabled;
-        	self.$('select[name="sort_start_pos"]')[0].value = self.geo.glass.sort_start_pos || 0;
+        	self.$('select[name="sort_start_pos"]')[0].value = self.glass.sort_start_pos || 0;
         	self.$('select[name="sort_start_pos"]')[0].disabled = disabled;
         	
         	self._useHsdChange();
@@ -153,17 +155,17 @@ var WidgetInfo = Widget.extend({
     	if(disabled)
     		return;
     	
-    	this.geo.glass.sort_range = this.$('input[name="sort_range"]:checked').data('value');
-    	this.geo.glass.sort_direction = this.$('input[name="sort_direction"]:checked').data('value');
-    	this.geo.glass.sort_trend_x = this.$('input[name="sort_trend_x"]:checked').data('value');
-    	this.geo.glass.sort_trend_y = this.$('input[name="sort_trend_y"]:checked').data('value');
+    	this.glass.sort_range = this.$('input[name="sort_range"]:checked').data('value');
+    	this.glass.sort_direction = this.$('input[name="sort_direction"]:checked').data('value');
+    	this.glass.sort_trend_x = this.$('input[name="sort_trend_x"]:checked').data('value');
+    	this.glass.sort_trend_y = this.$('input[name="sort_trend_y"]:checked').data('value');
     	
-    	PanelResort.panel_resort(this.geo);
+    	PanelResort.panel_resort(this.geo,this.glass);
     	
     	this.geo.no_render_map = false;
     	this.trigger_up('field_changed', {
             dataPointID: this.getParent().state.id,
-            changes:{geo:this.geo},
+            changes:{geo:this.geo,glass:this.glass},
             noundo:true
         });
     },
@@ -199,13 +201,13 @@ var WidgetInfo = Widget.extend({
     		if(this.width_short && size[0]>size[1]){
     			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
     		}else{
-        		this.geo.glass.size = size;
-            	this.geo.glass.coord = 0;
+        		thisglass.size = size;
+            	this.glass.coord = 0;
             	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',"/favite_gmd/static/src/img/icon0.ico");
             	
             	this.trigger_up('field_changed', {
                     dataPointID: this.getParent().state.id,
-                    changes:{geo:this.geo},
+                    changes:{geo:this.geo,glass:this.glass},
                     noundo:true
                 });
             	
@@ -218,15 +220,15 @@ var WidgetInfo = Widget.extend({
     },
     
     _useHsdChange: function(){
-    	//this.$('.sort_range').toggleClass('o_hidden',this.geo.glass.use_hsd===true);
-    	this.$('.sort_trend_x').toggleClass('o_hidden',this.geo.glass.use_hsd===true);
-    	this.$('.sort_trend_y').toggleClass('o_hidden',this.geo.glass.use_hsd===true);
-    	this.$('.sort_start_pos').toggleClass('o_hidden',this.geo.glass.use_hsd!==true);
+    	//this.$('.sort_range').toggleClass('o_hidden',this.glass.use_hsd===true);
+    	this.$('.sort_trend_x').toggleClass('o_hidden',this.glass.use_hsd===true);
+    	this.$('.sort_trend_y').toggleClass('o_hidden',this.glass.use_hsd===true);
+    	this.$('.sort_start_pos').toggleClass('o_hidden',this.glass.use_hsd!==true);
     	
     	if(this.widget_info && this.widget_info instanceof InfoBlock){
-    		$(this.widget_info.$el[2]).toggleClass('o_hidden',this.geo.glass.use_hsd===true);
-    		$(this.widget_info.$el[4]).toggleClass('o_hidden',this.geo.glass.use_hsd!==true);
-    		$(this.widget_info.$el[6]).toggleClass('o_hidden',this.geo.glass.use_hsd!==true);
+    		$(this.widget_info.$el[2]).toggleClass('o_hidden',this.glass.use_hsd===true);
+    		$(this.widget_info.$el[4]).toggleClass('o_hidden',this.glass.use_hsd!==true);
+    		$(this.widget_info.$el[6]).toggleClass('o_hidden',this.glass.use_hsd!==true);
     	}
     	
     	
@@ -240,15 +242,15 @@ var WidgetInfo = Widget.extend({
     		this._glassSizeChange(value);
     	}else{
     		if(name == 'use_hsd'){
-    			this.geo.glass[name] = $(e.currentTarget)[0].checked;
+    			this.glass[name] = $(e.currentTarget)[0].checked;
     			this._useHsdChange();
     		}else if(name == 'sort_start_pos'){
-    			this.geo.glass[name] = parseInt(value);
+    			this.glass[name] = parseInt(value);
     		}
 
     		this.trigger_up('field_changed', {
                 dataPointID: this.getParent().state.id,
-                changes:{geo:this.geo},
+                changes:{geo:this.geo,glass:this.glass},
                 noundo:true
             });
     	}
@@ -259,12 +261,12 @@ var WidgetInfo = Widget.extend({
     _onCornerTypeSelect: function(e){
     	
     	var $el = $(e.currentTarget);
-    	this.geo.glass.corner = $el.find('a').data('type');
-    	this.geo.no_render_map = true;
+    	this.glass.corner = $el.find('a').data('type');
+    	this.no_render_map = true;
     	
     	this.trigger_up('field_changed', {
             dataPointID: this.getParent().state.id,
-            changes:{geo:this.geo},
+            changes:{geo:this.geo,glass:this.glass},
             noundo:true
         });
 
@@ -275,39 +277,39 @@ var WidgetInfo = Widget.extend({
     
     _onCoordTypeSelect: function(e){
     	var $el = $(e.currentTarget);
-    	this.geo.glass.coord = $el.find('a').data('type');
+    	this.glass.coord = $el.find('a').data('type');
     	
-    	if(this.geo.glass.coord < 0){
-    		this.geo.glass.iCenterMode = -1;
-    		this.geo.glass.iLongEdge = -1;
-    		this.geo.glass.iStartQuandrant = -1;
+    	if(this.glass.coord < 0){
+    		this.glass.iCenterMode = -1;
+    		this.glass.iLongEdge = -1;
+    		this.glass.iStartQuandrant = -1;
     	}
-    	else if(this.geo.glass.coord < 4){
-    		this.geo.glass.iCenterMode = 1;
-    		this.geo.glass.iLongEdge = 1;
-    		this.geo.glass.iStartQuandrant = this.geo.glass.coord + 1;
+    	else if(this.glass.coord < 4){
+    		this.glass.iCenterMode = 1;
+    		this.glass.iLongEdge = 1;
+    		this.glass.iStartQuandrant = this.glass.coord + 1;
     	}else if(this.geo.glass.coord < 8){
-    		this.geo.glass.iCenterMode = 1;
-    		this.geo.glass.iLongEdge = 0;
-    		this.geo.glass.iStartQuandrant = this.geo.glass.coord - 3;
-    	}else if(this.geo.glass.coord < 12){
-    		this.geo.glass.iCenterMode = 0;
-    		this.geo.glass.iLongEdge = 1;
-    		this.geo.glass.iStartQuandrant = this.geo.glass.coord - 7;
-    	}else if(this.geo.glass.coord < 16){
-    		this.geo.glass.iCenterMode = 0;
-    		this.geo.glass.iLongEdge = 0;
-    		this.geo.glass.iStartQuandrant = this.geo.glass.coord - 11;
+    		this.glass.iCenterMode = 1;
+    		this.glass.iLongEdge = 0;
+    		this.glass.iStartQuandrant = this.glass.coord - 3;
+    	}else if(this.glass.coord < 12){
+    		this.glass.iCenterMode = 0;
+    		this.glass.iLongEdge = 1;
+    		this.glass.iStartQuandrant = this.glass.coord - 7;
+    	}else if(this.glass.coord < 16){
+    		this.glass.iCenterMode = 0;
+    		this.glass.iLongEdge = 0;
+    		this.glass.iStartQuandrant = this.glass.coord - 11;
     	}else{
-    		this.geo.glass.iCenterMode = -1;
-    		this.geo.glass.iLongEdge = -1;
-    		this.geo.glass.iStartQuandrant = -1;
+    		this.glass.iCenterMode = -1;
+    		this.glass.iLongEdge = -1;
+    		this.glass.iStartQuandrant = -1;
     	}
     	
     	this.geo.no_render_map = true;
     	this.trigger_up('field_changed', {
             dataPointID: this.getParent().state.id,
-            changes:{geo:this.geo},
+            changes:{geo:this.geo,glass:this.glass},
             noundo:true
         });
 

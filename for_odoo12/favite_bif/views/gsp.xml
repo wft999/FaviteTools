@@ -28,6 +28,7 @@
 				<field name="camera_path" invisible="1"/>
 				<field name="camera_ini" invisible="1"/>
 				<field name="geo"  invisible="1"/>
+				<field name="glass" invisible="1"/>
 				<field name="gmd_id" invisible="1"/>
 				<field name="src_panel_id" invisible="1"/>
 				<group>

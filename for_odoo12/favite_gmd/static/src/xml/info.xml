@@ -25,7 +25,7 @@
 	       				<div class="btn-group">
 			        		<div  class="o_corner_type_list">
 			        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="glass corner" title="glass corner">
-			                		<img class="o_corner_type_img" t-attf-src="/favite_gmd/static/src/img/ico_GlassCorner{{widget.geo.glass.corner}}.ico" alt="Icon" />
+			                		<img class="o_corner_type_img" t-attf-src="/favite_gmd/static/src/img/ico_GlassCorner{{widget.glass.corner}}.ico" alt="Icon" />
 			            		</a>
 			       				<ul class="dropdown-menu">
 			       					<li><a class="dropdown-item" data-type="1"><img src="/favite_gmd/static/src/img/ico_GlassCorner1.ico" alt="Icon" /></a></li>
@@ -37,7 +37,7 @@
 			        		
 			        		<div  class="o_coord_type_list">
 			        			<a class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="coordinate system" title="coordinate system">
-			                		<img class="o_coord_type_img"  t-attf-src="/favite_gmd/static/src/img/icon{{widget.geo.glass.coord+1}}.ico" alt="Icon" />
+			                		<img class="o_coord_type_img"  t-attf-src="/favite_gmd/static/src/img/icon{{widget.glass.coord+1}}.ico" alt="Icon" />
 			            		</a>
 			       				<ul class="dropdown-menu">
 			       					<t t-foreach="[1, 2, 3,4,9,10,11,12]" t-as="i">

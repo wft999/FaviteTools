@@ -163,8 +163,10 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     _get_geo: function(state){
     	this.geo = {};
+    	this.glass = {};
     	state = state || this.getParent().state;
     	$.extend(true,this.geo,state.data.geo);
+    	$.extend(true,this.glass,state.data.glass);
     },
     
     _drawObjects:function(state){

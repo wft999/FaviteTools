@@ -239,6 +239,8 @@ var LightRegion = Canvas.Polyline.extend({
 		return true;
 	},
 });
+canvas_registry.add('favite_bif_frame_filter',LightRegion);
+canvas_registry.add('favite_bif_frame_inspect',LightRegion);
 canvas_registry.add('favite_bif_panel_filter',LightRegion);
 canvas_registry.add('favite_gmd_gmd_mask',LightRegion);
 canvas_registry.add('favite_gmd_gmd_markoffset',LightRegion);

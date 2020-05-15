@@ -92,9 +92,9 @@ return Widget.extend({
         		self.$('#d1g1')[0].value = self.panel.d1g1 || '';
         	}
         	
-        	$(self.$el[2]).toggleClass('o_hidden',self.geo.glass.use_hsd===true);
-        	$(self.$el[4]).toggleClass('o_hidden',self.geo.glass.use_hsd!==true);
-        	$(self.$el[6]).toggleClass('o_hidden',self.geo.glass.use_hsd!==true);
+        	$(self.$el[2]).toggleClass('o_hidden',self.glass.use_hsd===true);
+        	$(self.$el[4]).toggleClass('o_hidden',self.glass.use_hsd!==true);
+        	$(self.$el[6]).toggleClass('o_hidden',self.glass.use_hsd!==true);
         	
         	
         	return $.when();

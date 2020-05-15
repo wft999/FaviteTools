@@ -29,7 +29,13 @@
         'views/pad.xml',
         'views/gsp.xml',
         'views/bif.xml',
-        'views/subbif.xml',
+        
+        'views/frame.xml',
+        'views/mark.xml',
+        'views/measure.xml',
+        'views/lut.xml',
+        'views/fixpoint.xml',
+        
         'views/templates.xml',
         
         'data/bif.xml',

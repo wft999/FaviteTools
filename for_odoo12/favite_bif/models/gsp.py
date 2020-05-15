@@ -38,15 +38,14 @@ class Gsp(models.Model):
         objs = bif.geo['panel']['objs']
         geo = {
         "domain":{"objs":[]},
-        "domain_bright":{"objs":[]},
-        "domain_dark":{"objs":[]},
+        "bright":{"objs":[]},
+        "dark":{"objs":[]},
         "zone":{"objs":[]},
         
         "polygon":{"objs":[]},
         "circle":{"objs":[]},
         "bow":{"objs":[]},
         
-        "glass":gmd.geo['glass'],
         "panel":{"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
         }
         return geo
@@ -54,6 +53,7 @@ class Gsp(models.Model):
     
     
     geo = fields.Jsonb(string = "geometry value",default=_default_geo)   
+    glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     bif_id = fields.Many2one('favite_bif.bif',ondelete='cascade')  
     gmd_id = fields.Many2one('favite_gmd.gmd',related='bif_id.gmd_id')
     pad_id = fields.Many2one('favite_bif.pad',ondelete='set null',domain="[('gmd_id', '=', gmd_id),('src_panel_id', '=', src_panel_id)]")  
@@ -108,23 +108,30 @@ class Gsp(models.Model):
             }
         
     def export_string(self,index):
-        num = len(self.geo['zone']['objs'])
+        geo = self._export_geo()
+        
+        strPolygon = 'gsp.%d.polygon = %s\n' % (index,json.dumps(geo['polygon']))
+        strPolygon += 'gsp.%d.circle = %s\n' % (index,json.dumps(geo['circle']))
+        strPolygon += 'gsp.%d.bow = %s\n' % (index,json.dumps(geo['bow']))
+        
+        num = len(geo['zone']['objs'])
         strZone = 'gsp.%d.zone.number = %d\n' % (index,num)
         for i in range(0,num):
-            strZone += 'gsp.%d.zone.%d.obj = %s\n'%(index,i,json.dumps(self.geo['zone']['objs'][i]))
-            strZone += 'gsp.%d.zone.%d.darktol = %s\n'%(index,i,self.geo['zone']['objs'][i]['darktol'])
-            strZone += 'gsp.%d.zone.%d.brighttol = %s\n'%(index,i,self.geo['zone']['objs'][i]['brighttol'])
-            strZone += 'gsp.%d.zone.%d.longedgeminsize = %s\n'%(index,i,self.geo['zone']['objs'][i]['longedgeminsize'])
-            strZone += 'gsp.%d.zone.%d.longedgemaxsize = %s\n'%(index,i,self.geo['zone']['objs'][i]['longedgemaxsize'])
-            strZone += 'gsp.%d.zone.%d.shortedgeminsize = %s\n'%(index,i,self.geo['zone']['objs'][i]['shortedgeminsize'])
-            strZone += 'gsp.%d.zone.%d.shortedgemaxsize = %s\n'%(index,i,self.geo['zone']['objs'][i]['shortedgemaxsize'])
+            strZone += 'gsp.%d.zone.%d.obj = %s\n'%(index,i,json.dumps(geo['zone']['objs'][i]))
+            strZone += 'gsp.%d.zone.%d.level = %s\n'%(index,i,geo['zone']['objs'][i]['level'])
+            strZone += 'gsp.%d.zone.%d.darktol = %s\n'%(index,i,geo['zone']['objs'][i]['darktol'])
+            strZone += 'gsp.%d.zone.%d.brighttol = %s\n'%(index,i,geo['zone']['objs'][i]['brighttol'])
+            strZone += 'gsp.%d.zone.%d.longedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgeminsize'])
+            strZone += 'gsp.%d.zone.%d.longedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgemaxsize'])
+            strZone += 'gsp.%d.zone.%d.shortedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgeminsize'])
+            strZone += 'gsp.%d.zone.%d.shortedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgemaxsize'])
         
-        strDomain = 'gsp.%d.domain = %s\n' % (index,json.dumps(self.geo['domain']))
+        strDomain = 'gsp.%d.domain = %s\n' % (index,json.dumps(geo['domain']))
         
-        num = len(self.geo['domain_dark']['objs'])
+        num = len(geo['dark']['objs'])
         strDark = 'gsp.%d.domain.dark.number = %d\n' % (index,num)
         for i in range(0,num):
-            obj = self.geo['domain_dark']['objs'][i]
+            obj = geo['dark']['objs'][i]
             p1 = obj['points'][0]
             p2 = obj['points'][1]
             left = min(p1['offsetX'],p2['offsetX'])
@@ -134,10 +141,10 @@ class Gsp(models.Model):
             strDark += 'gsp.%d.domain.dark.%d.obj = %s\n' % (index,i,json.dumps(obj))
             strDark += 'gsp.%d.domain.dark.%d.position = %d,%d,%d,%d\n' % (index,i,int(left),int(top),int(right),int(bottom))
             
-        num = len(self.geo['domain_bright']['objs'])
+        num = len(geo['bright']['objs'])
         strBright = 'gsp.%d.domain.bright.number = %d\n' % (index,num)
         for i in range(0,num):
-            obj = self.geo['domain_bright']['objs'][i]
+            obj = geo['bright']['objs'][i]
             p1 = obj['points'][0]
             p2 = obj['points'][1]
             left = min(p1['offsetX'],p2['offsetX'])
@@ -156,7 +163,7 @@ class Gsp(models.Model):
                 strParameter += 'gsp.%d.%s = %d\n' % (index,fields_data[name]['complete_name'],self[name])
             else:
                 strParameter += 'gsp.%d.%s = %s\n' % (index,fields_data[name]['complete_name'],field.convert_to_export(self[name],self))
-        return strParameter + strDomain + strZone + strDark + strBright;
+        return strParameter + strPolygon + strDomain + strZone + strDark + strBright;
     
     @api.model
     def import_string(self,par,gspname,gspindex,bif,panel):
@@ -166,43 +173,45 @@ class Gsp(models.Model):
         obj = {'name':gspname}
         geo = {
         "domain":{"objs":[]},
-        "domain_bright":{"objs":[]},
-        "domain_dark":{"objs":[]},
+        "bright":{"objs":[]},
+        "dark":{"objs":[]},
         "zone":{"objs":[]},
         
         "polygon":{"objs":[]},
         "circle":{"objs":[]},
         "bow":{"objs":[]},
         
-        "glass":gmd.geo['glass'],
-        "panel":{"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
+        "panel":{"readonly":True,'objs':[obj for obj in bif.geo['panel']['objs'] if obj['name'] == panel.name]}
         }
         
-        pad_item = 'gsp.%d.padfile'% gspindex
-        if pad_item in par:
-            name,_ = par[pad_item].split('.')
-            pad = self.env['favite_bif.pad'].sudo().search([('name','=',name),('src_panel_id','=',panel.id)])
-            if pad:
-                obj['pad_id'] = pad.id
-            else:
-                raise UserError("File(%s) must first be imported!" % par[pad_item])
-
-        geo['domain'] = json.loads(par['gsp.%d.domain'%gspindex])
-        
-        num = int(par.get('gsp.%d.domain.dark.number'%gspindex,0))
+#         pad_item = 'gsp.%s.padfile'% gspindex
+#         if pad_item in par:
+#             name,_ = par[pad_item].split('.')
+#             pad = self.env['favite_bif.pad'].sudo().search([('name','=',name),('src_panel_id','=',panel.id)])
+#             if pad:
+#                 obj['pad_id'] = pad.id
+#             else:
+#                 raise UserError("File(%s) must first be imported!" % par[pad_item])
+         
+        geo['polygon'] = json.loads(par['gsp.%s.polygon'%gspindex])
+        geo['circle'] = json.loads(par['gsp.%s.circle'%gspindex])
+        geo['bow'] = json.loads(par['gsp.%s.bow'%gspindex])
+        geo['domain'] = json.loads(par['gsp.%s.domain'%gspindex])
+         
+        num = int(par.get('gsp.%s.domain.dark.number'%gspindex,0))
         for i in range(0, num):
-            obj = json.loads(par['gsp.%d.domain.dark.%d.obj'%(gspindex,i)])
-            geo['domain_dark']['objs'].append(obj)
-            
-        num = int(par.get('gsp.%d.domain.bright.number'%gspindex,0))
+            o = json.loads(par['gsp.%s.domain.dark.%d.obj'%(gspindex,i)])
+            geo['dark']['objs'].append(o)
+              
+        num = int(par.get('gsp.%s.domain.bright.number'%gspindex,0))
         for i in range(0, num):
-            obj = json.loads(par['gsp.%d.domain.bright.%d.obj'%(gspindex,i)])
-            geo['domain_bright']['objs'].append(obj)
-            
-        num = int(par.get('gsp.%d.zone.number'%gspindex,0))
+            o = json.loads(par['gsp.%s.domain.bright.%d.obj'%(gspindex,i)])
+            geo['bright']['objs'].append(o)
+              
+        num = int(par.get('gsp.%s.zone.number'%gspindex,0))
         for i in range(0, num):
-            obj = json.loads(par['gsp.%d.zone.%d.obj'%(gspindex,i)])
-            geo['zone']['objs'].append(obj)
+            o = json.loads(par['gsp.%s.zone.%d.obj'%(gspindex,i)])
+            geo['zone']['objs'].append(o)
         
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
         for name, field in self._fields.items():
@@ -217,4 +226,4 @@ class Gsp(models.Model):
                     obj[name] = value == '1' 
                     
         obj['geo'] = geo                
-        return self.create(obj)   
+        return self.create(obj)._import_geo()   

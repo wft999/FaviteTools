@@ -269,9 +269,9 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
     _render: function(ctx) {
 		this.width = this.w/this.canvas.getZoom();
 		this.height = this.w/this.canvas.getZoom();
-		this.strokeWidth = 1/this.canvas.getZoom();
-		//ctx.lineWidth= Math.round(1/this.canvas.getZoom());
-		
+		//this.strokeWidth = 1/this.canvas.getZoom();
+		ctx.lineWidth= Math.round(1/this.canvas.getZoom());
+
 		switch(this.coord){
 		case 0:
 			ctx.beginPath(); 

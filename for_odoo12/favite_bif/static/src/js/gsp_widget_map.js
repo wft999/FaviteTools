@@ -17,7 +17,7 @@ var canvas_registry = require('favite_common.canvas_registry');
 var DOMAIN_WIDTH = 1024
 var DOMAIN_HEIGHT = 1024
 
-var DomainZone = Canvas.Polyline.extend({
+var Domain = Canvas.Polyline.extend({
 	checkPoint:function(point){
 		if(this.points && this.points.length > 0){
 			return false;
@@ -82,16 +82,45 @@ var Zone = Canvas.Polyline.extend({
     	return true;
 	},
 });
-
-var Domain = Zone.extend({
-	checkPoint:function(point){
+var DarkBright = Canvas.Polyline.extend({
+	
+	checkPoint: function(point){
 		if(this.points && this.points.length >= 2){
 			return false;
 		}
-		return this._super.apply(this, arguments);
+
+		var point = this.widget._map2geo(point);
+    	var dz = this.widget.geo["domain"];
+    	if(dz && dz.objs.length > 0){
+    		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+    		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+    		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+    		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+    		
+    		return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom; 
+    	}else{
+    		return false;
+    	}
+    		
 	},
-    
+	
+	specialHandle: function(){
+		var dz = this.widget.geo["domain"];
+		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x)
+		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y)
+		var org = this.widget._geo2map({x,y});
+		
+		var self = this;
+    	this.obj.points.forEach(function(p){
+    		var tmp = self.widget._geo2map(p);
+    		p.offsetX = tmp.x - org.x;
+    		p.offsetY = -tmp.y + org.y;
+    	})
+    	
+    	return true;
+	},
 });
+
 
 var Circle = Canvas.Polyline.extend({
 	clear:function(){
@@ -277,9 +306,9 @@ var Bow = Canvas.Polyline.extend({
 });
 
 canvas_registry.add('favite_bif_gsp_zone',Zone);
-canvas_registry.add('favite_bif_gsp_domain_bright',Domain);
-canvas_registry.add('favite_bif_gsp_domain_dark',Domain);
-canvas_registry.add('favite_bif_gsp_domain',DomainZone);
+canvas_registry.add('favite_bif_gsp_bright',DarkBright);
+canvas_registry.add('favite_bif_gsp_dark',DarkBright);
+canvas_registry.add('favite_bif_gsp_domain',Domain);
 canvas_registry.add('favite_bif_gsp_circle',Circle);
 canvas_registry.add('favite_bif_gsp_bow',Bow);
 

@@ -168,7 +168,7 @@ var WidgetMapThumb = WidgetMap.extend({
  			top: this.image.height/2,
  			width:100,
  			height:100,
- 			coord:this.geo.glass.coord,
+ 			coord:this.glass.coord,
  			strokeWidth : 1/this.map.getZoom()
  			});
     	this.map.add(this.hawkeye);
@@ -178,7 +178,7 @@ var WidgetMapThumb = WidgetMap.extend({
     _drawCorner:function(){    
     	var left = 0;
     	var top = 0;
-		switch(this.geo.glass.corner){
+		switch(this.glass.corner){
 		case 1:
 			left = this.image.width;
 			top = 0;
@@ -199,7 +199,7 @@ var WidgetMapThumb = WidgetMap.extend({
     	this.corner = new Canvas.Corner({ 
     		left,
     		top,
- 			cornerType:this.geo.glass.corner
+ 			cornerType:this.glass.corner
  			});
     	this.map.add(this.corner);
     	this.corner.bringToFront();

@@ -67,7 +67,7 @@ function StrIndexToIntIndex(strIndex){
 }
 
 
-function ResortPanelID(geo,first_panel_mode, dir ,range ,iStartPos){
+function ResortPanelID(geo,glass,first_panel_mode, dir ,range ,iStartPos){
 	var tol;
 	var width;
 	var height;
@@ -89,13 +89,13 @@ function ResortPanelID(geo,first_panel_mode, dir ,range ,iStartPos){
 	
 	tol = _.min(_.map(geo.block.objs,b=>{return Math.min(Math.abs(b.points[0].x-b.points[1].x),Math.abs(b.points[0].y-b.points[1].y))}))/2;
 	
-	iCenterMode = geo.glass.iCenterMode;
-	imageEdge = geo.glass.iLongEdge; 
-	quarant = geo.glass.iStartQuandrant;
-	iGlassCorner = geo.glass.corner;
+	iCenterMode = glass.iCenterMode;
+	imageEdge = glass.iLongEdge; 
+	quarant = glass.iStartQuandrant;
+	iGlassCorner = glass.corner;
 	quarant -= 1;
 	
-	if(geo.glass.size[0] > geo.glass.size[1])
+	if(glass.size[0] > glass.size[1])
 	{
 		glassEdge = 0;
 	}
@@ -595,7 +595,7 @@ function getNeedSwitch(first_panel_mode,dir,tol,centerx,centery,centerx1,centery
 
 //first _panel _mode: 0: index随着x递增，index随着y递增；1:  index随着x递增，index随着y递减；
 //2:  index随着x递减，index随着y递增； 3: index随着x递减, y递减
-function ResortPanelIndex(geo,first_panel_mode, dir, range){
+function ResortPanelIndex(geo,glass,first_panel_mode, dir, range){
 	var panel_num;
 	//var i;
 	var panel_count;
@@ -620,12 +620,12 @@ function ResortPanelIndex(geo,first_panel_mode, dir, range){
 	var index_list=[];
 	var temp_index;
 	
-	iCenterMode = geo.glass.iCenterMode;
-	imageEdge = geo.glass.iLongEdge; 
-	iStartQuandrant = geo.glass.iStartQuandrant;
-	iGlassCorner = geo.glass.corner;
+	iCenterMode = glass.iCenterMode;
+	imageEdge = glass.iLongEdge; 
+	iStartQuandrant = glass.iStartQuandrant;
+	iGlassCorner = glass.corner;
 
-	glassEdge = geo.glass.size[0] > geo.glass.size[1] ? 0 : 1;
+	glassEdge = glass.size[0] > glass.size[1] ? 0 : 1;
 	
 	panel_num = 0;
 	panel_count = _.reduce(geo.block.objs,(count,b)=>{return count + b.panels.length},0);
@@ -713,7 +713,7 @@ function ResortPanelIndex(geo,first_panel_mode, dir, range){
 }
 
 
-function panel_resort(geo){
+function panel_resort(geo,glass){
 	var imageEdge;
 	var glassEdge;
 	var trendX;
@@ -731,14 +731,14 @@ function panel_resort(geo){
 	var iStartPos;
 	
 
-	iCenterMode = geo.glass.iCenterMode;
-	imageEdge = geo.glass.iLongEdge; 
-	quarant = geo.glass.iStartQuandrant;
-	glasscorner = geo.glass.corner;
+	iCenterMode = glass.iCenterMode;
+	imageEdge = glass.iLongEdge; 
+	quarant = glass.iStartQuandrant;
+	glasscorner = glass.corner;
 	quarant -= 1;
 	glasscorner -= 1;
 	
-	if(geo.glass.size[0] > geo.glass.size[1])
+	if(geo.glass.size[0] > glass.size[1])
 	{
 		glassEdge = 0;
 	}
@@ -749,17 +749,17 @@ function panel_resort(geo){
 	
 	if(imageEdge == glassEdge)
 	{
-		trendX = geo.glass.sort_trend_x;
-		trendY = geo.glass.sort_trend_y;
+		trendX = glass.sort_trend_x;
+		trendY = glass.sort_trend_y;
 	}
 	else
 	{
-		trendY = geo.glass.sort_trend_x;
-		trendX = geo.glass.sort_trend_y;
+		trendY = glass.sort_trend_x;
+		trendX = glass.sort_trend_y;
 	}
 	
-	dir = geo.glass.sort_direction;
-	range = geo.glass.sort_range;
+	dir = glass.sort_direction;
+	range = glass.sort_range;
 	
 	if(glasscorner < 0)
 	{
@@ -825,14 +825,14 @@ function panel_resort(geo){
 	
 	first_panel_mode = x * 2 + y;
 
-	if(geo.glass.use_hsd)
+	if(glass.use_hsd)
 	{
-		iStartPos = geo.glass.sort_start_pos;
-		ResortPanelID(geo,first_panel_mode, dir, range,iStartPos);
+		iStartPos = glass.sort_start_pos;
+		ResortPanelID(geo,glass,first_panel_mode, dir, range,iStartPos);
 	}
 	else
 	{
-		ResortPanelIndex(geo,first_panel_mode, dir, range);
+		ResortPanelIndex(geo,glass,first_panel_mode, dir, range);
 	}
 	
 }

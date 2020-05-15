@@ -137,6 +137,7 @@
 		<field name="arch" type="xml">
 			<map string="Fields"  duplicate="false">
 				<field name="geo" />
+				<field name="glass" />
 				<field name="camera_path"  invisible="1"/>
 				<field name="camera_ini"  invisible="1"/>
 				<notebook>		

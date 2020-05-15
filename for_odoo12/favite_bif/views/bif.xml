@@ -113,6 +113,7 @@
 				<field name="camera_path" invisible="1"/>
 				<field name="camera_ini" invisible="1"/>
 				<field name="geo"  invisible="1"/>
+				<field name="glass"  invisible="1"/>
 				<field name="gmd_id"  invisible="1"/>
 				<notebook>	
 					<page string="Gsp">
@@ -215,6 +216,6 @@
 
 	<menuitem name="Bif" id="favite_bif.bif" parent="favite_common.menu_root" />
 	<menuitem name="Main" id="favite_bif.main" parent="favite_bif.bif" action="favite_bif.open_kanban_bif"/>
-   
+   	<menuitem name="Sub" id="favite_bif.sub" parent="favite_bif.bif"/>
   </data>
 </odoo>
