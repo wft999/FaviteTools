@@ -341,7 +341,7 @@ var WidgetInfo = Widget.extend({
     			this.widget_info = new InfoMask(this, curPolyline,this.geo,oid);
     			this.widget_info.appendTo('.gmd_info');
     		}else if(curPolyline.type == 'block'){
-    			this.widget_info = new InfoBlock(this, curPolyline,this.geo,oid);
+    			this.widget_info = new InfoBlock(this, curPolyline,this.geo,this.glass,oid);
     			this.widget_info.appendTo('.gmd_info');
     		}
     	}

@@ -80,7 +80,7 @@ class Bif(models.Model):
             panel.write({'geo':geo})
 
     @api.one
-    @api.depends('gmd_id','gmd_id.geo','panel_ids.geo')
+    @api.depends('gmd_id','gmd_id.geo')
     def _compute_geo(self):
         self.geo['mark'] = self.gmd_id.geo['mark']
         self.geo['mark']['readonly'] = True
@@ -91,14 +91,13 @@ class Bif(models.Model):
         cur = self.env['favite_bif.panel'].sudo().search([('name','in',names)])
         (total - cur).unlink()
         
-        objs = []
+        self.geo['panel']['objs'] = []
         for b in self.gmd_id.geo['block']['objs']:
             for p in b['panels']:
-                objs.append(p)
+                self.geo['panel']['objs'].append(p)
                 panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)]);
                 if not panel:
                     self.env['favite_bif.panel'].sudo().create({'bif_id': self.id,'name':p['name']})
-        self.geo['panel']['objs'] = list(objs)
 
         self.geo['panel_filter'] = {"objs":[]}
         for panel in self.panel_ids:
@@ -229,6 +228,10 @@ class Bif(models.Model):
                 gsp_list[i].pad_id.export_file(directory_ids)
                 strGsp += 'gsp.%d.padfile = %s.pad\n' % (i,gsp_list[i].pad_id.name) 
             strGsp += gsp_list[i].export_string(i)
+            gsp_list[i].export_image(directory_ids)
+            strGsp += 'gsp.%d.zone.originimage = %s_%s_org.bmp\n' % (i,self.name,gsp_list[i].name) 
+            strGsp += 'gsp.%d.zone.zoneimage = %s_%s_zone.bmp\n' % (i,self.name,gsp_list[i].name)
+            strGsp += 'gsp.%d.panelpolygon = %s_%s_polygon.bmp\n' % (i,self.name,gsp_list[i].name)
             
         strSubbif = ''
         if self.frame_id:

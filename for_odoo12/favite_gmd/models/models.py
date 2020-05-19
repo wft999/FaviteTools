@@ -408,7 +408,7 @@ class Gmd(models.Model):
             h = abs(p1['y'] - p2['y'])
             strMark += 'mark.%d.size = %f,%f\n' % (i,w,h)
             
-        lightregionNum = len(geo['lightRegion']['objs'])
+        lightregionNum = len(geo['lightregion']['objs'])
         strlightregion = 'lightregion.number = %d\n' % lightregionNum
         for i in range(0,lightregionNum):
             p1 = geo['lightRegion']['objs'][i]['points'][0]

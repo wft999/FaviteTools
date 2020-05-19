@@ -60,8 +60,9 @@ return Widget.extend({
     
     
 
-    init: function(parent,curPolyline, geo,oid){
+    init: function(parent,curPolyline, geo,glass,oid){
     	this.geo = geo;
+    	this.glass = glass;
     	this.oid = oid;
     	this.curPolyline = curPolyline;
     	

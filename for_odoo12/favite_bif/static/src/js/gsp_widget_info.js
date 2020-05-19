@@ -56,6 +56,15 @@ var WidgetZone = Widget.extend({
         	self.$('input[name="longedgemaxsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['longedgemaxsize'] || 0;
         	self.$('input[name="shortedgeminsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['shortedgeminsize'] || 0;
         	self.$('input[name="shortedgemaxsize"]')[0].value = self.geo[self.curPolyline.type].objs[self.obj_id]['shortedgemaxsize'] || 0;
+        	if(self.readonly){
+        		self.$('input[name="level"]')[0].disabled = true;
+        		self.$('input[name="darktol"]')[0].disabled = true;
+        		self.$('input[name="brighttol"]')[0].disabled = true;
+        		self.$('input[name="longedgeminsize"]')[0].disabled = true;
+        		self.$('input[name="longedgemaxsize"]')[0].disabled = true;
+        		self.$('input[name="shortedgeminsize"]')[0].disabled = true;
+        		self.$('input[name="shortedgemaxsize"]')[0].disabled = true;
+        	}
         	return $.when();
         });
     },

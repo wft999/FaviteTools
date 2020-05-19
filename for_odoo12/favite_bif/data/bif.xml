@@ -135,6 +135,17 @@
             <field name="default_value" eval="500" />
             <field name="sequence">3</field>
     </record>   
+    <record  model="ir.model.fields"  id="favite_bif_bif_global_polygon_width">
+            <field name="model_id" ref="favite_bif.model_favite_bif_bif" />
+            <field name="name">x_global_polygon_width</field>
+			<field name="complete_name">global.polygonwidth</field>
+			<field name="ttype">integer</field>
+            <field name="locate">Global.Common</field>
+            <field name="field_description">Panel polygon image width</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="200" />
+            <field name="sequence">4</field>
+    </record>
     
     <record  model="ir.model.fields"  id="favite_bif_bif_global_enablenofiltermode">
             <field name="model_id" ref="favite_bif.model_favite_bif_bif" />

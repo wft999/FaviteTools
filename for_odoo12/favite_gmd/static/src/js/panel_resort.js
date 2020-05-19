@@ -738,7 +738,7 @@ function panel_resort(geo,glass){
 	quarant -= 1;
 	glasscorner -= 1;
 	
-	if(geo.glass.size[0] > glass.size[1])
+	if(glass.size[0] > glass.size[1])
 	{
 		glassEdge = 0;
 	}

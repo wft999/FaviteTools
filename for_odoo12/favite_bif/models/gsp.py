@@ -3,10 +3,16 @@ import logging
 import os       
 import json
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
-
+from PIL import Image
+from io import BytesIO
+import base64
+import numpy as np
+import cv2
+import math
 
 _logger = logging.getLogger(__name__)
-
+DOMAIN_WIDTH = 1024
+DOMAIN_HEIGHT = 1024
 # class Zone(models.Model):
 #     _name = 'favite_bif.gsp_zone'   
 #     
@@ -49,8 +55,6 @@ class Gsp(models.Model):
         "panel":{"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
         }
         return geo
-    
-    
     
     geo = fields.Jsonb(string = "geometry value",default=_default_geo)   
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
@@ -107,6 +111,117 @@ class Gsp(models.Model):
             'context': ctx,
             }
         
+    def export_image(self,directory_ids):
+        imgWidth = int(self.geo['domain']['objs'][0]['imgWidth'])
+        imgHeight = int(self.geo['domain']['objs'][0]['imgHeight'])
+        blocks = json.loads(self.geo['domain']['objs'][0]['strBlocks'])
+         
+        origin = Image.new('L', (imgWidth,imgHeight))   
+        left = 0
+        top = 0 
+        for x in range(len(blocks)):
+            for y in range(len(blocks[x])-1,-1,-1):
+                b = blocks[x][y]    
+                if b is None or b['bHasIntersection'] == False:
+                    continue;
+                
+                try:
+                    imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    with Image.open(imgFile) as im:
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                        region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                        origin.paste(region, (left,top))
+                        if y == 0:
+                            left += region.width
+                            top = 0
+                        else:
+                            top += region.height
+                except:
+                    raise UserError("No such file:%s"% (imgFile))
+        origin = origin.transpose(Image.FLIP_TOP_BOTTOM)
+        for d in directory_ids:  
+            dir = os.path.join(d.name ,'bif')
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+            path = os.path.join(dir,self.bif_id.name+'_'+self.name+'_org.bmp')
+            with open(path, 'wb') as f:
+                origin.save(f, format="BMP")
+        
+        zone = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        for o in self.geo['zone']['objs']:
+            p2 = []
+            for p in o['points']:
+                p2.append([int(p['offsetX']),int(p['offsetY'])])
+            b = np.array([p2], dtype = np.int32)
+            cv2.fillPoly(zone, b, int(o['level'] if 'level' in o else '15'))
+  
+        for d in directory_ids:  
+            dir = os.path.join(d.name ,'bif')
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+            path = os.path.join(dir,self.bif_id.name+'_'+self.name+'_zone.bmp')
+            cv2.imwrite(path, zone)
+        
+        obj = self.geo['panel']['objs'][0]
+        p1 = obj['points'][0]
+        p2 = obj['points'][1]
+        left = min(p1['x'],p2['x'])
+        right = max(p1['x'],p2['x'])
+        bottom = min(p1['y'],p2['y'])
+        top = max(p1['y'],p2['y'])
+        
+        imgWidth = self.bif_id.x_global_polygon_width
+        rate = imgWidth / (right - left)
+        imgHeight = int(rate * (top - bottom))    
+        polygon = np.zeros([imgHeight,imgWidth], dtype = np.uint8)
+        for o in self.geo['polygon']['objs']:
+            p2 = []
+            for p in o['points']:
+                p2.append([(p['x']-left)*rate,(top-p['y'])*rate])
+            b = np.array([p2], dtype = np.int32)
+            cv2.fillPoly(polygon, b, 255)
+            
+        for o in self.geo['bow']['objs']:
+            p = o['points']
+            x = int((p[0]['x']-left)*rate)
+            y = int((top-p[0]['y'])*rate)
+            x1 = int((p[1]['x']-left)*rate)
+            y1 = int((top-p[1]['y'])*rate)
+            x2 = int((p[2]['x']-left)*rate)
+            y2 = int((top-p[2]['y'])*rate)
+            r = math.sqrt((x1-x)**2 + (y1-y)**2)
+            startAngle = math.degrees(math.atan2(y1 - y, x1 - x))
+            endAngle = math.degrees(math.atan2(y2 - y, x2 - x))
+            
+            p2 = [[x,y],[x1,y1],[x2,y2]]
+            b = np.array([p2], dtype = np.int32)
+            
+            if endAngle < startAngle:
+                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,startAngle,360,255,cv2.FILLED)
+                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,0,endAngle,255,cv2.FILLED)
+                cv2.fillPoly(polygon, b, 255)
+            else:
+                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,startAngle,endAngle,255,cv2.FILLED)
+                cv2.fillPoly(polygon, b, 0)
+            
+            
+            
+        for o in self.geo['circle']['objs']:
+            p = o['points']
+            x = int((p[0]['x']-left)*rate)
+            y = int((top-p[0]['y'])*rate)
+            x1 = int((p[1]['x']-left)*rate)
+            y1 = int((top-p[1]['y'])*rate)
+            r = math.sqrt((x1-x)**2 + (y1-y)**2)
+            cv2.circle(polygon, (x,y), int(r),255,cv2.FILLED)
+            
+        for d in directory_ids:  
+            dir = os.path.join(d.name ,'bif')
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+            path = os.path.join(dir,self.bif_id.name+'_'+self.name+'_polygon.bmp')
+            cv2.imwrite(path, polygon)
+        
     def export_string(self,index):
         geo = self._export_geo()
         
@@ -118,13 +233,13 @@ class Gsp(models.Model):
         strZone = 'gsp.%d.zone.number = %d\n' % (index,num)
         for i in range(0,num):
             strZone += 'gsp.%d.zone.%d.obj = %s\n'%(index,i,json.dumps(geo['zone']['objs'][i]))
-            strZone += 'gsp.%d.zone.%d.level = %s\n'%(index,i,geo['zone']['objs'][i]['level'])
-            strZone += 'gsp.%d.zone.%d.darktol = %s\n'%(index,i,geo['zone']['objs'][i]['darktol'])
-            strZone += 'gsp.%d.zone.%d.brighttol = %s\n'%(index,i,geo['zone']['objs'][i]['brighttol'])
-            strZone += 'gsp.%d.zone.%d.longedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgeminsize'])
-            strZone += 'gsp.%d.zone.%d.longedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgemaxsize'])
-            strZone += 'gsp.%d.zone.%d.shortedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgeminsize'])
-            strZone += 'gsp.%d.zone.%d.shortedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgemaxsize'])
+            strZone += 'gsp.%d.zone.%d.level = %s\n'%(index,i,geo['zone']['objs'][i]['level'] if 'level' in geo['zone']['objs'][i] else '15')
+            strZone += 'gsp.%d.zone.%d.darktol = %s\n'%(index,i,geo['zone']['objs'][i]['darktol'] if 'darktol' in geo['zone']['objs'][i] else '15')
+            strZone += 'gsp.%d.zone.%d.brighttol = %s\n'%(index,i,geo['zone']['objs'][i]['brighttol'] if 'brighttol' in geo['zone']['objs'][i] else '15')
+            strZone += 'gsp.%d.zone.%d.longedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgeminsize'] if 'longedgeminsize' in geo['zone']['objs'][i] else '0')
+            strZone += 'gsp.%d.zone.%d.longedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['longedgemaxsize'] if 'longedgemaxsize' in geo['zone']['objs'][i] else '0')
+            strZone += 'gsp.%d.zone.%d.shortedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgeminsize'] if 'shortedgeminsize' in geo['zone']['objs'][i] else '0')
+            strZone += 'gsp.%d.zone.%d.shortedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgemaxsize'] if 'shortedgemaxsize' in geo['zone']['objs'][i] else '0')
         
         strDomain = 'gsp.%d.domain = %s\n' % (index,json.dumps(geo['domain']))
         

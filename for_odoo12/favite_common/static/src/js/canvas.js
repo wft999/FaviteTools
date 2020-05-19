@@ -44,7 +44,7 @@ var Arc = fabric.util.createClass(fabric.Circle, {
 		        0,
 		        this.radius,
 		        this.startAngle,
-		        this.endAngle, true);
+		        this.endAngle, false);
 		ctx.stroke(); 
     }
   });

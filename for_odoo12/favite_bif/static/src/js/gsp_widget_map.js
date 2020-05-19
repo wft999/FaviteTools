@@ -14,8 +14,8 @@ var _t = core._t;
 var Class = require('web.Class');
 var Canvas = require('favite_common.Canvas');
 var canvas_registry = require('favite_common.canvas_registry');
-var DOMAIN_WIDTH = 1024
-var DOMAIN_HEIGHT = 1024
+var DOMAIN_WIDTH = 1000
+var DOMAIN_HEIGHT = 1000
 
 var Domain = Canvas.Polyline.extend({
 	checkPoint:function(point){
@@ -38,6 +38,12 @@ var Domain = Canvas.Polyline.extend({
     		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
     	}else{
     		obj.strBlocks = JSON.stringify(this.widget.coord.bmpBlockMapPara.m_BlockMap);
+    		obj.imgWidth = _.reduce(this.widget.coord.bmpBlockMapPara.m_BlockMap, function(memo, block){ 
+        		return memo + (block[0]&&block[0].bHasIntersection?block[0].iInterSectionWidth:0); 
+        		}, 0);
+        	obj.imgHeight = _.reduce(this.widget.coord.bmpBlockMapPara.m_BlockMap[0], function(memo, block){ 
+        		return memo  + (block&&block.bHasIntersection?block.iInterSectionHeight:0); 
+        		}, 0);
     	}
 
     	return true;
@@ -47,7 +53,21 @@ var Domain = Canvas.Polyline.extend({
 
 var Zone = Canvas.Polyline.extend({
 	
+	init: function(widget,type,obj,color,readonly=false){
+		this._super.apply(this, arguments);
+/*		this.level = 15;
+		this.darktol = 15;
+		this.brighttol = 15;
+		this.longedgeminsize = 0;
+		this.longedgemaxsize = 0;
+		this.shortedgeminsize = 0;
+		this.shortedgemaxsize = 0;*/
+	},
+	
 	checkPoint: function(point){
+		if(this._super.apply(this, arguments) == false)
+			return false;
+		
 		if(this.widget.map_type != "raw")
 			return false;
 
@@ -176,6 +196,7 @@ var Circle = Canvas.Polyline.extend({
 	            endAngle : 2 * Math.PI,
 	            left: this.points[0].x,
 	            top: this.points[0].y,
+	            strokeWidth : 1/this.widget.map.getZoom(),
 	            visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color
 	          });
 			
@@ -260,7 +281,7 @@ var Bow = Canvas.Polyline.extend({
 
 		var wh = 10/this.widget.map.getZoom();
 		var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
-		if(this.points.length >= 3){
+		if(this.points.length > 2){
 			var tmpx = this.points[1].x - this.points[0].x;
 			var tmpy = this.points[1].y - this.points[0].y;
 			var radius = Math.sqrt(tmpx * tmpx + tmpy * tmpy);
@@ -278,6 +299,7 @@ var Bow = Canvas.Polyline.extend({
 	            endAngle,
 	            left: this.points[0].x,
 	            top: this.points[0].y,
+	        	strokeWidth : 1/this.widget.map.getZoom(),
 	            visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color
 	          });
 			
