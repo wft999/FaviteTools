@@ -320,7 +320,7 @@ var Map = Widget.extend({
     		}else if(String.fromCharCode(e.which).toLowerCase() === 's'){
     			this._onButtonSave();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'c'){
-    			this._onButtonCopy();
+    			//this._onButtonCopy();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'x'){
     			this._onButtonCut();
     		}else if(String.fromCharCode(e.which).toLowerCase() === 'h'){
@@ -444,8 +444,11 @@ var Map = Widget.extend({
 			var right = Math.max(this.map.startPointer.x,opt.pointer.x)/zoom;
 			var top = Math.min(this.map.startPointer.y,opt.pointer.y)/zoom;
     		for(var i = 0; i < this.map.pads.length; i++){
-				if(this.map.pads[i].padType != this.pad.curType)
-					continue;
+				if(this.map.pads[i].padType != this.pad.curType){
+					if(this.map.pads[i].padType != 'region' || (this.pad.curType != 'frame' && this.pad.curType != 'pframe' ))
+						continue;
+				}
+				
 				if(_isDrawRect){
 					this.map.pads[i].selected = this.map.pads[i].withinRect(left,right,top,bottom);
 				}else{

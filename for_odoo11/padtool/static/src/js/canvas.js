@@ -577,6 +577,8 @@ var MyPolyline = Class.extend({
 				}
 			}
 		}
+		if(this.padType == 'inspectZoneFrame')
+			this.lines.forEach(function(line){line.visible = true;line.stroke= 'blue'});
 	}
 });
 

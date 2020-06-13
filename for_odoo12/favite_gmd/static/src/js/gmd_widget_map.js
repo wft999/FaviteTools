@@ -1,3 +1,5 @@
+var events = [];
+
 odoo.define('favite_gmd.GmdWidgetMap', function (require) {
 "use strict";
 
@@ -21,10 +23,13 @@ var GmdWidgetMap = {
     		return;
     	}
     	if(key == 'mark' && this.geo[key].objs.length>=2){
+    		console.log(JSON.stringify(events));
     		this.do_warn(_t('Incorrect Operation'),_t('mark already exists !'),false);
     		return;
     	}
-		
+    	
+    	
+    	rrweb.record({emit(event) {events.push(event);},});
 		return this._super.apply(this, arguments);
 	},
 

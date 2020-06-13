@@ -12,6 +12,7 @@ encoding//for_odoo11/padtool/models/res_config_settings.py=utf-8
 encoding//for_odoo11/padtool/wizard/__init__.py=utf-8
 encoding//for_odoo11/padtool/wizard/pad_publish_wizard.py=utf-8
 encoding//for_odoo11/web_demo/models/models.py=utf-8
+encoding//for_odoo12/db_view/controllers/controllers.py=utf-8
 encoding//for_odoo12/db_view/models/models.py=utf-8
 encoding//for_odoo12/favite_bif/__manifest__.py=utf-8
 encoding//for_odoo12/favite_bif/controllers/controllers.py=utf-8

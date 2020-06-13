@@ -234,6 +234,12 @@ class PadPublishWizard(models.TransientModel):
                 
                 strRegion += 'Region'+str(region_id)+'.region = '+str(regionLeft)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionBottom)+';'+str(regionRight)+','+str(regionTop)+';'+str(regionLeft)+','+str(regionTop)+'\n'
                 strRegion += 'Region'+str(region_id)+'.iFrameNo = '+str(obj['iFrameNo'])+'\n'
+                
+                strRegion += 'Region'+str(region_id)+'.period0 = '+str(obj['period0'])+'\n'
+                strRegion += 'Region'+str(region_id)+'.period1 = '+str(obj['period1'])+'\n'
+                strRegion += 'Region'+str(region_id)+'.angle0 = '+str(obj['angle0'])+'\n'
+                strRegion += 'Region'+str(region_id)+'.angle1 = '+str(obj['angle1'])+'\n'
+                
                 region_id = region_id + 1
                 
                 

@@ -169,6 +169,8 @@ var MapMouseHandle = {
      	this.hawkeye.bringToFront();
      	
     	this._changeHawkeye(newPointer);
+    	
+    	
     },
 
 };

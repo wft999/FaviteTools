@@ -84,3 +84,5 @@ odoo.define('favite_common.canvas_registry', function (require) {
     var Registry = require('web.Registry');
     return new Registry();
 });
+
+

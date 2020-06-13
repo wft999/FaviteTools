@@ -423,6 +423,72 @@ class Pad(models.Model):
         }
         
     @api.model
+    def set_panel_information(self,menu_id,panelName,offsetXum,offsetYum):
+        if menu_id is None:
+            return
+        
+        menu = request.env['ir.ui.menu'].sudo().browse(int(menu_id))
+        parts=[c for c in menu.complete_name.split('/') if c]
+
+        root =  odoo.tools.config['glass_root_path']
+        padConfFile = os.path.normcase(root + '/' + parts[2] + "/PadToolConfig.ini")
+        if not os.path.isfile(padConfFile):
+            raise UserError("File(%s) doesn't exist" % padConfFile)
+    
+        padConf = ConfigParser.ConfigParser()
+        try:
+            padConf.read(padConfFile)
+        except Exception as e:
+            raise UserError("File(%s) format is not correct" % padConfFile)   
+        
+        x = float(padConf._sections[panelName]['panel_center_x']) + offsetXum    
+        y = float(padConf._sections[panelName]['panel_center_y']) + offsetYum 
+        padConf._sections[panelName]['panel_center_x'] = x
+        padConf._sections[panelName]['panel_center_y'] = y
+        
+        with open(padConfFile,'w') as fp:
+            padConf.write(fp)
+            
+        mapFile = os.path.normcase(root + '/' + parts[2]  +'/' +parts[3]+'/'+ padConf[parts[3]]['PANEL_MAP'])
+        if not os.path.isfile(mapFile):
+            raise UserError("File(%s) doesn't exist" % mapFile)
+        
+        bifFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE'])
+        if not os.path.isfile(bifFile):
+            raise UserError("File(%s) doesn't exist" % bifFile)
+        
+        bifConf = ConfigParser.RawConfigParser()
+        with open(bifFile, 'r') as f:
+            bifConf.read_string("[DEFAULT]\r\n" + f.read())
+        
+        cameraFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE'])
+        if not os.path.isfile(cameraFile):
+            raise UserError("File(%s) doesn't exist" % cameraFile)
+        
+        cameraConf = ConfigParser.RawConfigParser()
+        with open(cameraFile, 'r') as f:
+            cameraConf.read_string("[general]\r\n" + f.read())
+            
+        gmdConf = None
+        if 'GMD_FILE' in padConf['GLASS_INFORMATION']:
+            gmdFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GMD_FILE'])
+            if os.path.isfile(gmdFile):
+                gmdConf = ConfigParser.ConfigParser()
+                with open(gmdFile, 'r') as f:
+                    gmdConf.read(gmdFile)
+            
+        globalConf = request.env['res.config.settings'].get_values();
+        return {
+            "cameraConf":cameraConf._sections,
+            "bifConf":bifConf._defaults,
+            "padConf":padConf._sections,
+            "glassName":parts[2],
+            "panelName": parts[3],
+            "globalConf":globalConf,
+            "gmdConf":gmdConf and gmdConf._sections
+        }
+        
+    @api.model
     def panel_information(self,menu_id):
         if menu_id is None:
             return
@@ -575,6 +641,10 @@ class Pad(models.Model):
                 region['points'][1]['ux'] = regionRight + content['dPanelCenterX']
                 region['points'][1]['uy'] = regionTop + content['dPanelCenterY']
                 region['iFrameNo'] = int(par.get(('Region%d.iFrameNo' % i).lower(),0))
+                region['period0'] = float(par.get(('Region%d.period0' % i).lower(),0))
+                region['period1'] = float(par.get(('Region%d.period1' % i).lower(),0))
+                region['angle0'] = float(par.get(('Region%d.angle0' % i).lower(),0))
+                region['angle1'] = float(par.get(('Region%d.angle1' % i).lower(),0))
                 content['objs'].append(region)
                 
             MainMarkNumber = int(par.get('MainMarkNumber'.lower(),0))

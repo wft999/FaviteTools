@@ -4,7 +4,10 @@
         	<xpath expr="." position="inside">
         		<link rel="stylesheet" href="/favite_common/static/src/css/common.css"/>
         		<link rel="stylesheet" type="text/scss" href="/favite_common/static/src/scss/dashboard.scss"/>
-        		
+<!--         		
+        		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/rrweb@latest/dist/rrweb.min.css"/>
+    			<script src="https://cdn.jsdelivr.net/npm/rrweb@latest/dist/rrweb.min.js"></script>
+        		 -->
         		<script type="text/javascript" src="/favite_common/static/src/js/coordinate.js"></script>
         		<script type="text/javascript" src="/favite_common/static/src/js/fabric.js"></script>
         		<script type="text/javascript" src="/favite_common/static/src/js/canvas.js"></script>
@@ -22,6 +25,8 @@
                 
                 <script type="text/javascript" src="/favite_common/static/src/js/import_action.js"></script>
                 <script type="text/javascript" src="/favite_common/static/src/js/import_buttons.js"></script>
+                
+                
                 
             </xpath>
         </template>

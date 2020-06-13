@@ -91,6 +91,8 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	this.$buttons.find('.fa-eye').toggleClass('o_hidden',this.coordinate.giGlassInformationPara == undefined);
     	this.$buttons.find('.submask-checkbox-label').toggleClass('o_hidden',this.pad.curType !== 'subMark');
     	this.$buttons.find('.fa-th').toggleClass('o_hidden',this.pad.curType !== 'subMark');
+    	
+    	this.$buttons.find('.fa-gear').toggleClass('o_hidden', this.pad.curType !== 'frame' && this.pad.curType !== 'pframe');
 
     },
     
@@ -100,7 +102,8 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 			|| (obj.pad.padType == 'region' && this.pad.curType == 'frame') 
 			|| ((obj.pad.padType == 'inspectZone'||obj.pad.padType == 'unregularInspectZone') && this.pad.curType == 'uninspectZone')
 			|| ((obj.pad.padType == 'uninspectZone'||obj.pad.padType == 'unregularInspectZone') && this.pad.curType == 'inspectZone')
-			|| ((obj.pad.padType == 'uninspectZone'||obj.pad.padType == 'inspectZone') && this.pad.curType == 'unregularInspectZone');
+			|| ((obj.pad.padType == 'uninspectZone'||obj.pad.padType == 'inspectZone') && this.pad.curType == 'unregularInspectZone')
+			|| obj.pad.padType == 'inspectZoneFrame';
 			if(obj.type == 'cross'){
 				obj.visible = this.pad.curType == 'frame' && obj.pad.padType == 'frame' && this.map.hoverCursor == 'default';
 			}
@@ -208,6 +211,10 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     			o.goaUY = obj.goaUY || 0;
     		}else if(obj.padType == 'region'){
     			o.iFrameNo = obj.iFrameNo;
+    			o.period0 = obj.period0 || 0;
+ 				o.period1 = obj.period1 || 0;
+ 				o.angle0 = obj.angle0 || 0;
+ 				o.angle1 = obj.angle1 || 0;
     		}
     		
     		pad.objs.push(o);
@@ -382,6 +389,52 @@ var Panelmap = Map.extend(ControlPanelMixin,{
             });
         });
         this.dialog.open();
+    },    
+    
+    _onButtonSetting: function(){
+    	var unselected = _.every(this.map.pads,p => (!p.selected) || p.padType != 'region');
+    	if(unselected){
+    		this.do_warn(_t('Operation Result'),_t("Please select region first !"),false);
+    		return;
+    	}
+    	
+    	var self = this;
+        var $content = $(QWeb.render("SetRegionDialog"));
+            
+        this.dialog = new Dialog(this, {
+        	title: _t('Region'),
+        	size: 'medium',
+        	$content: $content,
+        	buttons: [{text: _t('Confirm'), classes: 'btn-primary', close: true, click: function(){
+        		var period0 = parseFloat(this.$content.find('#period0').val());
+            	var angle0 = parseFloat(this.$content.find('#angle0').val());
+            	var period1 = parseFloat(this.$content.find('#period1').val());
+            	var angle1 = parseFloat(this.$content.find('#angle1').val());
+            	
+            	_.each(self.map.pads, function(p){
+            		if(p.selected && p.padType == 'region'){
+            			p.period0 = period0;
+                		p.period1 = period1;
+                		p.angle0 = angle0;
+                		p.angle1 = angle1;
+            		}
+            	});
+
+        	}},
+        		{text: _t('Discard'), close: true}],
+        });
+        this.dialog.opened().then(function () {
+        	var pad = _.find(self.map.pads,p => p.selected && p.padType == 'region');
+            var $period0 = self.dialog.$('#period0');
+            $period0.val(pad.period0 || 0);
+            var $angle0 = self.dialog.$('#angle0');
+            $angle0.val(pad.angle0 || 0);
+            var $period1 = self.dialog.$('#period1');
+            $period1.val(pad.period1 || 0);
+            var $angle1 = self.dialog.$('#angle1');
+            $angle1.val(pad.angle1 || 0);
+        });
+        this.dialog.open();
     },
     
     _showMark:function(markImage,pad,i){
@@ -460,6 +513,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	this.$buttons.on('click', '.fa-eye',this._onButtonHawkeye.bind(this) );
     	this.$buttons.on('click', '.fa-th',this._onButtonSubmark.bind(this) );
     	this.$buttons.on('click', '.fa-recycle',this._onButtonResetImageCache.bind(this) );
+    	this.$buttons.on('click', '.fa-gear',this._onButtonSetting.bind(this) );
     	
     	this.$buttons.on('click', '.fa-undo',this.undo.bind(this) );
     	this.$buttons.on('click', '.fa-repeat',this.redo.bind(this) );
@@ -675,6 +729,10 @@ var Panelmap = Map.extend(ControlPanelMixin,{
  		 			self.outerFrame = obj;
  			}else if(pad.padType == 'region'){
  				hasRegion = true;
+ 				obj.period0 = obj.period0 || 0;
+ 				obj.period1 = obj.period1 || 0;
+ 				obj.angle0 = obj.angle0 || 0;
+ 				obj.angle1 = obj.angle1 || 0;
  			}else if(pad.padType == 'subMark'){
  				if(obj.points.length == 2 && pad.blocks === undefined){
  					var ux1 = obj.points[0].ux;
@@ -895,7 +953,8 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     		
     		var out1 = this.coordinate.UMCoordinateToPanelMapCoordinate(x1,y1)
     		var out2 = this.coordinate.UMCoordinateToPanelMapCoordinate(x2,y2)
-
+    		
+/*
     		x1 = out1.dOutputX;
     		y1 = this.image.height - out1.dOutputY;
     		x2 = out2.dOutputX;
@@ -906,10 +965,16 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 	 		var line4 = new Mycanvas.Line([x2,y2,x1,y2],{stroke: 'blue',pad:null});
 	 		this.map.add(line1,line2,line3,line4);
 	 		
-	 		this.inspectZoneX1 = x1;
+    		this.inspectZoneX1 = x1;
 	 		this.inspectZoneY1 = y1;
 	 		this.inspectZoneX2 = x2;
-	 		this.inspectZoneY2 = y2;
+	 		this.inspectZoneY2 = y2;*/
+    		
+    		this.inspectZoneFrame = new Mycanvas.MyPolyline(this.map,'inspectZoneFrame');
+    		this.inspectZoneFrame.points.push({x:out1.dOutputX,y:this.image.height - out1.dOutputY,ux:x1,uy:y1});
+    		this.inspectZoneFrame.points.push({x:out2.dOutputX,y:this.image.height - out2.dOutputY,ux:x2,uy:y2});
+    		this.inspectZoneFrame.update();
+    		this.inspectZoneFrame.lines.forEach(function(line){line.visible = true;line.stroke= 'blue'});
 	 		
     		break;
  		}
@@ -919,7 +984,12 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	var self = this; 
     	var first = true;
     	this.map.pads.forEach(function(pad){
-			if(pad.padType == self.pad.curType && pad.points.length){
+    		if(!pad.points.length)
+    			return;
+    			
+			if(pad.padType == self.pad.curType 
+					|| (pad.padType == 'region' && self.pad.curType == 'frame') 
+					|| (pad.padType == 'region' && self.pad.curType == 'pframe')){
 				if(pad.selected){
 					pad.lines.forEach(function(line){line.dirty=true;line.stroke = 'red';line.fill='red'});
 					if(first){

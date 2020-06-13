@@ -38,6 +38,8 @@ var WidgetMapThumb = Thumb.extend(GmdWidgetMap,{
         	self.showMap();
     		self._drawHawk();
     		self._drawCorner();
+    		
+    		
         	return $.when();
         });
     },

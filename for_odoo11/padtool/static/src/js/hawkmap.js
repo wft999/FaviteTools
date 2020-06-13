@@ -8,6 +8,7 @@ var Dialog = require('web.Dialog');
 var framework = require('web.framework');
 var QWeb = core.qweb;
 var _t = core._t;
+var Coordinate = require('padtool.coordinate');
 
 var CROSSHAIR = "url(http://localhost/padtool/static/jpg/crosshair.png) 8 8,crosshair";
 var HAWK_WIDTH = 600;
@@ -158,20 +159,28 @@ var Hawkmap = Widget.extend({
     	self.map.pads = new Array();
     	self.map.add(self.image.set({hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false}));
 
-    	var x1 = this.parent.inspectZoneX1;
+/*    	var x1 = this.parent.inspectZoneX1;
  		var y1 = this.parent.inspectZoneY1;
  		var x2 = this.parent.inspectZoneX2;
  		var y2 = this.parent.inspectZoneY2;
+ 		
  		x1 = (x1 - self.eyeLeft)/self.parent.padConf[self.parent.panelName].panel_map_ratio_x;
 		y1= (y1 - self.eyeTop)/self.parent.padConf[self.parent.panelName].panel_map_ratio_y;
 		x2 = (x2 - self.eyeLeft)/self.parent.padConf[self.parent.panelName].panel_map_ratio_x;
 		y2= (y2 - self.eyeTop)/self.parent.padConf[self.parent.panelName].panel_map_ratio_y;
+		
+		self.inspectZoneFrame = new Mycanvas.MyPolyline(self.map,'inspectZoneFrame');
+ 		self.inspectZoneFrame.points.push({x:x1,y:y1});
+ 		self.inspectZoneFrame.points.push({x:x2,y:y2});
+ 		self.inspectZoneFrame.update();
+ 		self.inspectZoneFrame.lines.forEach(function(line){line.visible = true;line.stroke= 'blue'});
+ 		
 
 		var line1 = new Mycanvas.Line([x1,y1,x1,y2],{stroke: 'blue',pad:null});
  		var line2 = new Mycanvas.Line([x1,y1,x2,y1],{stroke: 'blue',pad:null});
  		var line3 = new Mycanvas.Line([x2,y2,x2,y1],{stroke: 'blue',pad:null});
  		var line4 = new Mycanvas.Line([x2,y2,x1,y2],{stroke: 'blue',pad:null});
- 		this.map.add(line1,line2,line3,line4);
+ 		this.map.add(line1,line2,line3,line4);*/
  		
  		var wh = 10/this.map.getZoom();
  		var center = new Mycanvas.Cross({ 
@@ -230,10 +239,13 @@ var Hawkmap = Widget.extend({
     		|| (pad.padType == 'region' && self.parent.pad.curType == 'frame')
     		|| ((pad.padType == 'inspectZone'||pad.padType == 'unregularInspectZone') && self.parent.pad.curType == 'uninspectZone')
 			|| ((pad.padType == 'uninspectZone'||pad.padType == 'unregularInspectZone') && self.parent.pad.curType == 'inspectZone')
-			|| ((pad.padType == 'uninspectZone'||pad.padType == 'inspectZone') && self.parent.pad.curType == 'unregularInspectZone');
+			|| ((pad.padType == 'uninspectZone'||pad.padType == 'inspectZone') && self.parent.pad.curType == 'unregularInspectZone')
+			||pad.padType == 'inspectZoneFrame';
     		var crossVisible = lineVisible && (pad.padType == 'frame' || self.map.curPad == pad);
     		pad.lines.forEach(function(line){line.visible = lineVisible;});
     		pad.crosses.forEach(function(cross){cross.visible = crossVisible;cross.hasBorders = cross.visible;})
+    		if(obj.padType == 'inspectZoneFrame')
+    			pad.lines.forEach(function(line){line.visible = true;line.stroke= 'blue'});
 
     		
     		if(obj.padType == 'inspectZone' && ((obj.periodX != undefined && obj.periodX != 0) || (obj.periodY != undefined && obj.periodY != 0))){
@@ -306,13 +318,31 @@ var Hawkmap = Widget.extend({
 		var {dOutputX:ux2, dOutputY:uy2} = this.parent.coordinate.HawkmapCoordinateToUMCoordinate(this.map.startPointer.x/zoom,this.image.height-this.map.startPointer.y/zoom);
 		var offsetXum = ux1 - ux2;
 		var offsetYum = uy1 - uy2;
-		
+
 		var self = this;
 		this.map.pads.forEach(function(pad){
-			if(pad.padType != self.pad.curType)
-				return;
 			if(!pad.panelpad.selected)
 				return;
+			
+			if(pad.padType == 'inspectZoneFrame'){
+				self._rpc({model: 'padtool.pad',method: 'set_panel_information',args: [self.parent.menu_id,self.parent.panelName,offsetXum,offsetYum],})
+		        .then(function(res) {
+		        	if(res !== undefined){
+		        		//self.parent.coordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName,res.gmdConf);
+	                	//self.parent.tmpCoordinate = new Coordinate(res.cameraConf,res.bifConf,res.padConf,res.panelName);
+	                	
+		                self.do_notify(_t('Operation Result'),_t('The Operation is success!'),false);
+		        	}else{
+		        		self.do_warn(_t('Operation Result'),_t('The Operation failed!'),false);
+		        	}
+		        }).fail(function(){
+		        	self.do_warn(_t('Operation Result'),_t('The Operation failed!'),false);
+		        	});
+				return;
+			}
+			else if(pad.padType != self.pad.curType)
+				return;
+			
 			
 			self.parent.register(pad.panelpad);
 			var tmpPoints = _.clone(pad.panelpad.points);
@@ -819,7 +849,7 @@ var Hawkmap = Widget.extend({
 			this.map.discardActiveObject();
 			var selected = new Array();
 			for(var i = 0; i < this.map.pads.length; i++){
-				if(this.map.pads[i].padType != this.pad.curType)
+				if(this.map.pads[i].padType != this.pad.curType && this.map.pads[i].padType != 'inspectZoneFrame')
 					continue;
 				if(_isDrawRect){
 					var left = Math.min(this.map.startPointer.x,opt.pointer.x)/zoom;
