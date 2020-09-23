@@ -249,8 +249,8 @@ var GLASS_INFORMATION = Class.extend({
 
     	if(this.m_iCenterMode == 0)
     	{
-    		dCustomerPointX += m_dGlassSizeX / 2;
-    		dCustomerPointY += m_dGlassSizeY / 2;
+    		dCustomerPointX += this.m_dGlassSizeX / 2;
+    		dCustomerPointY += this.m_dGlassSizeY / 2;
     	}
     	else if(this.m_iCenterMode == 2)
     	{

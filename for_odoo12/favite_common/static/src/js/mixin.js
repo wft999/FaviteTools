@@ -68,24 +68,32 @@ var MapMouseHandle = {
 				this.map.curPolyline = null;
 			}
 			
-			
+			var hasReadonly = false;
 			var selected = new Array();
 			for(var i = 0; i < this.map.polylines.length; i++){
 				this.map.polylines[i].focus(false);
 				if(!this.map.polylines[i].visible)
 					continue;
-				if(this.map.polylines[i].readonly)
+				if(this.map.polylines[i].noselect)
 					continue;
+//				if(this.map.polylines[i].readonly)
+//					continue;
 
 				if(isClick){
 					var sel = this.map.polylines[i].containsPoint(newPointer);
 					if(opt.e.ctrlKey){
 						if(sel){
 							this.map.polylines[i].select(!this.map.polylines[i].obj.selected);
+							if(this.map.polylines[i].type == 'block'){
+								_.each(this.map.polylines[i].panels,p=>{if(p.containsPoint(newPointer)) p.select(!p.obj.selected)});
+							}
 						}
 					}else{
 						this.map.polylines[i].select(sel);
 						this.map.polylines[i].focus(sel);
+						if(this.map.polylines[i].type == 'block'){
+							_.each(this.map.polylines[i].panels,p=>{p.select(p.containsPoint(newPointer))});
+						}
 					}
 				}else{
 					var left = Math.min(this.map.lastPointer.x,newPointer.x);
@@ -105,16 +113,26 @@ var MapMouseHandle = {
 				if(this.map.polylines[i].obj.selected){
 					//this.map.polylines[i].crosses.forEach(function(c){selected.push(c);})
 					this.map.polylines[i].lines.forEach(function(c){selected.push(c);})
+					if(this.map.polylines[i].readonly)
+						hasReadonly = true;
 				}
 			}
 			if(selected.length > 0){
 				this.map.discardActiveObject();
-				var sel = new fabric.ActiveSelection(selected, {canvas: this.map,hasControls: false,hoverCursor:"move",hasBorders:false});
+				
+				var sel = new fabric.ActiveSelection(selected, {
+					canvas: this.map,
+					hasControls: false,
+					hoverCursor:"move",
+					hasBorders:false,
+					lockMovementX:hasReadonly,
+					lockMovementY:hasReadonly
+					});
 				this.map.setActiveObject(sel);
 			}
 			
-			this._showCommand('Delete',selected.length > 0 || this.map.curPolyline);
-			this._showCommand('Copy',selected.length > 0 || this.map.curPolyline);
+			this._showCommand('Delete',(!hasReadonly) && (selected.length > 0 || this.map.curPolyline));
+			this._showCommand('Copy',(!hasReadonly) && (selected.length > 0 || this.map.curPolyline));
 			this._showMode('crosshair',this.map.curPolyline);
 			this.$('a.dropdown-toggle').toggleClass('o_hidden',!!this.map.curPolyline);
 			
@@ -200,7 +218,11 @@ var MapEventHandle = {
     _changeHawkeye:function(pt){
     	var p = this._map2geo(pt);
    	 	var range = 10000;
-    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(p.x - range,p.y - range,p.x + range,p.y + range,true);
+   	 	var left = p.x > range ? p.x - range : 0;
+   	 	var bottom = p.y > range ? p.y - range : 0;
+   	 	var right = left > 0 ? p.x + range : 2 * range;
+   	 	var top = bottom > 0 ? p.y + range : 2 * range;
+    	this.coord.GetRectIntersectionInfoInBlockMapMatrix(left,bottom,right,top,true);
     	if(this.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
     		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
     	}else{

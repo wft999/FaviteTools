@@ -71,6 +71,7 @@ class PadtoolMixIn(models.AbstractModel):
         
 class Pad(models.Model):
     _name = 'padtool.pad'
+    _order = 'name asc'
     
     _inherit = ['padtool.mixin']
     
@@ -202,10 +203,16 @@ class Pad(models.Model):
         dirs = self.env['padtool.directory'].with_context(active_test=False).search([('model','=','padtool.pad')])
         for dir in dirs:  
             for pad in self:
-                if os.path.isfile(os.path.normcase(dir.name) +'/'+ pad.name+'.pad'):
-                    os.remove(os.path.normcase(dir.name) +'/'+ pad.name+'.pad')
-                if os.path.isfile(os.path.normcase(dir.name) +'/'+ pad.name+'.cur'):
-                    os.remove(os.path.normcase(dir.name) +'/'+ pad.name+'.cur')
+                if os.path.isfile(os.path.join(dir.name, pad.name+'.pad')):
+                    os.remove(os.path.join(dir.name, pad.name+'.pad'))
+                if os.path.isfile(os.path.join(dir.name, pad.name+'.cur')):
+                    os.remove(os.path.join(dir.name, pad.name+'.cur'))
+                if os.path.isfile(os.path.join(dir.name, pad.name,'MainMark.bmp')):
+                    os.remove(os.path.join(dir.name, pad.name,'MainMark.bmp'))
+                if os.path.isfile(os.path.join(dir.name, pad.name,'SubMark.bmp')):
+                    os.remove(os.path.join(dir.name, pad.name,'SubMark.bmp'))
+                if os.path.isdir(os.path.join(dir.name, pad.name)):
+                    os.rmdir(os.path.join(dir.name, pad.name))
         return super(Pad, self).unlink()
     
     @api.multi
@@ -431,7 +438,7 @@ class Pad(models.Model):
         parts=[c for c in menu.complete_name.split('/') if c]
 
         root =  odoo.tools.config['glass_root_path']
-        padConfFile = os.path.normcase(root + '/' + parts[2] + "/PadToolConfig.ini")
+        padConfFile = os.path.join(root , parts[2] , "PadToolConfig.ini")
         if not os.path.isfile(padConfFile):
             raise UserError("File(%s) doesn't exist" % padConfFile)
     
@@ -449,11 +456,11 @@ class Pad(models.Model):
         with open(padConfFile,'w') as fp:
             padConf.write(fp)
             
-        mapFile = os.path.normcase(root + '/' + parts[2]  +'/' +parts[3]+'/'+ padConf[parts[3]]['PANEL_MAP'])
+        mapFile = os.path.join(root , parts[2] ,parts[3], padConf[parts[3]]['PANEL_MAP'])
         if not os.path.isfile(mapFile):
             raise UserError("File(%s) doesn't exist" % mapFile)
         
-        bifFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['BIF_FILE'])
+        bifFile = os.path.join(root , parts[2],padConf['GLASS_INFORMATION']['BIF_FILE'])
         if not os.path.isfile(bifFile):
             raise UserError("File(%s) doesn't exist" % bifFile)
         
@@ -461,7 +468,7 @@ class Pad(models.Model):
         with open(bifFile, 'r') as f:
             bifConf.read_string("[DEFAULT]\r\n" + f.read())
         
-        cameraFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['CAMERA_FILE'])
+        cameraFile = os.path.join(root,parts[2],padConf['GLASS_INFORMATION']['CAMERA_FILE'])
         if not os.path.isfile(cameraFile):
             raise UserError("File(%s) doesn't exist" % cameraFile)
         
@@ -471,7 +478,7 @@ class Pad(models.Model):
             
         gmdConf = None
         if 'GMD_FILE' in padConf['GLASS_INFORMATION']:
-            gmdFile = os.path.normcase(root + '/' + parts[2]  +'/' + padConf['GLASS_INFORMATION']['GMD_FILE'])
+            gmdFile = os.path.join(root,parts[2],padConf['GLASS_INFORMATION']['GMD_FILE'])
             if os.path.isfile(gmdFile):
                 gmdConf = ConfigParser.ConfigParser()
                 with open(gmdFile, 'r') as f:
@@ -820,6 +827,36 @@ class Pad(models.Model):
                 'result': False
             }
 
+    @api.model
+    def search_pframe(self,strPoints,dResolutionX,dResolutionY):
+        try:
+            getattr(windll,"AutoPeriod")
+        except:
+            raise UserError("'auto search' not supported on goa")
+        
+        points = json.loads(strPoints)
+
+        nVertices1 = len(points['x1'])
+        aVerticesX1 = (c_int * nVertices1)(*points['x1'])
+        aVerticesY1 = (c_int * nVertices1)(*points['y1'])
+        nVertices2 = len(points['x2'])
+        aVerticesX2 = (c_int * nVertices2)(*points['x2'])
+        aVerticesY2 = (c_int * nVertices2)(*points['y2'])
+        
+        buf = create_string_buffer(1024*100)
+        res = windll.AutoPeriod.SplitPolygonRegion(aVerticesX1,aVerticesY1,nVertices1,aVerticesX2,aVerticesY2,nVertices2,c_double(dResolutionX),c_double(dResolutionY),buf)
+        if res == 1:
+            b = string_at(buf,1024*100)
+            return {
+                'result': True,
+                "buf":b,
+            }
+        else:
+            return {
+                'result': False
+            }
+            
+            
 class PublishDirectory(models.Model):
     _name = "padtool.directory"
     _description = "Publich directory of pad"

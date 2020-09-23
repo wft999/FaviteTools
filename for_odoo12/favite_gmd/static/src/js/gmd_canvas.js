@@ -15,33 +15,43 @@ var Block = Canvas.Polyline.extend({
     specialHandle: function(){
     	var obj = this.obj;
     	obj.panels = [];
-    	if(obj.points.length > 1){
+    	if((obj.points.length == 2 && obj.row == 1 && obj.col == 1) || obj.points.length == 3){
+    		var row = obj.row;
+			var col = obj.col;
 			
-			var row = 0;
-			var col = 0;
-			var offsetX = 0;
-			var offsetY = 0;
-			var width = obj.points.length > 1 ? obj.points[1].x-obj.points[0].x : 0;
-			var height = obj.points.length > 1 ? obj.points[1].y-obj.points[0].y : 0;
-			if(obj.points.length == 2){
-				row = 1;
-				col = 1;
-			}else if(obj.points.length == 3){
-				col = Math.floor((obj.points[2].x-obj.points[0].x)/width);
-				row = Math.floor((obj.points[2].y-obj.points[0].y)/height);
-				offsetX = col>1?((obj.points[2].x-obj.points[0].x)%width)/(col-1):0;
-				offsetY = row>1?((obj.points[2].y-obj.points[0].y)%height)/(row-1):0;
+			function convert(p,dAngle){
+				return {
+					x : p.x * Math.cos(dAngle) + p.y * Math.sin(dAngle),
+					y : -p.x * Math.sin(dAngle) + p.y * Math.cos(dAngle)
+				}
 			}
 			
-			obj.row = row;
-			obj.col = col;
+			var dAngle = parseFloat(this.widget.cameraConf['glass.angle.0']);
+			var p0 = convert(obj.points[0],dAngle);
+			var p1 = convert(obj.points[1],dAngle);
+			
+			obj.panel_width =  p1.x-p0.x;
+			obj.panel_height = p1.y-p0.y;
+			
+			var offsetX = 0;
+			var offsetY = 0;
+			if(obj.points.length == 3){
+				var p2 = convert(obj.points[2],dAngle);
+				offsetX = col>1?(p2.x-p0.x - obj.panel_width)/(col-1) - obj.panel_width:0;
+				offsetY = row>1?(p2.y-p0.y - obj.panel_height)/(row-1) - obj.panel_height:0;
+			}
+
 			for(var r = 0; r < row; r++){
 				for(var c = 0; c < col; c++){
-					var x = c * (width + offsetX) + obj.points[0].x;
-					var y = r * (height + offsetY) + obj.points[0].y;
-					var panel = {points:[],name:"P" + (r * col + c),d1g1:"1",pixelsize:"478.8000,159.6000"};
-					panel.points.push({x,y});
-					panel.points.push({x:x+width,y:y+height});
+					var panel = {points:[],panel_index:(r * col + c),name:"P" + (r * col + c),d1g1:"1",pixelsize:"478.8000,159.6000"};
+					
+					var x = c * (obj.panel_width + offsetX) + p0.x;
+					var y = r * (obj.panel_height + offsetY) + p0.y;
+					
+					panel.points.push(convert({x,y},-dAngle));
+					panel.points.push(convert({x:x+obj.panel_width,y:y},-dAngle));
+					panel.points.push(convert({x:x+obj.panel_width,y:y+obj.panel_height},-dAngle));
+					panel.points.push(convert({x:x,y:y+obj.panel_height},-dAngle));
 					obj.panels.push(panel);
 				}
 			}
@@ -93,7 +103,7 @@ var Block = Canvas.Polyline.extend({
 			return false;
 		}
 		else{
-			_.each(this.panels,p=>{p.select(p.containsPoint(point))});
+			//_.each(this.panels,p=>{p.select(p.containsPoint(point))});
 			var left = Math.min(this.points[0].x,this.points[this.points.length - 1].x);
 			var right = Math.max(this.points[0].x,this.points[this.points.length - 1].x);
 			var top = Math.min(this.points[0].y,this.points[this.points.length - 1].y);
@@ -129,9 +139,6 @@ var Block = Canvas.Polyline.extend({
 			if(point.x < this.points[1].x || point.y > this.points[1].y)
 				return false;
 		}else if(this.points.length == 3){
-			//if(point.x <= this.points[2].x || point.y <= this.points[2].y)
-				return false;
-		}else if(this.points.length == 4){
 			return false;
 		}
 
@@ -149,12 +156,12 @@ var Block = Canvas.Polyline.extend({
 
 		while(this.crosses.length)
 		{
-			var cross = this.crosses.pop()
+			var cross = this.crosses.pop();
 			this.widget.map.remove(cross);
 		}
 		while(this.panels.length)
 		{
-			var panel = this.panels.pop()
+			var panel = this.panels.pop();
 			panel.clear();
 		}
 		
@@ -239,6 +246,8 @@ var LightRegion = Canvas.Polyline.extend({
 		return true;
 	},
 });
+
+
 canvas_registry.add('favite_bif_frame_filter',LightRegion);
 canvas_registry.add('favite_bif_frame_inspect',LightRegion);
 canvas_registry.add('favite_bif_panel_filter',LightRegion);

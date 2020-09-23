@@ -35,9 +35,15 @@ var WidgetMapRaw = Raw.extend(GspWidgetMap,{
     start: function () {
         var self = this;
         return this._super.apply(this, arguments).then(function () {
+        	
         	return $.when();
         });
     },
+    
+    _drawObjects: function(){
+    	this._super.apply(this, arguments);
+    	this._drawPeriod();
+    }
     
 });
 

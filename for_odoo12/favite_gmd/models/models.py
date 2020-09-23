@@ -4,6 +4,7 @@ import os
 import io
 import json
 import math
+import copy   
 from PIL import Image
 try:
     import configparser as ConfigParser
@@ -29,16 +30,87 @@ class Gmd(models.Model):
         "lightregion":{"objs":[]},
         "markoffset":{"objs":[]},
         "mark":{"objs":[]},
-        "mask":{"objs":[]},
-        "block":{"objs":[]},
+        "block":{"objs":[],"mask":[]},
         }
         return geo
+    
     @api.model
     def _default_glass(self):
-        glass = {"corner":1,"size":[2200,2500],"coord":0}
+        glass = {"corner":1,"size":[2200,2500],"coord":0,"iCenterMode":-1,"iLongEdge":-1,"iStartQuandrant":-1}
         return glass
     
-    camera_path = fields.Selection(selection='_list_all_camers', string='Camera data path', required=True)
+    @api.depends('camera_path')
+    def _compute_name(self):
+        iniFile = os.path.join(self.camera_path, 'FISTConfig.ini')
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            self.camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
+    
+    @api.depends('camera_path')
+    def _compute_ini(self):
+        iniFile = os.path.join(self.camera_path , self.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            self.camera_ini =  json.dumps(iniConf._defaults,indent=5)
+    
+    
+    def _list_all_camers(self):
+        cameras = []
+        root = tools.config['camera_data_path']  
+        for dir in os.listdir(root):   
+            subdir = os.path.join(root , dir)
+            if not os.path.isdir(subdir):
+                continue
+            
+            iniFilePath = os.path.join(subdir, "FISTConfig.ini")
+            if not os.path.isfile(iniFilePath):
+                continue
+            
+            jpgFilePath = os.path.join(subdir , "Image")
+            if not os.path.isdir(jpgFilePath):
+                continue
+            
+            cameras.append((subdir,subdir))
+                
+            glass_map = os.path.join(subdir , "glass.bmp")
+            if not os.path.isfile(glass_map):
+                iniFile = os.path.join(subdir, 'FISTConfig.ini')
+                iniConf = ConfigParser.RawConfigParser()
+                with open(iniFile, 'r') as f:
+                    iniConf.read_string("[DEFAULT]\r\n" + f.read())
+                    camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
+            
+                    self._generate_glass_map(subdir,camera_name)
+                
+        return cameras
+    
+    @api.model
+    def _default_camera(self):
+        camera = ''
+        root = tools.config['camera_data_path']  
+        for dir in os.listdir(root):   
+            subdir = os.path.join(root , dir)
+            if not os.path.isdir(subdir):
+                continue
+            
+            iniFilePath = os.path.join(subdir, "FISTConfig.ini")
+            if not os.path.isfile(iniFilePath):
+                continue
+            
+            jpgFilePath = os.path.join(subdir , "Image")
+            if not os.path.isdir(jpgFilePath):
+                continue
+            
+            if dir == 'default':
+                camera = subdir
+                break
+                
+        return camera
+    
+    camera_path = fields.Selection(selection='_list_all_camers',default=_default_camera,string='Camera data path', required=True)
+    camera_name = fields.Text(compute='_compute_name')
     camera_ini = fields.Text(compute='_compute_ini')
     geo = fields.Jsonb(required=True,string = "geometry value",default=_default_geo)
     glass = fields.Jsonb(required=True,string = "glass value",default=_default_glass)
@@ -49,14 +121,15 @@ class Gmd(models.Model):
     ]    
     
     @api.model
-    def create(self, vals):
-        #self._create_block(vals)   
-        return super(Gmd, self).create(vals)   
-    
-    @api.multi
-    def write(self, vals):
-        #self._create_block(vals)    
-        return super(Gmd, self).write(vals)
+    def create(self, vals):   
+        root = tools.config['camera_data_path']     
+        if vals['camera_path'].endswith('default'):
+            newPath = os.path.join(root , vals['name'])
+            os.rename(vals['camera_path'],newPath)
+            vals['camera_path'] = newPath
+        
+        return super(Gmd, self).create(vals)
+
         
     def _create_block(self,vals):
         if 'geo' not in vals:
@@ -82,13 +155,6 @@ class Gmd(models.Model):
         if not os.path.isfile(cameraFile):
             raise UserError("File(%s) doesn't exist" % 'camera.ini')
     
-    @api.depends('camera_path')
-    def _compute_ini(self):
-        iniFile = self.camera_path + '\camera.ini'
-        iniConf = ConfigParser.RawConfigParser()
-        with open(iniFile, 'r') as f:
-            iniConf.read_string("[DEFAULT]\r\n" + f.read())
-            self.camera_ini =  json.dumps(iniConf._defaults,indent=5)
     
     def _get_top_left(self,conf,ip,scan,dLeft):
         iCameraNoPerRow = 2
@@ -122,9 +188,9 @@ class Gmd(models.Model):
             
         return dLeft,iRange_Left,iRange_Bottom
     
-    def _generate_glass_map(self,root):
+    def _generate_glass_map(self,root,camera_name):
         conf = ConfigParser.RawConfigParser()
-        with open(root + '\camera.ini', 'r') as f:
+        with open(os.path.join(root, camera_name), 'r') as f:
             conf.read_string("[DEFAULT]\r\n" + f.read())
             
         ip_num = int(conf._defaults['ip.number'])
@@ -159,9 +225,9 @@ class Gmd(models.Model):
                 
         dest.save(root + '\glass.bmp', format="bmp")    
     
-    def _generate_glass_map2(self,root):
+    def _generate_glass_map2(self,root,camera_name):
         conf = ConfigParser.RawConfigParser()
-        with open(root + '\camera.ini', 'r') as f:
+        with open(os.path.join(root , camera_name), 'r') as f:
             conf.read_string("[DEFAULT]\r\n" + f.read())
             
         ip_num = int(conf._defaults['ip.number'])
@@ -230,29 +296,7 @@ class Gmd(models.Model):
                     top += rh
         dest.save(root +'/'+ panelName +'.jpg', format="jpeg")
 
-    def _list_all_camers(self):
-        cameras = []
-        root = tools.config['camera_data_path']  
-        for dir in os.listdir(root):   
-            subdir = os.path.normpath(root + '/' + dir)
-            if not os.path.isdir(subdir):
-                continue
-            
-            iniFilePath = subdir + "/camera.ini"
-            if not os.path.isfile(iniFilePath):
-                continue
-            
-            jpgFilePath = subdir + "/Image"
-            if not os.path.isdir(jpgFilePath):
-                continue
-            
-            cameras.append((subdir,subdir))
-                
-            glass_map = subdir + "/glass.bmp"
-            if not os.path.isfile(glass_map):
-                self._generate_glass_map(subdir)
-                
-        return cameras
+
 
     def export_coord(self):
         iCenterMode = 1
@@ -374,7 +418,173 @@ class Gmd(models.Model):
                 if _check_panel(p['points']):
                     res.append(p['name'])
         return ','.join(res)
-           
+    
+    def _um2customer(self,dCustomerPointX,dCustomerPointY,dGlassCenterX,dGlassCenterY,dAngle):
+        iCenterMode,iLongEdge,iStartQuadrant = self.export_coord()
+        
+        dInputX = dCustomerPointX
+        dInputY = dCustomerPointY
+        dCustomerPointX = (dInputX -dGlassCenterX) * math.cos(dAngle) + (dInputY - dGlassCenterY) * math.sin(dAngle)
+        dCustomerPointY = -(dInputX - dGlassCenterX) * math.sin(dAngle) + (dInputY - dGlassCenterY) * math.cos(dAngle)
+
+        if iStartQuadrant == 1 or iStartQuadrant == 2:
+            dCustomerPointY *= -1
+
+        if iStartQuadrant == 1 or iStartQuadrant == 4:
+            dCustomerPointX *= -1
+
+        if iCenterMode == 0:
+            dCustomerPointX += m_dGlassSizeX / 2
+            dCustomerPointY += m_dGlassSizeY / 2
+        elif iCenterMode == 2:
+            if self.glass['size'][0] < self.glass['size'][1]:
+                dCustomerPointX += self.glass['size'][0] / 2
+            else:
+                dCustomerPointY += self.glass['size'][1] / 2
+        elif iCenterMode == 3:
+            if self.glass['size'][0] > self.glass['size'][1]:
+                dCustomerPointX += self.glass['size'][0] / 2
+            else:
+                dCustomerPointY += self.glass['size'][1] / 2
+
+
+#         if iLongEdge != this.m_iGlassLongEdge:
+#             dTemp = dCustomerPointX;
+#             dCustomerPointX = dCustomerPointY;
+#             dCustomerPointY = dTemp;
+
+        return (dCustomerPointX, dCustomerPointY);
+    
+    def _export_geo(self):
+        
+        iniFile = os.path.join(self.camera_path , self.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = copy.deepcopy(self.geo)      
+            for o in geo['lightregion']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._um2customer(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+            for o in geo['markoffset']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._um2customer(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+            for o in geo['mark']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._um2customer(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+                    
+            for b in geo['block']['objs']:
+                if 'pad' not in b:
+                    continue
+                if 'panels' not in b:
+                    continue
+                
+                for p in b['pad']['points']:
+                    dCustomerPointX, dCustomerPointY = self._um2customer(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+
+                for panel in b['panels']:
+                    for p in panel['points']:
+                        dCustomerPointX, dCustomerPointY = self._um2customer(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                        p['x'] = dCustomerPointX
+                        p['y'] = dCustomerPointY
+
+            return geo
+    
+    def _customer2um(self,dCustomerPointX,dCustomerPointY,dGlassCenterX,dGlassCenterY,dAngle):
+        iCenterMode,iLongEdge,iStartQuadrant = self.export_coord()
+        
+        dFavitePointX = dCustomerPointX
+        dFavitePointY = dCustomerPointY
+#         if iImageLongEdge != this.m_iGlassLongEdge:
+#             dTemp = dFavitePointX;
+#             dFavitePointX = dFavitePointY;
+#             dFavitePointY = dTemp;
+
+        if iCenterMode == 0:
+            dFavitePointX -= dGlassCenterX / 2
+            dFavitePointY -= dGlassCenterY / 2
+        elif iCenterMode == 2:
+            if dGlassCenterX < dGlassCenterY:
+                dFavitePointX -= dGlassCenterX / 2
+            else:
+                dFavitePointY -= dGlassCenterY / 2
+        elif iCenterMode == 3:
+            if dGlassCenterX > dGlassCenterY:
+                dFavitePointX -= dGlassCenterX / 2
+            else:
+                dFavitePointY -= dGlassCenterY / 2
+
+        if iStartQuadrant == 1 or this.m_iStartQuadrant == 2:
+            dFavitePointY *= -1
+
+        if iStartQuadrant == 1 or this.m_iStartQuadrant == 4:
+            dFavitePointX *= -1
+        
+        dInputX = dFavitePointX
+        dInputY = dFavitePointY
+        dFavitePointX = dInputX * math.cos(-dAngle) + dInputY * math.sin(-dAngle) + dGlassCenterX;
+        dFavitePointY = -dInputX * math.sin(-dAngle) + dInputY * math.cos(-dAngle) + dGlassCenterY;
+        
+        return (dFavitePointX,dFavitePointY)
+
+    
+    def _import_geo(self):
+        iniFile = os.path.join(self.camera_path , self.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = self.geo    
+            for o in geo['lightregion']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._customer2um(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+            for o in geo['markoffset']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._customer2um(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+            for o in geo['mark']['objs']:
+                for p in o['points']:
+                    dCustomerPointX, dCustomerPointY = self._customer2um(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+                    
+                    
+            for b in geo['block']['objs']:
+                for p in b['pad']['points']:
+                    dCustomerPointX, dCustomerPointY = self._customer2um(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                    p['x'] = dCustomerPointX
+                    p['y'] = dCustomerPointY
+
+                for panel in b['panels']:
+                    for p in panel['points']:
+                        dCustomerPointX, dCustomerPointY = self._customer2um(p['x'],p['y'],dGlassCenterX,dGlassCenterY,dAngle)
+                        p['x'] = dCustomerPointX
+                        p['y'] = dCustomerPointY
+
+        
+            self.write({'geo': geo})
+            
+                   
     @api.one
     def export_file(self,directory_ids):
         strCoordtransform = 'coordtransform.customer.glasssize = %d,%d\n' % tuple(self.glass['size'])
@@ -387,7 +597,7 @@ class Gmd(models.Model):
         
         geo = self._export_geo()
         strMark = ''
-        if len(geo['markoffset']['objs']):
+        if len(geo['markoffset']['objs']) and len(geo['markoffset']['objs'][0]['points']) > 1:
             p1 = geo['markoffset']['objs'][0]['points'][0]
             p2 = geo['markoffset']['objs'][0]['points'][1]
             w = abs(p1['x'] - p2['x'])
@@ -411,30 +621,28 @@ class Gmd(models.Model):
         lightregionNum = len(geo['lightregion']['objs'])
         strlightregion = 'lightregion.number = %d\n' % lightregionNum
         for i in range(0,lightregionNum):
-            p1 = geo['lightRegion']['objs'][i]['points'][0]
-            p2 = geo['lightRegion']['objs'][i]['points'][1]
+            p1 = geo['lightregion']['objs'][i]['points'][0]
+            p2 = geo['lightregion']['objs'][i]['points'][1]
             left = min(p1['x'],p2['x'])
             right = max(p1['x'],p2['x'])
             bottom = min(p1['y'],p2['y'])
             top = max(p1['y'],p2['y'])
             strlightregion += 'lightregion.%d.position = %f,%f,%f,%f\n' % (i,left,bottom,right,top)
             
-        maskNum = len(geo['mask']['objs'])
+        maskNum = len(geo['block']['mask'])
         strMask = 'mask.group.number = %d\n' % maskNum
         for i in range(0,maskNum):
-            p1 = geo['mask']['objs'][i]['points'][0]
-            p2 = geo['mask']['objs'][i]['points'][1]
-            left = min(p1['x'],p2['x'])
-            right = max(p1['x'],p2['x'])
-            bottom = min(p1['y'],p2['y'])
-            top = max(p1['y'],p2['y'])
-            strMask += 'mask.group.%d.position = %f,%f,%f,%f\n' % (i,left,bottom,right,top)
-            strMask += 'mask.group.%d.threshold = %d\n' % (i,geo['mask']['objs'][i]['threshold'])
-            strMask += 'mask.group.%d.panellist = %s\n' % (i,self._get_panels(p1,p2,geo['block']['objs']))
+            strMask += 'mask.group.%d.threshold = %s\n' % (i,geo['block']['mask'][i]['threshold'])
+            strMask += 'mask.group.%d.panellist = %s\n' % (i,geo['block']['mask'][i]['panels'])
             
         panelNum = 0
         strPanel = 'panel.idmode = 0\n'
         for b in geo['block']['objs']:
+            if 'pad' not in b:
+                continue
+            if 'panels' not in b:
+                continue
+                
             padx = b['points'][0]['x'] - b['pad']['points'][0]['x']
             pady = b['points'][0]['y'] - b['pad']['points'][0]['y']
             for p in b['panels']:
@@ -442,19 +650,24 @@ class Gmd(models.Model):
                 strPanel += 'panel.%d.d1g1 = %s\n' % (panelNum,p['d1g1'])
                 strPanel += 'panel.%d.id = %s\n' % (panelNum,p['panel_index'])
                 
-                p1 = p['points'][0]
-                p2 = p['points'][1]
-                x = (p1['x'] + p2['x'])/2
-                y = (p1['y'] + p2['y'])/2
+                x1 = p['points'][0]['x']
+                x2 = p['points'][2]['x']
+                x3 = p['points'][1]['x']
+                x4 = p['points'][3]['x']
+                y1 = p['points'][0]['y']
+                y2 = p['points'][2]['y']
+                y3 = p['points'][1]['y']
+                y4 = p['points'][3]['y']
+
+                x = ((x1 - x2) * (x3 * y4 - x4 * y3) - (x3 - x4) * (x1 * y2 - x2 * y1))  / ((x3 - x4) * (y1 - y2) - (x1 - x2) * (y3 - y4))
+                y = ((y1 - y2) * (x3 * y4 - x4 * y3) - (x1 * y2 - x2 * y1) * (y3 - y4))  / ((y1 - y2) * (x3 - x4) - (x1 - x2) * (y3 - y4))
                 strPanel += 'panel.%d.position = %f,%f\n' % (panelNum,x,y)
-                w = abs(p1['x'] - p2['x'])
-                h = abs(p1['y'] - p2['y'])
-                strPanel += 'panel.%d.size = %f,%f\n' % (panelNum,w,h)
+                strPanel += 'panel.%d.size = %f,%f\n' % (panelNum,b['panel_width'],b['panel_height'])
                 
-                strPanel += 'panel.%d.padrange.left = %f\n' % (panelNum,p1['x'] - padx)
-                strPanel += 'panel.%d.padrange.top = %f\n' % (panelNum,p2['y'] + pady)
-                strPanel += 'panel.%d.padrange.right = %f\n' % (panelNum,p2['x'] + padx)
-                strPanel += 'panel.%d.padrange.bottom = %f\n' % (panelNum,p1['y'] - pady)
+                strPanel += 'panel.%d.padrange.left = %f\n' % (panelNum,min(x1,x2,x3,x4) - padx)
+                strPanel += 'panel.%d.padrange.top = %f\n' % (panelNum,max(y1,y2,y3,y4) + pady)
+                strPanel += 'panel.%d.padrange.right = %f\n' % (panelNum,max(x1,x2,x3,x4) + padx)
+                strPanel += 'panel.%d.padrange.bottom = %f\n' % (panelNum,min(y1,y2,y3,y4) - pady)
 
                 panelNum = panelNum + 1
         
@@ -462,7 +675,7 @@ class Gmd(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -498,8 +711,7 @@ class Gmd(models.Model):
         "lightregion":{"objs":[]},
         "markoffset":{"objs":[]},
         "mark":{"objs":[]},
-        "mask":{"objs":[]},
-        "block":{"objs":[]},
+        "block":{"objs":[],"mask":[]},
         }
         glass = {"corner":1,"size":[0,0],"coord":0}
         obj = {'name':file.filename.split('.')[0]}
@@ -545,12 +757,11 @@ class Gmd(models.Model):
                 
             n = int(par.get('mask.group.number'.lower(),0))
             for i in range(0, n):
-                x1,y1,x2,y2 = (float(s) for s in par['mask.group.%d.position'%i].split(','))
-                p = {'points':[]}
-                p['threshold'] = int(par.get('mask.group.%d.threshold'%i,0))
-                p['points'].append({'x':x1,'y':y1})
-                p['points'].append({'x':x2,'y':y2})
-                geo['mask']['objs'].append(p)  
+                g = {
+                    'panels':par['mask.group.%d.panellist'%i],
+                    'threshold':int(par.get('mask.group.%d.threshold'%i,0))
+                    }
+                geo['block']['mask'].append(g)  
                 
                 
             fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)

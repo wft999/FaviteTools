@@ -48,7 +48,7 @@ class Http(models.AbstractModel):
         Menu = request.env['ir.ui.menu'].with_context({'ir.ui.menu.full_list': True})
         for dir in os.listdir(root):   
 
-            iniFilePath = os.path.normcase(root + '/' + dir + "/PadToolConfig.ini")
+            iniFilePath = os.path.join(root , dir , "PadToolConfig.ini")
             if not os.path.isfile(iniFilePath):
                 continue
             
@@ -84,6 +84,10 @@ class Http(models.AbstractModel):
                     
             if(menu.name not in glass):
                 menu.unlink(True)
-
-        return super(Http,self).webclient_rendering_context()
+                
+        res = super(Http,self).webclient_rendering_context()
+        if len(res['menu_data']['children']) and len(res['menu_data']['children'][0]['children']) > 1:
+            res['menu_data']['children'][0]['children'][1]['children'] = sorted(res['menu_data']['children'][0]['children'][1]['children'],key=lambda k: k['name'])
+        
+        return res
 

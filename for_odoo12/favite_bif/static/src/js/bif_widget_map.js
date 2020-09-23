@@ -15,6 +15,9 @@ var _t = core._t;
 var BifWidgetMap = {
     
     _onTypeButtonClick: function(ev){
+    	if(!this.map)
+    		return;
+    	
     	var key = $(ev.currentTarget).data('type');
 /*    	if(key == 'markoffset' && this.geo[key].objs.length>=1){
     		this.do_warn(_t('Incorrect Operation'),_t('markoffset already exists !'),false);

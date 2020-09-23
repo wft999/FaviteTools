@@ -14,10 +14,10 @@ var _t = core._t;
 var Class = require('web.Class');
 var Canvas = require('favite_common.Canvas');
 var canvas_registry = require('favite_common.canvas_registry');
-var DOMAIN_WIDTH = 1000
-var DOMAIN_HEIGHT = 1000
+var ZONE_FRAME_WIDTH = 1000
+var ZONE_FRAME_HEIGHT = 1000
 
-var Domain = Canvas.Polyline.extend({
+var ZoneFrame = Canvas.Polyline.extend({
 	checkPoint:function(point){
 		if(this.points && this.points.length > 0){
 			return false;
@@ -26,11 +26,12 @@ var Domain = Canvas.Polyline.extend({
 	},
     specialHandle: function(){
     	var obj = this.obj;
+    	obj.nocross = true;
     	
     	if(obj.points && obj.points.length == 1){
-    		obj.points.push({x:obj.points[0].x + DOMAIN_WIDTH,y:obj.points[0].y + DOMAIN_HEIGHT});
-    		obj.points[0].x -= DOMAIN_WIDTH;
-    		obj.points[0].y -= DOMAIN_HEIGHT;
+    		obj.points.push({x:obj.points[0].x + ZONE_FRAME_WIDTH,y:obj.points[0].y + ZONE_FRAME_HEIGHT});
+    		obj.points[0].x -= ZONE_FRAME_WIDTH;
+    		obj.points[0].y -= ZONE_FRAME_HEIGHT;
     	}
     	
    	 	this.widget.coord.GetRectIntersectionInfoInBlockMapMatrix(obj.points[0].x,obj.points[0].y,obj.points[1].x,obj.points[1].y,true);
@@ -64,35 +65,42 @@ var Zone = Canvas.Polyline.extend({
 		this.shortedgemaxsize = 0;*/
 	},
 	
-	checkPoint: function(point){
-		if(this._super.apply(this, arguments) == false)
+	checkPoint:function(point){
+		if(this.points && this.points.length > 0){
 			return false;
-		
-		if(this.widget.map_type != "raw")
-			return false;
-
-		var point = this.widget._map2geo(point);
-    	var dz = this.widget.geo["domain"];
-    	if(dz && dz.objs.length > 0){
-    		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
-    		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
-    		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
-    		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
-    		
-    		return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom; 
-    	}else{
-    		return false;
-    	}
-    		
+		}
+		return true;
 	},
 	
 	specialHandle: function(){
-		var dz = this.widget.geo["domain"];
-		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x)
-		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y)
-		var org = this.widget._geo2map({x,y});
-		
 		var self = this;
+		if(this.widget.geo["zoneFrame"].objs.length == 0)
+			return false;
+		
+		var obj = this.obj;
+    	obj.nocross = true;
+    	
+		var dz = this.widget.geo["zoneFrame"];
+		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+		
+		var zone = this.widget.getParent().state.data.period;
+		var zone_width = parseFloat(zone[0]);
+		var zone_height = parseFloat(zone[1]);
+		
+		var x1 = obj.points[0].x - zone_width/2;
+		var y1 = obj.points[0].y - zone_height/2;
+		if(x1 < left || x1 > right || y1 > top || y1 < bottom)
+			return false;
+		var x2 = obj.points[0].x + zone_width/2;
+		var y2 = obj.points[0].y + zone_height/2;
+		if(x2 < left || x2 > right || y2 > top || y2 < bottom)
+			return false;
+		
+		obj.points = [{x:x1,y:y1},{x:x2,y:y2}];
+		var org = this.widget._geo2map({x:left,y:bottom});
     	this.obj.points.forEach(function(p){
     		var tmp = self.widget._geo2map(p);
     		p.offsetX = tmp.x - org.x;
@@ -110,7 +118,7 @@ var DarkBright = Canvas.Polyline.extend({
 		}
 
 		var point = this.widget._map2geo(point);
-    	var dz = this.widget.geo["domain"];
+    	var dz = this.widget.geo["zoneFrame"];
     	if(dz && dz.objs.length > 0){
     		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
     		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
@@ -125,7 +133,7 @@ var DarkBright = Canvas.Polyline.extend({
 	},
 	
 	specialHandle: function(){
-		var dz = this.widget.geo["domain"];
+		var dz = this.widget.geo["zoneFrame"];
 		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x)
 		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y)
 		var org = this.widget._geo2map({x,y});
@@ -328,18 +336,21 @@ var Bow = Canvas.Polyline.extend({
 });
 
 canvas_registry.add('favite_bif_gsp_zone',Zone);
-canvas_registry.add('favite_bif_gsp_bright',DarkBright);
-canvas_registry.add('favite_bif_gsp_dark',DarkBright);
-canvas_registry.add('favite_bif_gsp_domain',Domain);
+canvas_registry.add('favite_bif_gsp_brightDomain',DarkBright);
+canvas_registry.add('favite_bif_gsp_darkDomain',DarkBright);
+canvas_registry.add('favite_bif_gsp_zoneFrame',ZoneFrame);
 canvas_registry.add('favite_bif_gsp_circle',Circle);
 canvas_registry.add('favite_bif_gsp_bow',Bow);
 
 var GspWidgetMap = {
     
     _onTypeButtonClick: function(ev){
+    	if(!this.map)
+    		return;
+    	
     	var key = $(ev.currentTarget).data('type');
-    	if(key == 'domain' && this.geo[key].objs.length>=1){
-    		this.do_warn(_t('Incorrect Operation'),_t('domain already exists !'),false);
+    	if(key == 'zoneFrame' && this.geo[key].objs.length>=1){
+    		this.do_warn(_t('Incorrect Operation'),_t('zoneFrame already exists !'),false);
     		return;
     	}
 /*    	if(key == 'mark' && this.geo[key].objs.length>=2){

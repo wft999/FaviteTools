@@ -31,13 +31,14 @@ class Pad(models.Model):
         "frame":{"objs":[],"no_add":True},
         "region":{"objs":[],"no_add":True,"readonly":True},
         
-        "panel":{"readonly":True,'objs':[]}
+        "panel":{"noselect":True,"readonly":True,'objs':[]}
         }
         
         for b in gmd.geo['block']['objs']:
-            for p in b['panels']:
-                if p['name'] == panel.name:
-                    geo['panel']['objs'].append(p)
+            if 'panels' in b:
+                for p in b['panels']:
+                    if p['name'] == panel.name:
+                        geo['panel']['objs'].append(p)
         
         return geo
         
@@ -293,6 +294,8 @@ class Pad(models.Model):
 
             markStartx += iInterSectionWidth
             markNumber += 1
+            
+        return strMark
              
     @api.one
     def export_file(self,directory_ids):
@@ -307,7 +310,7 @@ class Pad(models.Model):
         
         strParameter = 'panelcenter.position = %f,%f' % (panel_x, panel_y)
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -392,12 +395,15 @@ class Pad(models.Model):
                 f.write('submark=%s\n'%json.dumps(geo['submark']))
                 f.write('src_panel=%s\n'%self.src_panel_id.name)
             
-            path = os.path.join(dir,self.name+'_mainmark.bmp')    
-            with open(path, 'wb') as f:
-                f.write(base64.b64decode(self.mainMark))  
-            path = os.path.join(dir,self.name+'_submark.bmp')    
-            with open(path, 'wb') as f:
-                f.write(base64.b64decode(self.subMark))  
+            if self.mainMark:
+                path = os.path.join(dir,self.name+'_mainmark.bmp')    
+                with open(path, 'wb') as f:
+                    f.write(base64.b64decode(self.mainMark))  
+                    
+            if self.subMark:
+                path = os.path.join(dir,self.name+'_submark.bmp')    
+                with open(path, 'wb') as f:
+                    f.write(base64.b64decode(self.subMark))  
                 
         
     @api.model

@@ -119,7 +119,7 @@ return BasicRenderer.extend({
 
         var defs = [];
         var subviews = [{id:'thumb',string:'Map'},{id:'raw',string:'Raw'},{id:'info',string:modelName}];
-        local_storage.clear();
+        //local_storage.clear();
         _.each([0,1,2],function(col_id){
         	var str = local_storage.getItem(baseKey + col_id) || "";
         	_.each(str.split(','),function(subview_id){
@@ -161,6 +161,7 @@ return BasicRenderer.extend({
         
         var Widget = widgetRegistry.get('subview_' + baseKey + subview.id) || widgetRegistry.get('subview_' + subview.id);
         var w = _.extend(new Widget(this),subview);
+        w.readonly = this.mode == 'readonly';
         w.fold = local_storage.getItem(baseKey + subview.id + '_fold') || "false";
     	w.fold = eval(w.fold.toLowerCase())
     	

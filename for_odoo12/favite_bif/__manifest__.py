@@ -24,7 +24,7 @@
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
+        
 #         'views/panel.xml',
         'views/pad.xml',
         'views/gsp.xml',
@@ -42,7 +42,7 @@
         'data/gsp.xml',
         'data/pad.xml',
         'data/subbif.xml',
-
+        'security/ir.model.access.csv',
     ],
     # only loaded in demonstration mode
     'demo': [

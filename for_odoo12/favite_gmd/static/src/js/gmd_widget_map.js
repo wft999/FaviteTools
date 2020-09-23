@@ -17,6 +17,9 @@ var _t = core._t;
 var GmdWidgetMap = {
     
     _onTypeButtonClick: function(ev){
+    	if(!this.map)
+    		return;
+    	
     	var key = $(ev.currentTarget).data('type');
     	if(key == 'markoffset' && this.geo[key].objs.length>=1){
     		this.do_warn(_t('Incorrect Operation'),_t('markoffset already exists !'),false);
@@ -28,9 +31,23 @@ var GmdWidgetMap = {
     		return;
     	}
     	
-    	
-    	rrweb.record({emit(event) {events.push(event);},});
-		return this._super.apply(this, arguments);
+		this._super.apply(this, arguments);
+		if(key == 'block'){
+			var self = this;
+	        var $content = $(QWeb.render("BlockLayoutDialog"));
+	            
+	        var dialog = new Dialog(this, {
+	        	title: _t('Block layout'),
+	        	size: 'medium',
+	        	$content: $content,
+	        	buttons: [{text: _t('Confirm'), classes: 'btn-primary', close: true, click: function(){
+	        		self.map.curPolyline.obj.col = parseFloat(this.$content.find('#col').val());
+	            	self.map.curPolyline.obj.row = parseFloat(this.$content.find('#row').val());
+	        	}}],
+	        });
+	        dialog.open();
+    	}
+		
 	},
 
     

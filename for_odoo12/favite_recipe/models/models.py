@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from shutil import copyfile
 import logging
 import os       
 try:
@@ -15,7 +16,7 @@ _logger = logging.getLogger(__name__)
 
 class Recipe(models.Model):
     _name = 'favite_recipe.recipe'
-    _inherit = ['favite_common.geometry']
+    _inherit = ['favite_common.costum']
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
@@ -37,25 +38,31 @@ class Recipe(models.Model):
         strSubbif = ''
         if self.gmd_id:
             self.gmd_id.export_file(directory_ids)
-            strSubbif += 'recipe.subrecipe.gmd = %s\n' % (self.gmd_id.name) 
-            strSubbif += 'recipe.subreicpe.camrera = %s\n' % (self.gmd_id.camera_path)
+            strSubbif += 'recipe.subrecipe.gmd = %s.gmd\n' % (self.gmd_id.name) 
+            
+            iniFile = os.path.join(self.gmd_id.camera_path, 'FISTConfig.ini')
+            iniConf = ConfigParser.RawConfigParser()
+            with open(iniFile, 'r') as f:
+                iniConf.read_string("[DEFAULT]\r\n" + f.read())
+                camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
+                strSubbif += 'recipe.subreicpe.camrera = %s\n' % (camera_name)
             
         if self.judge_id:
             self.judge_id.export_file(directory_ids)
-            strSubbif += 'recipe.subrecipe.judge = %s\n' % (self.judge_id.name) 
+            strSubbif += 'recipe.subrecipe.judge = %s.jdg\n' % (self.judge_id.name) 
         if self.filter_id:
             self.filter_id.export_file(directory_ids)
-            strSubbif += 'recipe.subrecipe.filter = %s\n' % (self.filter_id.name) 
+            strSubbif += 'recipe.subrecipe.filter = %s.flt\n' % (self.filter_id.name) 
         if self.mura_id:
             self.mura_id.export_file(directory_ids)
-            strSubbif += 'recipe.subrecipe.mura = %s\n' % (self.mura_id.name) 
+            strSubbif += 'recipe.subrecipe.mura = %s.mra\n' % (self.mura_id.name) 
         if self.decode_id:
             self.decode_id.export_file(directory_ids)
-            strSubbif += 'recipe.subrecipe.decode = %s\n' % (self.decode_id.name) 
+            strSubbif += 'recipe.subrecipe.decode = %s.dco\n' % (self.decode_id.name) 
         
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -64,6 +71,9 @@ class Recipe(models.Model):
                 strParameter += 'recipe.%s = %s\n' % (fields_data[name]['complete_name'],field.convert_to_export(self[name],self))
                 
         for d in directory_ids:  
+            if camera_name:
+                copyfile(os.path.join(self.gmd_id.camera_path, camera_name), os.path.join(d.name, camera_name))
+                
             dir = os.path.join(d.name ,'recipe')
             if not os.path.isdir(dir):
                 os.makedirs(dir)
@@ -146,19 +156,22 @@ class Recipe(models.Model):
  
 class JudgeDefect(models.Model):
     _name = 'favite_recipe.judge_defect'
-    _inherit = ['favite_common.geometry']
+    _inherit = ['favite_common.costum']
     _order = 'id'
-    _rec_name = 'id'
+#    _rec_name = 'id'
     
-    name = fields.Char(compute=lambda self:'rtdc'+self.id)
+    #name = fields.Char(compute=lambda self:'rtdc'+self.id)
     judge_id = fields.Many2one('favite_recipe.judge',ondelete='cascade')
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "Name already exists !"),
+    ]
     
     @api.one
     def export_string(self,prefix):
         str = ''
         str += '%s%s = %d\n' % (prefix,'id',self.id)
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -187,20 +200,20 @@ class JudgeDefect(models.Model):
     
 class JudgeRtdc(models.Model):
     _name = 'favite_recipe.judge_rtdc'
-    _inherit = ['favite_common.geometry']
+    _inherit = ['favite_common.costum']
     _order = 'id'
     _rec_name = 'id'
     
     name = fields.Char(compute=lambda self:'rtdc'+self.id)
     judge_id = fields.Many2one('favite_recipe.judge',ondelete='cascade')
-    defect_id = fields.Many2one('favite_recipe.judge_defect',ondelete='set null',string='defect type')
+    defect_id = fields.Many2one('favite_recipe.judge_defect',ondelete='set null',string='defect type',domain="[('judge_id', '=', judge_id)]")
     
     @api.one
     def export_string(self,prefix):
         str = ''
         str += '%s%s = %d\n' % (prefix,'defect.id',self.defect_id.id)
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -231,7 +244,7 @@ class JudgeRtdc(models.Model):
         
 class Judge(models.Model):
     _name = 'favite_recipe.judge'
-    _inherit = ['favite_common.geometry']
+    _inherit = ['favite_common.costum']
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
@@ -251,7 +264,7 @@ class Judge(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -332,7 +345,7 @@ class FilterRange(models.Model):
         str += '%s%s = %d,%d\n' % (prefix,'range.size',self.width,self.height)
         
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -372,7 +385,7 @@ class FilterRange(models.Model):
     
 class Filter(models.Model):
     _name = 'favite_recipe.filter'
-    _inherit = ['favite_common.geometry'] 
+    _inherit = ['favite_common.costum'] 
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
@@ -387,7 +400,7 @@ class Filter(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -445,7 +458,7 @@ class Filter(models.Model):
     
 class Mura(models.Model):
     _name = 'favite_recipe.mura'
-    _inherit = ['favite_common.geometry']
+    _inherit = ['favite_common.costum']
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
@@ -455,7 +468,7 @@ class Mura(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -508,7 +521,7 @@ class Mura(models.Model):
     
 class Decode(models.Model):
     _name = 'favite_recipe.decode'
-    _inherit = ['favite_common.geometry']    
+    _inherit = ['favite_common.costum']    
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]
@@ -518,7 +531,7 @@ class Decode(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':

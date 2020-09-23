@@ -14,9 +14,27 @@ var qweb = core.qweb;
 return BasicController.extend({
 	custom_events: _.extend({}, BasicController.prototype.custom_events, {
         switch_botton_click:'_onSwitchBottonClick',
+        kanban_record_update: '_onUpdateRecord',
     }),
     events: {
 
+    },
+    
+    _onUpdateRecord: function (ev) {
+        var changes = _.clone(ev.data);
+        
+        if(changes.color){
+        	ev.data.force_save = true;
+            this._applyChanges(ev.target.db_id, changes, ev);
+            
+/*        	this.trigger_up('field_changed', {
+                dataPointID: this.renderer.state.id,
+                changes:{geo:this.renderer.state.data.geo},
+                noundo:true
+            });*/
+        }
+        
+        
     },
     
     init: function (parent, model, renderer, params) {
@@ -232,7 +250,7 @@ return BasicController.extend({
     	var self = this;
     	var sel = {};
     	_.each(this.curSelect,function(item){
-        	var baseKey = self.getBaseKey(); ;
+        	var baseKey = self.getBaseKey();
         	sel[item] = local_storage.getItem(baseKey+item) || 'yellow';
         });
     	this.renderer.thumbWidget.updateMap(sel);

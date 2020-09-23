@@ -19,5 +19,39 @@ UserMenu.include({
 	},
 });
 
+var Menu = require('web.Menu');
+
+Menu.include({
+	
+	start: function () {
+		this._super.apply(this, arguments);
+		
+		this.$search_pad = this.$el.parents().find('.o_search_pad');
+        //this.$search_pad.on('input', this.on_search_pad);
+        this.$el.parents().find('.o_search_pad_button').on('click', this.on_search_pad);
+		
+	},
+	on_search_pad: function () {
+		if(this.$search_pad.val() == '')
+			return;
+
+		var target = null;
+		var pad_menus = this.$el.parents().find('.oe_menu_text');
+		for(var i=0;i<pad_menus.length;i++){
+			if(pad_menus[i].innerText.indexOf(this.$search_pad.val()) == 0 && target == null){
+				if(!$(pad_menus[i]).parent().hasClass('oe_menu_opened')){
+					target = $(pad_menus[i]).parent();
+				}
+			}else{
+				if($(pad_menus[i]).parent().hasClass('oe_menu_opened')){
+					$(pad_menus[i]).parent().click();
+				}
+			}
+		}
+		target && target.click();
+		
+	},
+
+});
 
 });

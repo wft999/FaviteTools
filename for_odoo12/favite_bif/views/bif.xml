@@ -58,21 +58,26 @@
 		<field name="arch" type="xml">
 			<kanban  on_create="favite_bif.open_create_bif" class="oe_background_grey o_kanban_dashboard  o_emphasize_colors">
 				<field name="gmd_id" />
+				<field name="color"/>
 				<field name="description" />
 				<field name="write_uid"/>
 				<field name="write_date"/>
 				<templates>
 					<t t-name="kanban-box">
-						<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+						<div  t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
 							<div class="o_dropdown_kanban dropdown">
                                     <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
                                         <span class="fa fa-ellipsis-v"/>
                                     </a>
-                                    <div class="dropdown-menu" role="menu">
-                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a>
-           								<a type="edit" class="dropdown-item">Setting</a>
-           								<a type="delete" class="dropdown-item">Delete</a>
-                                    </div>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a name="open_map" type="object" role="menuitem" class="dropdown-item o_hidden">Edit</a></li>
+                                        <li><a type="edit" role="menuitem" class="dropdown-item">Setting</a></li>
+           								<li><a type="delete" role="menuitem"  class="dropdown-item">Delete</a></li>
+           								<li class="divider"></li>
+           								<li>
+                                             <ul class="oe_kanban_colorpicker" data-field="color"/>
+                                         </li>
+                                    </ul>
                                 </div>
                                 
                                 <div class="oe_kanban_content">
@@ -105,6 +110,7 @@
 	</record>
 	
 	
+	
 	<record id="favite_bif_bif_map" model="ir.ui.view">
 		<field name="name">favite_bif.bif.map.parameter</field>
 		<field name="model">favite_bif.bif</field>
@@ -117,41 +123,42 @@
 				<field name="gmd_id"  invisible="1"/>
 				<notebook>	
 					<page string="Gsp">
-                        <field name="gsp_ids">
-                        <kanban class="o_kanban_small_column"  quick_create="true" create="0">
+                        <field name="gsp_ids" context="{'default_bif_id': active_id}">
+                        <kanban class="o_kanban_small_column" create="0">
                         	<field name="gmd_id" />
+                        	<field name="color"/>
 							<field name="description" />
 							<field name="write_uid"/>
 							<field name="write_date"/>
                             <templates>
                                 <t t-name="kanban-box">
-									<div class="oe_kanban_global_click o_has_icon oe_kanban_color_4">
+									<div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
 										<div class="o_dropdown_kanban dropdown">
 		                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
 		                                        <span class="fa fa-ellipsis-v"/>
 		                                    </a>
-		                                    <div class="dropdown-menu" role="menu">
-		                                    	<a type="edit" role="menuitem" class="dropdown-item o_hidden">Setting</a>
-		                                        <a name="open_map" type="object" role="menuitem" class="dropdown-item">Edit</a>
-		           								<a type="delete" role="menuitem"  class="dropdown-item">Delete</a>
-		                                    </div>
+		                                    <ul class="dropdown-menu" role="menu">
+		                                        <li><a name="open_map" type="object" role="menuitem" class="dropdown-item  o_hidden">Edit</a></li>
+		                                        <li><a type="edit" role="menuitem" class="dropdown-item">Setting</a></li>
+		           								<li><a type="delete" role="menuitem"  class="dropdown-item">Delete</a></li>
+		           								<li class="divider"></li>
+		           								<li>
+                                                	<ul class="oe_kanban_colorpicker" data-field="color"/>
+                                            	</li>
+		                                    </ul>
 		                                </div>
 		                                
 		                                <div class="oe_kanban_content">
 		                                    <div>
-		                                        <strong><field name="name"/></strong>
+		                                        <strong>Gsp<field name="sequence"/></strong>
 		                                    </div>
 		                                    <div class="text-muted o_kanban_record_subtitle">
 		                                        <span> <t t-esc="record.description.value"/></span>
 		                                    </div>
 		                                    <div>
-		                                        <strong class="o_kanban_record_title">Modified by:<t t-esc="record.write_uid.value" /></strong>
+		                                        <strong class="o_kanban_record_title">Modified by:<t t-esc="record.write_uid.value" />  <t t-esc="record.write_date.value" /></strong>
 		                                    </div>
-		                                    <div>
-		                                        <span>
-													<t t-esc="record.write_date.value" />
-												</span>
-		                                    </div>
+		                                    
 		                                </div>
 		                                <div class="oe_clear"/>
 									</div>
@@ -160,16 +167,16 @@
                         </kanban>
                         </field>
 					</page>					
-					<page string="Panel">
+<!-- 					<page string="Panel">
                         <field name="panel_ids" widget="one2many_list">
-                            <tree editable="bottom" string="Panel Items" create="0" delete="0">
+                            <tree  string="Panel Items" create="0" delete="0">
                                 <field name="name" readonly="1"/>
                                 <field name="bif_id" invisible="1"/>
                                 <field name="gsp_id" context="{'default_bif_id': bif_id,'default_src_panel_id':id}" options="{'no_create_edit': True, 'no_quick_create': False}"/>
                                 <field name="active"/>
                             </tree>
                         </field>
-					</page>			
+					</page>		 -->	
 					<page string="Subbif">
 						<group>
 							<field name="frame_id" context="{'default_gmd_id': gmd_id}"/>

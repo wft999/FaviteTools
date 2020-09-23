@@ -468,10 +468,11 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 
 
 var Polyline = Class.extend({
-	init: function(widget,type,obj,color,readonly=false){
+	init: function(widget,type,obj,color,readonly=false,noselect=false){
 		this.widget = widget;
 		this.strokeDash = false;
 		this.readonly = readonly;
+		this.noselect = noselect;
 		
 		this.obj = obj;
 		this.type = type;
@@ -501,13 +502,18 @@ var Polyline = Class.extend({
 	
 	select: function(selected){
 		this.obj.selected = selected;
-		var dash = 20 / this.widget.map.getZoom();
+		var dash = 4 / this.widget.map.getZoom();
 		_.each(this.lines,function(l){
 			l.strokeDashArray = selected? [dash,dash] : [];
 			//l.stroke = 'red';
 			l.dirty=true;
 			l.setCoords();
 		})
+		
+/*		if(this.text){
+			this.text.fill = selected? 'red': this.color;
+			this.text.dirty=true;
+		}*/
 	},
 	
 	update: function(visible,color){
@@ -740,7 +746,7 @@ var Polyline = Class.extend({
 				}
 			}
 			
-			if(this.readonly)
+			if(this.readonly || this.obj.nocross)
 				continue;
 			
 			var cross = new Cross({ 
@@ -757,15 +763,74 @@ var Polyline = Class.extend({
 			this.widget.map.add(cross);
 		}
 		
+		var colors = [0,'#f06050','#f4a460','#f7cd1f','#6cc1ed','#814968','#eb7e7f','#2c8397','#475577','#d6145f','#30c381','#9365b8']
 		if(this.obj.name && this.points.length >= 2 &&( this.type == 'block' ||  this.type == 'panel')){
-			this.text = new fabric.Text(this.obj.name, { 
+			var name = this.obj.name;
+			var color = this.color;
+			if(this.type == 'panel' && !this.obj.gsp){
+				//name += ':' + this.obj.gsp;
+				//color = colors[this.obj.color] || 10
+				var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
+				var line = new Line([this.points[0].x,this.points[0].y,this.points[2].x,this.points[2].y],attr);
+				this.lines.push(line);
+				this.widget.map.add(line);
+				line = new Line([this.points[1].x,this.points[1].y,this.points[3].x,this.points[3].y],attr);
+				this.lines.push(line);
+				this.widget.map.add(line);
+			}	
+				
+			this.text = new fabric.Text(name, { 
 				left:  _.reduce(this.points, function(memo, p){ return memo + p.x; }, 0) / this.points.length, 
 				top: _.reduce(this.points, function(memo, p){ return memo + p.y; }, 0) / this.points.length,
-				fill: this.color }
+				fill: color,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false }
 			);
 			this.widget.map.add(this.text);
 		}
 	}
+});
+
+var Period = fabric.util.createClass(fabric.Object, {
+	type:'period',
+    fill:false,
+    hasBorders:false,
+    transparentCorners: false,
+    cornerSize:5,
+	originX:"center",
+	originY:"center",
+	hoverCursor:"move",
+
+	x_period:20,
+	y_period:20,
+	number:5,
+	width:100,
+	height:100,
+    initialize: function(options) {
+    	this.callSuper('initialize', options);
+    	this.x_period = options.x_period || 20;
+    	this.y_period = options.y_period || 20;
+    	this.width = this.x_period * 5;
+    	this.height = this.y_period * 5;
+    },
+
+	_render: function(ctx) {	
+		var i;
+		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleY);
+		ctx.strokeStyle="yellow";
+		for(i =0; i < this.number+1; i++){
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2,-this.height/2+i*this.x_period);
+			ctx.lineTo(this.width/2,-this.height/2+i*this.y_period);
+			ctx.stroke();
+		}
+		
+		ctx.lineWidth= 1/(this.canvas.getZoom()*this.scaleX);
+		for(i =0; i < this.number+1; i++){
+			ctx.beginPath(); 
+			ctx.moveTo(-this.width/2+i*this.x_period,-this.height/2);
+			ctx.lineTo(-this.width/2+i*this.x_period,this.height/2);
+			ctx.stroke();
+		}
+    },
 });
 
 return {
@@ -774,7 +839,8 @@ return {
 	Hawkeye,
 	Polyline,
 	Corner,
-	Arc
+	Arc,
+	Period
 };
 
 });

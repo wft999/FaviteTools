@@ -80,11 +80,18 @@ var WidgetMapThumb = WidgetMap.extend({
     	self.image = new fabric.Image();
     	
     	var data = this.getParent().state.data;
-    	var points = data.geo.panel.objs[0].points;
-    	var left = Math.min(points[0].x,points[1].x) - PANEL_MAP_MARGIN;
-    	var right = Math.max(points[0].x,points[1].x) + PANEL_MAP_MARGIN;
-    	var top = Math.min(points[0].y,points[1].y) - PANEL_MAP_MARGIN;
-    	var bottom = Math.max(points[0].y,points[1].y) + PANEL_MAP_MARGIN;
+    	var ps = data.geo.panel.objs[0].points;
+    	var left = Math.min(ps[0].x,ps[1].x,ps[2].x,ps[3].x) - PANEL_MAP_MARGIN;
+    	if(left < 0) left = 0;
+    	var right = Math.max(ps[0].x,ps[1].x,ps[2].x,ps[3].x) + PANEL_MAP_MARGIN;
+    	if(right > self.coord.mpMachinePara.dGlassCenterX*2)
+    		right = self.coord.mpMachinePara.dGlassCenterX*2;
+    	var top = Math.min(ps[0].y,ps[1].y,ps[2].y,ps[3].y) - PANEL_MAP_MARGIN;
+    	if(top < 0) top = 0;
+    	var bottom = Math.max(ps[0].y,ps[1].y,ps[2].y,ps[3].y) + PANEL_MAP_MARGIN;
+    	if(bottom > self.coord.mpMachinePara.dGlassCenterY*2)
+    		bottom = self.coord.mpMachinePara.dGlassCenterY*2;
+    	
     	self.coord.GetRectIntersectionInfoInBlockMapMatrix(left,top,right,bottom,true);
     	if(self.coord.bmpBlockMapPara.m_BlockMap.length == 0 || self.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
     		self.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
@@ -117,15 +124,13 @@ var WidgetMapThumb = WidgetMap.extend({
     	var dMapBottom = self.offset.y;
     	self.coord = new Coordinate(self.cameraConf,dMapRatioX,dMapRatioY,dMapLeft,dMapBottom);
 
+    	var d = new Date();
     	var def = $.Deferred();
-    	var src = '/gmd/'+((data.gmd_id && data.gmd_id.res_id)|| data.id)+'/panel/'+data.geo.panel.objs[0].name+'/image';
-    	//var src = self.image_path + '/'+data.geo.panel.objs[0].name +'.jpg';
+    	var src = '/gmd/'+((data.gmd_id && data.gmd_id.res_id)|| data.id)+'/panel/'+data.geo.panel.objs[0].name+'/image?t='+ d.getTime();
+
     	self.image.setSrc(src, function(img){
-    		if(img.width && img.height){
-    			self.image.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });
-        		def.resolve();
-    		}else{
-	    		self._rpc({
+    		if(img.width != Math.floor(imgWidth*PANEL_MAP_RATE) || img.height != Math.floor(imgHeight*PANEL_MAP_RATE)){
+    			self._rpc({
 	                model: 'favite_gmd.gmd',
 	                method: 'generate_panel_map',
 	                args: [data.gmd_id.res_id,data.geo.panel.objs[0].name, imgWidth,imgHeight,strBlocks],
@@ -134,6 +139,9 @@ var WidgetMapThumb = WidgetMap.extend({
 	            		self.image.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });
 	            	});
 	            });
+    		}else{
+    			self.image.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });
+        		def.resolve();
     		}
     	});
     	

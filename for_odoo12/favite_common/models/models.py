@@ -14,9 +14,9 @@ import io
 import json
 
 import threading
-import watchdog
-from watchdog.observers import Observer
-from watchdog.events import FileCreatedEvent, FileModifiedEvent, FileMovedEvent
+# import watchdog
+# from watchdog.observers import Observer
+# from watchdog.events import FileCreatedEvent, FileModifiedEvent, FileMovedEvent
 
 try:
     import configparser as ConfigParser
@@ -26,7 +26,7 @@ except ImportError:
 from odoo import models, fields, api, _, tools
 from odoo.exceptions import UserError, ValidationError
 from suds import null
-from numpy.f2py.auxfuncs import isinteger
+
 
 PADNAME_PATTERN = '^[a-zA-Z0-9][a-zA-Z0-9_-]+$'
 
@@ -41,19 +41,13 @@ class ActWindowView(models.Model):
     view_mode = fields.Selection(selection_add=[('map', "Map")])
     
 
-class GeometryModel(models.AbstractModel):
-    _name = 'favite_common.geometry'
+class CostumModel(models.AbstractModel):
+    _name = 'favite_common.costum'
     
     name = fields.Char(required=True,)
     description = fields.Text()
-    
-    def _export_geo(self):
-        return self.geo
-    
-    def _import_geo(self):
-        geo = self.geo
-        
-        self.write({'geo': geo})
+    color = fields.Integer(string='Color Index', default=10)
+
     
     @api.one
     @api.constrains('name')
@@ -64,42 +58,6 @@ class GeometryModel(models.AbstractModel):
     @api.multi
     def close_dialog(self):
         return {'type': 'ir.actions.act_window_close'}
-    
-    @api.multi
-    def get_formview_action(self, access_uid=None):
-        """ Return an action to open the document ``self``. This method is meant
-            to be overridden in addons that want to give specific view ids for
-            example.
-
-        An optional access_uid holds the user that will access the document
-        that could be different from the current user. """
-        view_id = self.sudo().get_formview_id(access_uid=access_uid)
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': self._name,
-            'view_type': 'map',
-            'view_mode': 'map',
-            'views': [(view_id, 'map')],
-            'target': 'current',
-            'res_id': self.id,
-            'context': dict(self._context),
-            'flags':{'hasSearchView':False}
-        }
-    
-    @api.multi  
-    def open_map(self):
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': self.name,
-            'res_model': self._name,
-            'res_id': self.id,
-            'view_id': False,
-            'view_type': 'map',
-            'view_mode': 'map',
-            'target': 'current',
-            'flags':{'hasSearchView':False}
-            }
         
     @api.model
     def open_kanban(self):
@@ -115,7 +73,7 @@ class GeometryModel(models.AbstractModel):
     
     @api.model
     def load_views(self, views, options=None):
-        result = super(GeometryModel, self).load_views(views, options)
+        result = super(CostumModel, self).load_views(views, options)
 
         if 'map' in result['fields_views'] or 'form' in result['fields_views']:
             notebook = E.xpath(expr="//notebook", position="inside")
@@ -168,7 +126,71 @@ class GeometryModel(models.AbstractModel):
     
     def export_file(self,dir):
         pass
+
+class GeometryModel(CostumModel):
+    _name = 'favite_common.geometry'
     
+    def _export_geo(self):
+        return self.geo
+    
+    def _import_geo(self):
+        geo = self.geo
+        
+        self.write({'geo': geo})
+        
+    @api.multi
+    def write(self, vals):
+        if 'geo' in vals:
+            geo = vals['geo']
+            
+            for key in geo:
+                if (type(geo[key]).__name__=='dict') and 'objs' in geo[key]:
+                    objs = [o for o in geo[key]['objs'] if len(o['points']) > 1]
+                    if len(objs) != len(geo[key]['objs']):
+                        geo[key]['objs'] = objs
+
+            vals['geo'] = geo  
+        return super(GeometryModel, self).write(vals)
+    
+    
+    @api.multi
+    def get_formview_action(self, access_uid=None):
+        """ Return an action to open the document ``self``. This method is meant
+            to be overridden in addons that want to give specific view ids for
+            example.
+
+        An optional access_uid holds the user that will access the document
+        that could be different from the current user. """
+        view_id = self.sudo().get_formview_id(access_uid=access_uid)
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'view_type': 'map',
+            'view_mode': 'map',
+            'views': [(view_id, 'map')],
+            'target': 'current',
+            'res_id': self.id,
+            'context': dict(self._context),
+            'flags':{'hasSearchView':False}
+        }
+    
+    @api.multi  
+    def open_map(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': self.name,
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_id': False,
+            'view_type': 'map',
+            'view_mode': 'map',
+            'target': 'current',
+            'flags':{'hasSearchView':False}
+            }
+        
+    
+ 
     
 class Camera(models.Model):
     _name = 'favite_common.camera'
@@ -220,39 +242,39 @@ class Camera(models.Model):
         
 
 
-class FSWatchdog(object):
-    def __init__(self):
-        self.observer = Observer()
-        root = tools.config['camera_data_path']    
-#       path = 'D:\BaiduNetdiskDownload'
-        _logger.info('Watching addons folder %s', path)
-        self.observer.schedule(self, root, recursive=True)
-
-    def dispatch(self, event):
-        _logger.info('event is %s',event)
-        db_name = threading.current_thread().dbname
-        db = sql_db.db_connect(db_name)
-        
-        job_cr = db.cursor()
-        try:
-            reg = registry(db_name)
-            reg['favite_common.data_path']._process_watchdog_event(job_cr,event)
-        except Exception as e:
-            _logger.exception('Unexpected exception while processing cron job %r', e)
-        finally:
-            job_cr.close()
-
-
-    def start(self):
-        atexit.register(self.stop)
-        self.observer.start()
-        _logger.info('AutoReload watcher running with watchdog')
-                
-
-    def stop(self):
-        _logger.info('watcher exit')
-        self.observer.stop()
-        self.observer.join()
+# class FSWatchdog(object):
+#     def __init__(self):
+#         self.observer = Observer()
+#         root = tools.config['camera_data_path']    
+# #       path = 'D:\BaiduNetdiskDownload'
+#         _logger.info('Watching addons folder %s', path)
+#         self.observer.schedule(self, root, recursive=True)
+# 
+#     def dispatch(self, event):
+#         _logger.info('event is %s',event)
+#         db_name = threading.current_thread().dbname
+#         db = sql_db.db_connect(db_name)
+#         
+#         job_cr = db.cursor()
+#         try:
+#             reg = registry(db_name)
+#             reg['favite_common.data_path']._process_watchdog_event(job_cr,event)
+#         except Exception as e:
+#             _logger.exception('Unexpected exception while processing cron job %r', e)
+#         finally:
+#             job_cr.close()
+# 
+# 
+#     def start(self):
+#         atexit.register(self.stop)
+#         self.observer.start()
+#         _logger.info('AutoReload watcher running with watchdog')
+#                 
+# 
+#     def stop(self):
+#         _logger.info('watcher exit')
+#         self.observer.stop()
+#         self.observer.join()
 
 
 class Directory(models.Model):

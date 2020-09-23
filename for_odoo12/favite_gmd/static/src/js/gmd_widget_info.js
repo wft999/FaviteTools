@@ -9,7 +9,7 @@ var framework = require('web.framework');
 var widgetRegistry = require('web.widget_registry');
 
 var InfoMask = require('favite_gmd.InfoMask');
-var InfoMark = require('favite_gmd.InfoMark');
+var {InfoMark,InfoMarkOffset} = require('favite_gmd.InfoMark');
 var InfoBlock = require('favite_gmd.InfoBlock');
 var PanelResort = require('favite_gmd.PanelResort');
 
@@ -26,6 +26,11 @@ var WidgetInfo = Widget.extend({
         'change select.o_glass_data': '_onGlassDataChange',
         
         'click .o_button_resort': '_onResort',
+        
+        'click .o_button_add_mask_group': '_onAddMask',
+        'click .o_button_delete_mask_group': '_onDeleteMask',
+        'change select.o_mask_group': '_onMaskChange',
+        'change input.o_mask_threshold': '_onMaskThresholdChange',
         
     },
 
@@ -68,9 +73,6 @@ var WidgetInfo = Widget.extend({
         	$.extend(true,self.glass,self.getParent().state.data.glass);
         	self.cameraConf = JSON.parse(self.getParent().state.data.camera_ini);
             var pos = self.cameraConf['glass.center.position.0'].split(',');
-        	var x = parseInt(pos[0]);
-        	var y = parseInt(pos[1]);
-        	self.width_short = (x < y);
         	
             return $.when();
         });
@@ -92,7 +94,6 @@ var WidgetInfo = Widget.extend({
         	self.$('select.o_glass_data')[0].disabled = disabled;
         	self.$('select.o_glass_data')[0].disabled = disabled;
         	
-        	self._showCoordList();
         	self.$el.find('li.width_long')[0].disabled = disabled;
         	self.$el.find('li.width_short')[0].disabled = disabled;
         	
@@ -128,6 +129,18 @@ var WidgetInfo = Widget.extend({
         	self.$('.sort_trend_y')[0].disabled = disabled;
         	self.$('.sort_start_pos')[0].disabled = disabled;
         	
+        	self.$('input[name="mask_threshold"]')[0].disabled = disabled;
+        	self.$('.o_button_add_mask_group').hide();
+        	self.$('.o_button_delete_mask_group').hide();
+        	
+        	if(self.geo.block.mask.length){
+        		_.each(self.geo.block.mask,function(m){
+            		self.$('.o_mask_group').append('<option>'+m.panels+'</option>')
+            	});
+        		
+        		self.$('select[name="mask_group"]')[0].value = null;
+        	}
+        	
         	return $.when();
         });
     },
@@ -160,7 +173,9 @@ var WidgetInfo = Widget.extend({
     	this.glass.sort_trend_x = this.$('input[name="sort_trend_x"]:checked').data('value');
     	this.glass.sort_trend_y = this.$('input[name="sort_trend_y"]:checked').data('value');
     	
+    	framework.blockUI();
     	PanelResort.panel_resort(this.geo,this.glass);
+    	framework.unblockUI();
     	
     	this.geo.no_render_map = false;
     	this.trigger_up('field_changed', {
@@ -178,42 +193,23 @@ var WidgetInfo = Widget.extend({
 			this.$el.find('li.width_long').toggleClass('o_hidden',true);
     		this.$el.find('li.width_short').toggleClass('o_hidden',false);
 		}
-/*    	var size = this.geo.glass.size;
-    	if(size[0] > 0 && size[1] > 0){
-    		if(size[0] > size[1]){
-    			this.$el.find('li.width_long').toggleClass('o_hidden',true);
-        		this.$el.find('li.width_short').toggleClass('o_hidden',false);
-    		}else{
-    			this.$el.find('li.width_long').toggleClass('o_hidden',false);
-        		this.$el.find('li.width_short').toggleClass('o_hidden',true);
-    		}
-    			
-    	}else{
-    		this.$el.find('li.width_long').toggleClass('o_hidden',true);
-    		this.$el.find('li.width_short').toggleClass('o_hidden',true);
-    	}*/
     },
     
     _glassSizeChange: function(value){
     	value = value.toLowerCase();
     	if(value.match(/^\d+,\d+$/)){
     		var size = _.map(value.split(','),v=>parseInt(v));
-    		if(this.width_short && size[0]>size[1]){
-    			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
-    		}else{
-        		thisglass.size = size;
-            	this.glass.coord = 0;
-            	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',"/favite_gmd/static/src/img/icon0.ico");
+    		
+    		this.glass.size = size;
+        	this.glass.coord = 0;
+        	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',"/favite_gmd/static/src/img/icon0.ico");
+        	
+        	this.trigger_up('field_changed', {
+                dataPointID: this.getParent().state.id,
+                changes:{geo:this.geo,glass:this.glass},
+                noundo:true
+            });
             	
-            	this.trigger_up('field_changed', {
-                    dataPointID: this.getParent().state.id,
-                    changes:{geo:this.geo,glass:this.glass},
-                    noundo:true
-                });
-            	
-            	//this._showCoordList();
-    		}
-
     	}else{
     		this.do_warn(_t('Incorrect Operation'),_t('Please enter valid size!'),false);
     	}
@@ -257,6 +253,7 @@ var WidgetInfo = Widget.extend({
     	
     	
     },
+
     
     _onCornerTypeSelect: function(e){
     	
@@ -288,7 +285,7 @@ var WidgetInfo = Widget.extend({
     		this.glass.iCenterMode = 1;
     		this.glass.iLongEdge = 1;
     		this.glass.iStartQuandrant = this.glass.coord + 1;
-    	}else if(this.geo.glass.coord < 8){
+    	}else if(this.glass.coord < 8){
     		this.glass.iCenterMode = 1;
     		this.glass.iLongEdge = 0;
     		this.glass.iStartQuandrant = this.glass.coord - 3;
@@ -318,15 +315,108 @@ var WidgetInfo = Widget.extend({
     	this.$el.find('.o_coord_type_list .o_coord_type_img').attr('src',src);
     },
     
-    _onMapSelectChange:function(src){
+    _onMaskThresholdChange: function(e){
+    	var panels = self.$('select[name="mask_group"]')[0].value;
     	
+    	for (var i = 0;i< this.geo.block.mask.length;i++){
+    		if(this.geo.block.mask[i].panels == panels){
+    			this.geo.block.mask[i].threshold = $(e.currentTarget)[0].value;
+    			break;
+    		}
+    	}
+
+    	this.geo.no_render_map = true;
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    },
+    
+    _onMaskChange: function(e){
+    	var value = $(e.currentTarget)[0].value;
+    	var panels = value.split(',');
+    	
+    	var map = this.getParent().thumbWidget.map;
+    	_.each(map.polylines,function(poly){
+			if(poly.type !== 'block')
+				return;
+			_.each(poly.panels,function(p){
+					p.select(_.contains(panels, p.obj.panel_index.toString()));
+			});
+			
+		});
+    	map.requestRenderAll();
+    	
+    	_.each(this.geo.block.mask,function(m){
+    		if(m.panels == value){
+    			self.$('input[name="mask_threshold"]')[0].value = m.threshold;
+    		}
+    	});
+    	
+ 
+    	if(this.getParent().mode == 'edit')
+			this.$('.o_button_delete_mask_group').show();
+    },
+    
+    _onAddMask: function(){
+    	var disabled = this.getParent().mode != 'edit';
+    	if(disabled)
+    		return;
+    	
+    	this.$('.o_button_add_mask_group').hide();
+    	var option = $('<option>'+this.curPanels+'</option>');
+    	this.$('select[name="mask_group"]')[0].add(option[0],null);
+    	this.$('select[name="mask_group"]')[0].value = this.curPanels;
+    	this.$('input[name="mask_threshold"]')[0].value = 10;
+    	
+    	this.geo.block.mask.push({panels:this.curPanels,threshold:10});
+    	this.geo.no_render_map = true;
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    },
+    
+    _onDeleteMask: function(){
+    	var disabled = this.getParent().mode != 'edit';
+    	if(disabled)
+    		return;
+    	
+    	var panels = self.$('select[name="mask_group"]')[0].value;
+    	
+    	for (var i = 0;i< this.geo.block.mask.length;i++){
+    		if(this.geo.block.mask[i].panels == panels){
+    			this.geo.block.mask.splice(i, 1);
+    			break;
+    		}
+    	}
+    	
+    	this.geo.no_render_map = true;
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    	this.$('.o_button_delete_mask_group').hide();
+    	self.$('select[name="mask_group"]')[0].value = null;
+    	self.$('input[name="mask_threshold"]')[0].value = null;
+    },
+    
+    _onMapSelectChange:function(src){
+    	var edit = this.getParent().mode == 'edit';
+
     	if(this.getParent() !== src.getParent())
     		return
     		
     	var curPolyline = src.map.curPolyline;
     	this.geo = {};
     	$.extend(true,this.geo,this.getParent().state.data.geo);
+    	this.curPanels = null;
     	
+    	this.$('.o_button_add_mask_group').hide();
+    	this.$('.o_button_delete_mask_group').hide();
     	if(this.widget_info) {
     		this.widget_info.destroy();
     		this.widget_info.$el.remove();
@@ -335,15 +425,58 @@ var WidgetInfo = Widget.extend({
     	if(curPolyline){
     		var oid = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
     		if(curPolyline.type == 'mark'){
-    			//this.widget_info = new InfoMark(this, curPolyline,this.geo,oid);
-    			//this.widget_info.appendTo('.gmd_info');
-    		}else if(curPolyline.type == 'mask'){
-    			this.widget_info = new InfoMask(this, curPolyline,this.geo,oid);
+    			this.widget_info = new InfoMark(this, curPolyline,this.geo,oid);
+    			this.widget_info.appendTo('.gmd_info');
+    		}else if(curPolyline.type == 'markoffset'){
+    			this.widget_info = new InfoMarkOffset(this, curPolyline,this.geo,oid);
     			this.widget_info.appendTo('.gmd_info');
     		}else if(curPolyline.type == 'block'){
     			this.widget_info = new InfoBlock(this, curPolyline,this.geo,this.glass,oid);
     			this.widget_info.appendTo('.gmd_info');
     		}
+    	}else{
+    		var panels = [];
+    		_.each(src.map.polylines,function(poly){
+    			if(poly.type !== 'block')
+    				return;
+    			_.each(poly.panels,function(p){
+    				if(p.obj.selected){
+    					panels.push(p.obj.panel_index.toString());
+    				}
+    			});
+    			
+    		});
+    		
+    		var self = this;
+    		function panelMatch(m){
+    			var u = _.union(m.panels.split(','),panels);
+    			if(u.length == panels.length && m.panels.split(',').length == panels.length){
+    				self.curPanels = m.panels;
+    				return true;
+    			}else{
+    				return false;
+    			}
+    		}
+    		
+    		if(panels.length){
+    			if(_.any(this.geo.block.mask,panelMatch)){
+    				if(edit)
+    					this.$('.o_button_delete_mask_group').show();
+    			}else{
+    				this.curPanels = panels.join(',');
+    				
+    				if(edit){
+    					this.$('.o_button_add_mask_group').show();
+    				}
+    			}
+    				
+    		}else{
+    			this.$('.o_button_delete_mask_group').hide();
+    			this.$('.o_button_delete_mask_group').hide();
+    			this.$('select[name="mask_group"]')[0].value = null;
+    			this.$('input[name="mask_threshold"]')[0].value = null;
+    		}
+    		
     	}
     },
     

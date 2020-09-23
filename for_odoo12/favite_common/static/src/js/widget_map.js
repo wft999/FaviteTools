@@ -31,6 +31,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
 		this.fold = false;
 		this.mouseMode = 'select';
 		
+		
         return this._super.apply(this, arguments);
     },
    
@@ -71,6 +72,9 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     },
     
     _onTypeButtonClick: function(ev){
+    	if(!this.map)
+    		return;
+    	
 		var self = this;
 		
 		var key = $(ev.currentTarget).data('type');
@@ -108,6 +112,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     
     start: function () {
         var self = this;
+        
         
         return this._super.apply(this, arguments).then(function () {
         	self.$el.on('click', 'button.btn',self._onButtonClick.bind(self));
@@ -191,7 +196,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         			if(canvas_registry.get(baseKey+key))
         				objClass = canvas_registry.get(baseKey+key);
         			
-         			var p = new objClass(self,key,obj,color,!!self.geo[key].readonly);
+         			var p = new objClass(self,key,obj,color,!!self.geo[key].readonly,!!self.geo[key].noselect);
          			if(p.intersectsWithRect(0,self.size.x,0,self.size.y))
          				p.render();
          			
@@ -238,7 +243,9 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     },
     
     _onButtonClick : function(event) {
-    	console.log(event);
+    	if(!this.map)
+    		return;
+    	
     	var mode = $(event.currentTarget).data('mode');
 		if(mode){
 			this.$('button.btn').removeClass('active');

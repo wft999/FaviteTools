@@ -147,8 +147,9 @@ var Hawkmap = Widget.extend({
         });
     	
     	
-    	var hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.parent.isPolygonSubMark==false);
+    	var hidden = this.pad.curType == 'subMark' && this.parent.isPolygonSubMark==false;
     	this.$el.find('.fa-edit').toggleClass('o_hidden',hidden);
+    	hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.parent.isPolygonSubMark==false);
     	this.$el.find('.fa-copy').toggleClass('o_hidden',hidden);
     	
     },
@@ -323,6 +324,8 @@ var Hawkmap = Widget.extend({
 		this.map.pads.forEach(function(pad){
 			if(!pad.panelpad.selected)
 				return;
+			if(pad.padType == 'frame')
+				return;
 			
 			if(pad.padType == 'inspectZoneFrame'){
 				self._rpc({model: 'padtool.pad',method: 'set_panel_information',args: [self.parent.menu_id,self.parent.panelName,offsetXum,offsetYum],})
@@ -338,13 +341,13 @@ var Hawkmap = Widget.extend({
 		        }).fail(function(){
 		        	self.do_warn(_t('Operation Result'),_t('The Operation failed!'),false);
 		        	});
-				return;
 			}
 			else if(pad.padType != self.pad.curType)
 				return;
 			
+			if(pad.padType != 'inspectZoneFrame')
+				self.parent.register(pad.panelpad);
 			
-			self.parent.register(pad.panelpad);
 			var tmpPoints = _.clone(pad.panelpad.points);
 			for(var i = 0; i < pad.points.length; i++){
     			pad.points[i].x += offsetX;
@@ -416,7 +419,9 @@ var Hawkmap = Widget.extend({
 	    		
 			pad.update();
     		pad.panelpad.update();
-			self.parent.pad.isModified = true;	
+    		
+    		if(pad.padType != 'inspectZoneFrame')
+    			self.parent.pad.isModified = true;	
 		});
 		
     },
@@ -794,7 +799,7 @@ var Hawkmap = Widget.extend({
 			}else{
 				this.do_warn(_t('Incorrect Operation'),_t('Mark is across multiple IPs!'),false);
 			}
-    	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='inspectZone' ||this.pad.curType=='unregularInspectZone' || this.pad.curType=='uninspectZone')){
+    	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='inspectZone' ||this.pad.curType=='unregularInspectZone' || this.pad.curType=='uninspectZone'|| this.pad.curType=='pframe')){
     		if(!this.map.curPad){
     			var pad = new Mycanvas.MyPolyline(this.parent.map,this.pad.curType);
 				this.map.curPad = new Mycanvas.MyPolyline(this.map,this.pad.curType);
@@ -830,6 +835,24 @@ var Hawkmap = Widget.extend({
     		}else{
     			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
     		}    			
+		}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && this.pad.curType=='frame' ){
+    		if(!this.map.curPad){
+    			var pad = new Mycanvas.MyPolyline(this.parent.map,"frame-goa");
+				this.map.curPad = new Mycanvas.MyPolyline(this.map,"frame-goa");
+				this.map.curPad.panelpad = pad;
+				pad.hawkpad = this.map.curPad;
+			}
+    		
+    		
+			let {dOutputX:ux,dOutputY:uy} = this.parent.coordinate.HawkmapCoordinateToUMCoordinate(endPointer.x/zoom,this.image.height-endPointer.y/zoom);
+    		tmp = this.parent.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+
+    		if(this.map.curPad.panelpad.addPoint({x:tmp.dOutputX, y:this.parent.image.height-tmp.dOutputY,ux,uy})){
+    			this.map.curPad.addPoint({x: endPointer.x/zoom, y: endPointer.y/zoom})
+    			//this.pad.isModified = true;
+    		}else{
+    			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
+    		}    			
 		}else if(this.map.hoverCursor == 'default'){
 			if(this._isSelectCross){
 				this._isSelectCross = false;
@@ -839,6 +862,10 @@ var Hawkmap = Widget.extend({
 			var x = opt.pointer.x/zoom;
 			var y = opt.pointer.y/zoom;
 			if(this.map.curPad){
+				if(this.map.curPad.padType == 'frame-goa'){
+					//this._onConfirmGOA();
+				}
+				
 				this.map.curPad = null;
 				if(this.markShow){
 					this.map.remove(this.markShow);
@@ -849,7 +876,7 @@ var Hawkmap = Widget.extend({
 			this.map.discardActiveObject();
 			var selected = new Array();
 			for(var i = 0; i < this.map.pads.length; i++){
-				if(this.map.pads[i].padType != this.pad.curType && this.map.pads[i].padType != 'inspectZoneFrame')
+				if(this.map.pads[i].padType != this.pad.curType && this.map.pads[i].padType != 'inspectZoneFrame' && this.map.pads[i].padType != 'frame-goa')
 					continue;
 				if(_isDrawRect){
 					var left = Math.min(this.map.startPointer.x,opt.pointer.x)/zoom;
@@ -941,6 +968,8 @@ var Hawkmap = Widget.extend({
     },
     _on_close:function(){
     	this.parent.hawkeye.visible = false;
+    	_.each(this.parent.map.pads,p=>p.padType == 'frame-goa' && p.clear());
+    	this.parent.map.pads = _.filter(this.parent.map.pads,p=>p.padType != 'frame-goa');
     	this.parent.map.renderAll();
     	
     	//delete this.parent.hawkmap;
@@ -951,7 +980,7 @@ var Hawkmap = Widget.extend({
     _updateForMode:function(){
     	var self = this; 
     	this.map.forEachObject(function(obj){
-			if(obj.pad && obj.pad.padType == self.pad.curType){
+			if(obj.pad && (obj.pad.padType == self.pad.curType || (self.pad.curType == 'frame' && obj.pad.padType == 'frame-goa'))){
 				if(obj.type === 'cross'){
 					obj.lockMovementX = self.map.hoverCursor != 'default';
 					obj.lockMovementY = self.map.hoverCursor != 'default';
@@ -1051,7 +1080,7 @@ var Hawkmap = Widget.extend({
     		return;
     	if(this.map.hoverCursor !== 'default')
     		return;
-    	if(this.pad.curType !== 'inspectZone')
+    	if(this.pad.curType !== 'inspectZone' && this.pad.curType !== 'frame')
     		return;
     	
     	var zoom = this.map.getZoom();
@@ -1066,7 +1095,7 @@ var Hawkmap = Widget.extend({
 		}
 		
 		for(var i = 0; i < this.map.pads.length; i++){
-			if(this.map.pads[i].padType != this.pad.curType)
+			if((this.pad.curType == 'inspectZone' && this.map.pads[i].padType != this.pad.curType) || (this.pad.curType == 'frame' && this.map.pads[i].padType != 'frame-goa'))
 				continue;
 			this.map.pads[i].panelpad.selected = false;
 			if(this.map.curPad == null && this.map.pads[i].containsPoint({x,y})){
@@ -1075,7 +1104,10 @@ var Hawkmap = Widget.extend({
 		}
     	
    	 	if(this.map.curPad){
-   	 		this._onButtonAlign(x,y);
+   	 		if(this.pad.curType == 'inspectZone')
+   	 			this._onButtonAlign(x,y);
+   	 	if(this.pad.curType == 'frame')
+	 			this._onButtonAlignFrame(x,y);
    	 	}
     },
     
@@ -1204,6 +1236,58 @@ var Hawkmap = Widget.extend({
 		this.map.renderAll();
     },
     
+    _onConfirmFrameGOA:function(){
+    	var pad = this.map.curPad.panelpad;
+    	
+    	pad.periodX = parseFloat(this.dialog.$content.find('.o_set_periodx_input').val());
+    	pad.periodY = parseFloat(this.dialog.$content.find('.o_set_periody_input').val());
+    	
+    	if(pad.periodX == 0 && pad.periodY == 0){
+    		if(this.map.curPad.goa !== undefined){
+    			this.map.remove(this.map.curPad.goa);
+    			this.map.renderAll();
+    			this.map.curPad.goa = undefined;
+    		}
+    		return;
+    	}
+    	
+    	var angle,period;
+    	var periodX = pad.periodX/this.parent.coordinate.mpMachinePara.aIPParaArray[0].aScanParaArray[0].dResolutionX;
+    	var periodY = pad.periodY/this.parent.coordinate.mpMachinePara.aIPParaArray[0].aScanParaArray[0].dResolutionY;
+		if(pad.periodY == 0){
+			angle = fabric.util.degreesToRadians(90);
+			period = periodX;
+		}else if(pad.periodX == 0){
+			angle = fabric.util.degreesToRadians(0);
+			period = periodY;
+		}else{
+			angle = Math.atan(periodX/periodY);
+			period = periodY / fabric.util.cos(angle);
+		}
+		angle = fabric.util.radiansToDegrees(angle);
+		
+		if(this.map.curPad.goa === undefined){
+			this.map.curPad.goa = new Mycanvas.Goa({
+					left:this.dialog._x,
+					top:this.dialog._y,
+	    			pad:this.map.curPad,
+	    			period,
+	    			angle,
+	    			visible:true
+	    		}); 
+			this.map.add(this.map.curPad.goa);
+		}else{
+			var dirty = true;
+			var height = period * this.map.curPad.goa.number;
+			period = period / this.map.curPad.goa.scaleY;
+			if(period !== this.map.curPad.goa.period || angle !== this.map.curPad.goa.angle){
+				this.map.curPad.goa.set({angle,period,dirty,height});
+				this.map.curPad.goa.setCoords();
+			}
+		}
+		this.map.renderAll();
+    },
+    
     _onButtonAlign:function(x,y){
     	if(this.pad.curType != 'inspectZone')
     		return;
@@ -1234,6 +1318,29 @@ var Hawkmap = Widget.extend({
         	self.dialog.$('.o_set_periody_input').val(pad.periodY||0);
         	self.dialog.$('.o_set_d1g1_input')[0].checked = pad.D1G1 == 1;
             });
+        this.dialog.open();
+    },
+    
+    _onButtonAlignFrame:function(x,y){
+    	if(this.pad.curType != 'frame')
+    		return;
+    	if(this.map.curPad == null || this.map.curPad.padType !== 'frame-goa')
+    		return;
+    	
+    	var self = this;
+    	var pad = this.map.curPad.panelpad;
+        var $content = $(QWeb.render("FrameGoaDialog"));
+            
+        this.dialog = new Dialog(this, {
+        	title: _t('Search Period'),
+        	//size: 'medium',
+        	$content: $content,
+        	buttons: [{text: _t('AutoSearch'), classes: 'btn-primary', close: false, click: this._onSearchGOA.bind(this)}, 
+        		{text: _t('Confirm'), classes: 'btn-primary', close: true, click: this._onConfirmFrameGOA.bind(this)},
+        		{text: _t('Discard'), close: true}],
+        });
+        this.dialog._x = x;
+        this.dialog._y = y;
         this.dialog.open();
     },
     

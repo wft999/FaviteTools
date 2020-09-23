@@ -30,7 +30,12 @@
     
     <template id="menu_secondary" name="menu_secondary" inherit_id="web.menu_secondary">
         <xpath expr="//div[@class='o_sub_menu_footer']" position="replace">
-            
+            <div class="o_sub_menu_footer input-group">
+            	<input class="o_searchview_input o_search_pad form-control" placeholder="Search..." type="text" />
+            	<span class="input-group-btn">
+        			<button class="btn btn-default o_search_pad_button" type="button">Go</button>
+      			</span>
+        	</div>
         </xpath>
     </template>
     

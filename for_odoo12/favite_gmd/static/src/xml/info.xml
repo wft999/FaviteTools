@@ -8,10 +8,30 @@
     <t t-jquery="a[data-menu='account']" t-operation="replace"></t>
 </t> -->
 
+<t  t-name="BlockLayoutDialog">
+<div>
+	<form class="form-inline">
+		<div class="form-group">
+	    	<label for="tolerancex" class=" control-label">col:</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="col"  />
+	    	</div>
+	  	</div>
+	
+		<div class="form-group">
+	    	<label for="tolerancey" class="control-label">row:</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="row"  />
+	    	</div>
+	  	</div>
+	</form>
+</div>
+</t>
+
 <t t-name="favite_gmd.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-        	<span class="badge badge-primary"> <t t-esc="widget.string"/> </span>
+        	<span class="badge badge-primary">Gmd</span>
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
             <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
@@ -78,7 +98,26 @@
 					</td>
        			</tr>
        			
-       			
+       			<tr>
+       				<td ><div class="o_horizontal_separator">Mask</div></td>
+       				<td>
+       					<button class="btn btn-xs btn-primary o_button_add_mask_group" type="button">Add</button>
+       					<button class="btn btn-xs btn-primary o_button_delete_mask_group" type="button">Delete</button>
+       				</td>
+
+       			</tr>
+       			<tr>
+           			<td class="o_td_label"><label for="mask_group" class="o_form_label">Group</label></td>
+           			<td width="50%">
+           				<select  class="o_field_widget o_input o_mask_group" name="mask_group">
+<!--   							<option value ="0">TopLeft</option> -->
+						</select>
+					</td>
+       			</tr>
+       			<tr>
+       				<td class="o_td_label"><label for="mask_threshold" class="o_form_label">Threshold</label></td>
+       				<td width="30%"><input type="number" class="o_field_widget o_input o_mask_threshold" name="mask_threshold" /></td>
+       			</tr>
 
    			</table>
         </div>
@@ -88,11 +127,37 @@
 <t t-name="favite_gmd.info_mark">
 
     	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mark</div></td></tr>
-<!--        	<tr>
-           	<td class="o_td_label"><label for="shift" class="o_form_label">shift(pixel)</label></td>
-           	<td width="100%"><input type="number" class="o_field_widget o_input" name="shift" /></td>
-       	</tr> -->
+       	<tr>
+           	<td class="o_td_label"><label for="x_mark_position" class="o_form_label">x position</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="x_mark_position" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="y_mark_position" class="o_form_label">y position</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="y_mark_position" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_width" class="o_form_label">width</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="mark_width" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_height" class="o_form_label">height</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="mark_height" /></td>
+       	</tr>
+       	
+</t>
 
+<t t-name="favite_gmd.info_mark_offset">
+
+    	<tr><td colspan="2" style="width: 100%;"><div class="o_horizontal_separator">Mark offset</div></td></tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_offset_width" class="o_form_label">width</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="mark_offset_width" /></td>
+       	</tr>
+       	<tr>
+           	<td class="o_td_label"><label for="mark_offset_height" class="o_form_label">height</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input" name="mark_offset_height" /></td>
+       	</tr>
+       	
 </t>
 
 <t t-name="favite_gmd.info_mask">

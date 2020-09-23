@@ -4,7 +4,7 @@ odoo.define('padtool.Panelmap', function (require) {
 var ControlPanelMixin = require('web.ControlPanelMixin');
 var core = require('web.core');
 var Dialog = require('web.Dialog');
-
+var framework = require('web.framework');
 
 var Map = require('padtool.Map');
 var Mycanvas = require('padtool.Canvas');
@@ -92,8 +92,7 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     	this.$buttons.find('.submask-checkbox-label').toggleClass('o_hidden',this.pad.curType !== 'subMark');
     	this.$buttons.find('.fa-th').toggleClass('o_hidden',this.pad.curType !== 'subMark');
     	
-    	this.$buttons.find('.fa-gear').toggleClass('o_hidden', this.pad.curType !== 'frame' && this.pad.curType !== 'pframe');
-
+    	this.$buttons.find('.fa-gear').toggleClass('o_hidden', this.pad.curType !== 'frame' && this.pad.curType !== 'pframe'&& this.pad.curType !== 'inspectZone');
     },
     
     showObj:function(obj){
@@ -178,6 +177,10 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     			return;
     		}
     		if(obj.padType == 'subMark' && obj.points.length <= 2  && obj.blocks == undefined)
+    			return;
+    		if(obj.padType == 'inspectZoneFrame')
+    			return;
+    		if(obj.padType == 'frame-goa')
     			return;
     		
     		var o = {
@@ -274,6 +277,9 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         		this.hawkmap.drawPad();
     	}else if(this.pad.curType === 'frame'){
     		this._drawRegion();
+        	this.do_notify(_t('Operation Result'),_t('Region has refreshed!'),false);
+    	}else if(this.pad.curType === 'pframe'){
+    		this._drawPRegion();
         	this.do_notify(_t('Operation Result'),_t('Region has refreshed!'),false);
     	}else{
     		var self = this;
@@ -392,6 +398,59 @@ var Panelmap = Map.extend(ControlPanelMixin,{
     },    
     
     _onButtonSetting: function(){
+    	if(this.pad.curType == 'frame' || this.pad.curType == 'pframe'){
+    		this._onButtonSettingRegion();
+    	}else if(this.pad.curType == 'inspectZone'){
+    		this._onButtonSettingInspect();
+    	}
+    	
+    },
+    
+    _onButtonSettingInspect: function(){
+    	var unselected = _.every(this.map.pads,p => (!p.selected) || p.padType != 'inspectZone');
+    	if(unselected){
+    		this.do_warn(_t('Operation Result'),_t("Please select inspectZone first !"),false);
+    		return;
+    	}
+    	
+    	var self = this;
+        var $content = $(QWeb.render("SetInspectDialog"));
+            
+        this.dialog = new Dialog(this, {
+        	title: _t('Inspect'),
+        	size: 'medium',
+        	$content: $content,
+        	buttons: [{text: _t('Confirm'), classes: 'btn-primary', close: true, click: function(){
+        		var tolerancex = parseInt(this.$content.find('#tolerancex').val());
+            	var tolerancey = parseInt(this.$content.find('#tolerancey').val());
+            	var periodx = parseInt(this.$content.find('#periodx').val());
+            	var periody = parseInt(this.$content.find('#periody').val());
+            	
+            	_.each(self.map.pads, function(p){
+            		if(p.selected && p.padType == 'inspectZone'){
+            			p.toleranceX = tolerancex;
+                		p.toleranceY = tolerancey;
+                		p.periodX = periodx;
+                		p.periodY = periody;
+            		}
+            	});
+            	
+            	self.pad.isModified = true;
+
+        	}},
+        		{text: _t('Discard'), close: true}],
+        });
+        this.dialog.opened().then(function () {
+        	var pad = _.find(self.map.pads,p => p.selected && p.padType == 'inspectZone');
+            self.dialog.$('#tolerancex').val(pad.toleranceX||10);
+            self.dialog.$('#tolerancey').val(pad.toleranceY||10);
+            self.dialog.$('#periodx').val(pad.periodX||0);
+            self.dialog.$('#periody').val(pad.periodY||0);
+        });
+        this.dialog.open();
+    },
+    
+    _onButtonSettingRegion: function(){
     	var unselected = _.every(this.map.pads,p => (!p.selected) || p.padType != 'region');
     	if(unselected){
     		this.do_warn(_t('Operation Result'),_t("Please select region first !"),false);
@@ -419,6 +478,8 @@ var Panelmap = Map.extend(ControlPanelMixin,{
                 		p.angle1 = angle1;
             		}
             	});
+            	
+            	self.pad.isModified = true;
 
         	}},
         		{text: _t('Discard'), close: true}],
@@ -707,7 +768,11 @@ var Panelmap = Map.extend(ControlPanelMixin,{
  		var hasRegion = false;
  			
  		this.jsonpad.objs && this.jsonpad.objs.forEach(function(pad){
- 			var obj = new Mycanvas.MyPolyline(self.map,pad.padType);
+ 			var obj;
+ 			if(pad.padType == 'inspectZoneFrame')
+ 				return;
+ 			
+ 			obj = new Mycanvas.MyPolyline(self.map,pad.padType);
  			obj = _.extend(obj, pad);
  			for(var i = 0; i < obj.points.length; i++){
  				if(obj.points[i].x === undefined && obj.points[i].ux !== undefined){
@@ -831,6 +896,85 @@ var Panelmap = Map.extend(ControlPanelMixin,{
 		this.map.renderAll();
 
      },
+     
+ 	 _drawPRegion: function(){
+ 		var self = this;
+ 		
+ 		var frames = _.filter(this.map.pads,obj=>obj.padType == 'pframe' && obj.points.length > 2);
+ 		if(frames.length < 2){
+ 			self.do_warn(_t('Operation Result'),_t('The number of polygon must be 2!'),false);
+ 			return;
+ 		}
+ 		
+ 		var f0,f1;
+ 		if(_.every(frames[0].points,p => frames[1].containsPoint(p))){
+ 			f0 = frames[0];
+ 			f1 = frames[1];
+ 		}else if(_.every(frames[1].points,p => frames[0].containsPoint(p))){
+ 			f0 = frames[1];
+ 			f1 = frames[0];
+ 		}else{
+ 			self.do_warn(_t('Operation Result'),_t('The polygons are incorrect!'),false);
+ 			return;
+ 		}
+ 		
+  		var res = _.partition(this.map.pads, function(obj){
+  			return obj.padType == 'region';
+  		});
+  		this.map.pads = res[1];
+  		res[0].forEach(function(obj){
+  			obj.clear();
+  		})
+  		
+  		var points = {x1:[],y1:[],x2:[],y2:[]};
+  		f0.points.forEach(function(p){
+    		points.x1.push(Math.round(p.ux));
+    		points.y1.push(Math.round(p.uy));
+    	});
+  		f1.points.forEach(function(p){
+    		points.x2.push(Math.round(p.ux));
+    		points.y2.push(Math.round(p.uy));
+    	});
+    	var strPoints = JSON.stringify(points);
+    	var dResolutionX = this.coordinate.mpMachinePara.aIPParaArray[0].aScanParaArray[0].dResolutionX;
+    	var dResolutionY = this.coordinate.mpMachinePara.aIPParaArray[0].aScanParaArray[0].dResolutionY;
+  		
+  		framework.blockUI();
+    	this._rpc({model: 'padtool.pad',method: 'search_pframe',args: [strPoints,dResolutionX,dResolutionY],})
+        .then(function(res) {
+        	framework.unblockUI();
+        	if(res.result){
+        		var buf = res.buf.substring(0,res.buf.indexOf(']')+1);
+        		var regions = eval(buf);
+        		regions.forEach(function(r){
+        			var x,y,ux,uy,obj; 
+        			
+        			obj = new Mycanvas.MyPolyline(self.map,"region");
+          			obj.iFrameNo = 0;
+          			ux = r.l;
+          			uy = r.b;
+          			let {dOutputX:x1, dOutputY:y1} = self.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+          			obj.points.push({x:x1,y:self.image.height-y1,ux,uy});
+          			
+          			ux = r.r;
+          			uy = r.t;
+          			let {dOutputX:x2, dOutputY:y2} = self.coordinate.UMCoordinateToPanelMapCoordinate(ux,uy);
+          			obj.points.push({x:x2,y:self.image.height-y2,ux,uy});
+          			obj.update();
+        		})
+        		self.pad.isModified = true;
+                self.do_notify(_t('Operation Result'),_t('The search is success!'),false);
+        	}else{
+        		self.do_warn(_t('Operation Result'),_t('The search failed!'),false);
+        	}
+        }).fail(function(){
+        	framework.unblockUI();
+        	self.do_warn(_t('Operation Result'),_t('The search failed!'),false);
+        });
+  	   
+ 		
+  	 },     
+     
 
  	 _drawRegion: function(){
  		var x,y,ux,uy,obj; 

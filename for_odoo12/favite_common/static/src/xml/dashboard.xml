@@ -47,7 +47,7 @@
 				<button class="btn btn-secondary btn-sm fa fa-map-marker o_hidden" title="Point" data-mode="crosshair" accesskey="e"/>
 		    </div>
 
-            <a t-if="widget.id != 'info'"  class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="New" title="New">
+            <a t-if="widget.id != 'info' &amp;&amp; !widget.readonly"  class="dropdown-toggle o-no-caret btn btn-secondary btn-sm" data-toggle="dropdown" href="#" role="button" aria-label="New" title="New">
                 <span class="fa fa-ellipsis-h"/>
             </a>
             <div t-if="widget.id != 'info'"  class="dropdown-menu obj-types" role="menu" aria-labelledby="dLabel">

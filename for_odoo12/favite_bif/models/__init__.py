@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import bif,gsp,pad,frame,fixpoint,lut,mark,measure
+from . import pad,frame,fixpoint,lut,mark,measure,bif,gsp

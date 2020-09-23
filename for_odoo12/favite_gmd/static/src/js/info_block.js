@@ -84,9 +84,9 @@ return Widget.extend({
         var self = this;
         return this._super.apply(this, arguments).then(function () {
         	
-        	self.$('#panel_start_id')[0].value = self.curPolyline.obj.panel_start_id || '';
-        	self.$('#panel_start_id_x')[0].value = self.curPolyline.obj.panel_start_id_x || '';
-        	self.$('#panel_start_id_y')[0].value = self.curPolyline.obj.panel_start_id_y || '';
+        	self.$('#panel_start_id')[0].value = self.curPolyline.obj.panel_start_id || '0';
+        	self.$('#panel_start_id_x')[0].value = self.curPolyline.obj.panel_start_id_x || '0';
+        	self.$('#panel_start_id_y')[0].value = self.curPolyline.obj.panel_start_id_y || '0';
 
         	if(self.panel){
         		self.$('#pixelsize')[0].value = self.panel.pixelsize || '';

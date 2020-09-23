@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
-import os       
+import os 
+import math   
+import copy   
 
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 try:
@@ -77,7 +79,15 @@ class Bif(models.Model):
                     geo['filter']['objs'].append(f)
                     
             panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)])
-            panel.write({'geo':geo})
+            if 'gsp' in p:
+                gsp = self.env['favite_bif.gsp'].sudo().search([('id','=',p['gsp']),('bif_id','=',self.id)])
+                if gsp:
+                    panel.write({'geo':geo,'gsp_id':gsp.id})
+            else:
+                panel.write({'geo':geo})
+                
+        gsp = self.env['favite_bif.gsp'].sudo().search([('bif_id','=',self.id)])
+        gsp.refresh()
 
     @api.one
     @api.depends('gmd_id','gmd_id.geo')
@@ -87,17 +97,29 @@ class Bif(models.Model):
         self.geo['panel'] = {"objs":[],"readonly":True}
         
         total = self.env['favite_bif.panel'].sudo().search([('bif_id','=',self.id)])
-        names = [p['name'] for b in self.gmd_id.geo['block']['objs'] for p in b['panels'] ]
+        
+        names = []
+        for b in self.gmd_id.geo['block']['objs']:
+            if 'panels' in b:
+                for p in b['panels']:
+                    names.append(p['name'])
+
         cur = self.env['favite_bif.panel'].sudo().search([('name','in',names)])
         (total - cur).unlink()
         
         self.geo['panel']['objs'] = []
         for b in self.gmd_id.geo['block']['objs']:
-            for p in b['panels']:
-                self.geo['panel']['objs'].append(p)
-                panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)]);
-                if not panel:
-                    self.env['favite_bif.panel'].sudo().create({'bif_id': self.id,'name':p['name']})
+            if 'panels' in b:
+                for p in b['panels']:
+                    panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)]);
+                    if panel:
+                        if panel.gsp_id:
+                            panel.gsp_id.refresh()
+                            p['gsp'] = panel.gsp_id.id
+                            p['color'] = panel.gsp_id.color
+                    else:
+                        self.env['favite_bif.panel'].sudo().create({'bif_id': self.id,'name':p['name']}) 
+                    self.geo['panel']['objs'].append(p)
 
         self.geo['panel_filter'] = {"objs":[]}
         for panel in self.panel_ids:
@@ -105,6 +127,9 @@ class Bif(models.Model):
                 filter = obj
                 filter['name'] = panel['name']
                 self.geo['panel_filter']['objs'].append(filter)
+                
+        gsp = self.env['favite_bif.gsp'].sudo().search([('bif_id','=',self.id)])
+        gsp.refresh()
         
     geo = fields.Jsonb(string = "geometry value",compute='_compute_geo',inverse='_inverse_geo')
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
@@ -112,7 +137,7 @@ class Bif(models.Model):
     camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
-    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', requery=True)
+    gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', required=True)
     
     frame_id = fields.Many2one('favite_bif.frame',ondelete='set null')
     mark_id = fields.Many2one('favite_bif.mark',ondelete='set null')
@@ -160,13 +185,38 @@ class Bif(models.Model):
             'domain': [('bif_id', '=', self.id)],
             'context': ctx,
             }
+        
+    def _export_geo(self):
+        iniFile = os.path.join(self.camera_path , self.gmd_id.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = copy.deepcopy(self.geo)
+            for o in geo['panel']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = (dInputX -dGlassCenterX) * math.cos(dAngle) + (dInputY - dGlassCenterY) * math.sin(dAngle);
+                    p['y'] = -(dInputX - dGlassCenterX) * math.sin(dAngle) + (dInputY - dGlassCenterY) * math.cos(dAngle);
+                     
+            for o in geo['mark']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = (dInputX -dGlassCenterX) * math.cos(dAngle) + (dInputY - dGlassCenterY) * math.sin(dAngle);
+                    p['y'] = -(dInputX - dGlassCenterX) * math.sin(dAngle) + (dInputY - dGlassCenterY) * math.cos(dAngle);
+
+        return geo
+    
 
     @api.one
     def export_file(self,directory_ids):
-        geo = self._export_geo()
-        
         self.gmd_id.export_file(directory_ids)
         
+        geo = self._export_geo()
         markNum = len(geo['mark']['objs'])
         strMark = 'mark.number = %d\n' % markNum
         for i in range(0,markNum):
@@ -182,27 +232,38 @@ class Bif(models.Model):
         gsp_list = []
         panelNum = 0
         strPanel = 'panel.gmd = %s\n' % self.gmd_id.name    
-        for p in self.geo['panel']['objs']:
-            p1 = p['points'][0]
-            p2 = p['points'][1]
-            left = min(p1['x'],p2['x'])
-            right = max(p1['x'],p2['x'])
-            bottom = min(p1['y'],p2['y'])
-            top = max(p1['y'],p2['y'])
-            strPanel += 'panel.%d.topleft = %f,%f\n' % (panelNum,left,top)
-            strPanel += 'panel.%d.topright = %f,%f\n' % (panelNum,right,top)
-            strPanel += 'panel.%d.bottomleft = %f,%f\n' % (panelNum,left,bottom)
-            strPanel += 'panel.%d.bottomright = %f,%f\n' % (panelNum,right,bottom)
-            
+        for p in geo['panel']['objs']:
             panel = self.env['favite_bif.panel'].sudo().search([('name','=',p['name']),('bif_id','=',self.id)]);
+            if not panel.gsp_id:
+                continue
+            
+#             p1 = p['points'][0]
+#             p2 = p['points'][1]
+#             left = min(p1['x'],p2['x'])
+#             right = max(p1['x'],p2['x'])
+#             bottom = min(p1['y'],p2['y'])
+#             top = max(p1['y'],p2['y'])
+#             strPanel += 'panel.%d.bottomleft = %f,%f\n' % (panelNum,left,top)
+#             strPanel += 'panel.%d.bottomright = %f,%f\n' % (panelNum,right,top)
+#             strPanel += 'panel.%d.topleft = %f,%f\n' % (panelNum,left,bottom)
+#             strPanel += 'panel.%d.topright = %f,%f\n' % (panelNum,right,bottom)
+            p0 = p['points'][0]
+            p1 = p['points'][1]
+            p2 = p['points'][2]
+            p3 = p['points'][3]
+            
+            strPanel += 'panel.%d.topleft = %f,%f\n' % (panelNum,p0['x'],p0['y'])
+            strPanel += 'panel.%d.topright = %f,%f\n' % (panelNum,p1['x'],p1['y'])
+            strPanel += 'panel.%d.bottomright = %f,%f\n' % (panelNum,p2['x'],p2['y'])
+            strPanel += 'panel.%d.bottomleft = %f,%f\n' % (panelNum,p3['x'],p3['y'])
+            
             strPanel += 'panel.%d.name = %s\n' % (panelNum,panel.name)
-            if panel.gsp_id:
-                strPanel += 'panel.%d.gspname = %s\n' % (panelNum,panel.gsp_id.name)
-                if panel.gsp_id not in gsp_list:
-                    strPanel += 'panel.%d.gspindex = %d\n' % (panelNum,len(gsp_list))
-                    gsp_list.append(panel.gsp_id)
-                else:
-                    strPanel += 'panel.%d.gspindex = %d\n' % (panelNum,gsp_list.index(panel.gsp_id))
+            strPanel += 'panel.%d.gspname = %s\n' % (panelNum,panel.gsp_id.name)
+            if panel.gsp_id not in gsp_list:
+                strPanel += 'panel.%d.gspindex = %d\n' % (panelNum,len(gsp_list))
+                gsp_list.append(panel.gsp_id)
+            else:
+                strPanel += 'panel.%d.gspindex = %d\n' % (panelNum,gsp_list.index(panel.gsp_id))
                     
             panelFilterNum = 0
             for f in panel.geo['filter']['objs']:
@@ -212,10 +273,10 @@ class Bif(models.Model):
                 right = max(p1['x'],p2['x'])
                 bottom = min(p1['y'],p2['y'])
                 top = max(p1['y'],p2['y'])
-                strPanel += 'panel.%d.filter.%d.topleft = %f,%f\n' % (panelNum,panelFilterNum,left,top)
-                strPanel += 'panel.%d.filter.%d.topright = %f,%f\n' % (panelNum,panelFilterNum,right,top)
-                strPanel += 'panel.%d.filter.%d.bottomleft = %f,%f\n' % (panelNum,panelFilterNum,left,bottom)
-                strPanel += 'panel.%d.filter.%d.bottomright = %f,%f\n' % (panelNum,panelFilterNum,right,bottom)
+                strPanel += 'panel.%d.filter.%d.topleft = %f,%f\n' % (panelNum,panelFilterNum,left,bottom)
+                strPanel += 'panel.%d.filter.%d.topright = %f,%f\n' % (panelNum,panelFilterNum,right,bottom)
+                strPanel += 'panel.%d.filter.%d.bottomleft = %f,%f\n' % (panelNum,panelFilterNum,left,top)
+                strPanel += 'panel.%d.filter.%d.bottomright = %f,%f\n' % (panelNum,panelFilterNum,right,top)
                 panelFilterNum = panelFilterNum + 1
             strPanel += 'panel.%d.filternumber = %d\n' % (panelNum,panelFilterNum)
             panelNum = panelNum + 1
@@ -252,7 +313,7 @@ class Bif(models.Model):
         
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -271,6 +332,25 @@ class Bif(models.Model):
                 f.write(strPanel)
                 f.write(strGsp)
                 f.write(strSubbif)
+                
+    def _import_geo(self):
+        iniFile = os.path.join(self.camera_path , self.gmd_id.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = self.geo    
+            for o in geo['panel']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = dInputX * math.cos(-dAngle) + dInputY * math.sin(-dAngle) + dGlassCenterX;
+                    p['y'] = -dInputX * math.sin(-dAngle) + dInputY * math.cos(-dAngle) + dGlassCenterY;
+
+        
+            self.write({'geo': geo})
                 
     @api.model
     def import_file(self,file):
@@ -362,8 +442,8 @@ class Bif(models.Model):
                 
                 m = int(par.get('panel.%d.filternumber'%i,0))
                 for j in range(0, m):
-                    left,top = (float(s) for s in par['panel.%d.filter.%d.topleft'%(i,j)].split(','))
-                    right,bottom = (float(s) for s in par['panel.%d.filter.%d.bottomright'%(i,j)].split(','))
+                    left,bottom = (float(s) for s in par['panel.%d.filter.%d.topleft'%(i,j)].split(','))
+                    right,top = (float(s) for s in par['panel.%d.filter.%d.bottomright'%(i,j)].split(','))
                     o = {'points':[]}
                     o['points'].append({'x':left,'y':top})
                     o['points'].append({'x':right,'y':bottom})

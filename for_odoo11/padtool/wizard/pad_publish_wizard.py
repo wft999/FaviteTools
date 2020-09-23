@@ -3,7 +3,7 @@
 from odoo import api, fields, models
 import base64
 import json
-import os
+import os,stat
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -290,6 +290,7 @@ class PadPublishWizard(models.TransientModel):
             for dir in self.directory_ids:
                 if not os.path.exists(dir.name +'/'+ pad.name):
                     os.mkdir(dir.name +'/'+ pad.name)
+                    os.chmod(dir.name +'/'+ pad.name, stat.S_IREAD | stat.S_IWRITE)
                 with open(dir.name +'/'+ pad.name +'/MainMark.bmp', 'wb') as f:
                     f.write(base64.b64decode(pad.mainMark))
             #mark = Image.new('L', (mainMarkWidth,mainMarkHeight))
@@ -300,6 +301,7 @@ class PadPublishWizard(models.TransientModel):
             for dir in self.directory_ids:
                 if not os.path.exists(dir.name +'/'+ pad.name):
                     os.mkdir(dir.name +'/'+ pad.name)
+                    os.chmod(dir.name +'/'+ pad.name, stat.S_IREAD | stat.S_IWRITE)
                 with open(dir.name +'/'+ pad.name +'/SubMark.bmp', 'wb') as f:
                     f.write(base64.b64decode(pad.subMark))
             

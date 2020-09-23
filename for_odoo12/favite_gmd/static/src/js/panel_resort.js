@@ -93,7 +93,7 @@ function ResortPanelID(geo,glass,first_panel_mode, dir ,range ,iStartPos){
 	imageEdge = glass.iLongEdge; 
 	quarant = glass.iStartQuandrant;
 	iGlassCorner = glass.corner;
-	quarant -= 1;
+	//quarant -= 1;
 	
 	if(glass.size[0] > glass.size[1])
 	{
@@ -247,8 +247,8 @@ function ResortPanelID(geo,glass,first_panel_mode, dir ,range ,iStartPos){
 			}
 			
 			var m,n;
-			var start_index_x = b.panel_start_id_x;
-			var start_index_y = b.panel_start_id_y;
+			var start_index_x = b.panel_start_id_x || '0';
+			var start_index_y = b.panel_start_id_y || '0';
 			
 			function panel_sort_bxy(it,comp){
 				for(var j = 0; j < panel_count - 1; j ++){
@@ -703,7 +703,7 @@ function ResortPanelIndex(geo,glass,first_panel_mode, dir, range){
 	
 	if(range <= 0){
 		_.each(geo.block.objs,function(b){
-			sort_panel(b.panels,b.panel_start_id);
+			sort_panel(b.panels,b.panel_start_id || '0');
 		});
 		
 	}else{
@@ -735,8 +735,8 @@ function panel_resort(geo,glass){
 	imageEdge = glass.iLongEdge; 
 	quarant = glass.iStartQuandrant;
 	glasscorner = glass.corner;
-	quarant -= 1;
-	glasscorner -= 1;
+	//quarant -= 1;
+	//glasscorner -= 1;
 	
 	if(glass.size[0] > glass.size[1])
 	{

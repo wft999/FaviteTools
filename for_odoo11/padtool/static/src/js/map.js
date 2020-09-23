@@ -260,8 +260,9 @@ var Map = Widget.extend({
     		this.hawkmap.map.renderAll();
     		
     		this.hawkmap.$el.find('button.fa-mouse-pointer').click();
-    		var hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.isPolygonSubMark==false);
+    		var hidden = this.pad.curType == 'subMark' && this.isPolygonSubMark==false;
         	this.hawkmap.$el.find('.fa-edit').toggleClass('o_hidden',hidden);
+        	hidden = this.pad.curType == 'frame' || (this.pad.curType == 'subMark' && this.isPolygonSubMark==false);
          	this.hawkmap.$el.find('.fa-copy').toggleClass('o_hidden',hidden);
     	}
     	

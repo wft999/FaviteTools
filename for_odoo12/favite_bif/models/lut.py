@@ -109,7 +109,7 @@ class Lut(models.Model):
 
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':

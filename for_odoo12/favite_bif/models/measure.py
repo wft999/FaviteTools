@@ -2,7 +2,7 @@
 import logging
 import os       
 import sympy
-
+import copy   
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 try:
     import configparser as ConfigParser
@@ -38,6 +38,51 @@ class Measure(models.Model):
     @api.multi
     def get_formview_id(self, access_uid=None):
         return self.env.ref('favite_bif.favite_bif_measure_map').id
+    
+    def _export_geo(self):
+        iniFile = os.path.join(self.camera_path , self.gmd_id.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = copy.deepcopy(self.geo)     
+            for o in geo['film_region']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = (dInputX -dGlassCenterX) * math.cos(dAngle) + (dInputY - dGlassCenterY) * math.sin(dAngle);
+                    p['y'] = -(dInputX - dGlassCenterX) * math.sin(dAngle) + (dInputY - dGlassCenterY) * math.cos(dAngle);
+                    
+            for o in geo['mark_region']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = (dInputX -dGlassCenterX) * math.cos(dAngle) + (dInputY - dGlassCenterY) * math.sin(dAngle);
+                    p['y'] = -(dInputX - dGlassCenterX) * math.sin(dAngle) + (dInputY - dGlassCenterY) * math.cos(dAngle);
+                    
+
+        return geo
+    
+    def _import_geo(self):
+        iniFile = os.path.join(self.camera_path , self.gmd_id.camera_name)
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            dGlassCenterX,dGlassCenterY = (float(s) for s in iniConf._defaults['glass.center.position.0'].split(','))
+            dAngle = float(iniConf._defaults['glass.angle.0'])
+            
+            geo = self.geo    
+            for o in geo['region']['objs']:
+                for p in o['points']:
+                    dInputX = p['x']
+                    dInputY = p['y']
+                    p['x'] = dInputX * math.cos(-dAngle) + dInputY * math.sin(-dAngle) + dGlassCenterX;
+                    p['y'] = -dInputX * math.sin(-dAngle) + dInputY * math.cos(-dAngle) + dGlassCenterY;
+
+        
+            self.write({'geo': geo})
     
     @api.one
     def export_file(self,directory_ids):
@@ -83,7 +128,7 @@ class Measure(models.Model):
         
         strParameter = ''
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':

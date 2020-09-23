@@ -5,7 +5,7 @@
 <t t-name="favite_bif.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-info">Bif</span>
 			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
@@ -13,14 +13,35 @@
             <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
         </div>
         <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<table class="o_group o_inner_group o_label_nowrap bif_info">
+        	</table>
         </div>
     </div>
+</t>
+
+<t t-name="favite_bif.info_panel">
+	<tr>
+        <td class="o_td_label"><label for="use_hsd" class="o_form_label">Apply to all panels</label></td>
+        <td width="100%">
+        	<input type="checkbox" name="is_all" class="o_glass_data" />
+		</td>
+    </tr>
+    <tr class="sort_start_pos">
+           <td class="o_td_label"><label for="line_direction" class="o_form_label">Select gsp for panel</label></td>
+           <td width="50%">
+         		<select  class="o_field_widget o_input o_glass_data" name="panel_gsp">
+				</select>
+			</td>
+    </tr>
 </t>
 
 <t t-name="favite_gsp.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-info">Gsp </span>
+            <div t-if="widget.edit" class="btn-group" role="group">
+				<button class="btn btn-secondary btn-sm fa fa-bars" title="Period"/>
+		    </div>
 			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
@@ -37,7 +58,7 @@
 <t t-name="favite_pad.info">
     <div t-att-data-id="widget.id" class="oe_action">
         <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
-            <span class="badge badge-info"> <t t-esc="widget.string"/> </span>
+            <span class="badge badge-info">Pad</span>
 			
             <t t-if="!widget.string">&amp;nbsp;</t>
             <!-- <span class='oe_icon oe_close'></span> -->
@@ -85,6 +106,10 @@
 		<tr>
 			<td><div class="o_horizontal_separator">Zone</div></td>
 		</tr>
+		<tr>
+           	<td class="o_td_label"><label for="background" class="o_form_label">background</label></td>
+           	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="background" placeholder="0"/></td>
+       	</tr>		
 		<tr>
            	<td class="o_td_label"><label for="level" class="o_form_label">level</label></td>
            	<td width="100%"><input type="number" class="o_field_widget o_input o_panel_data" name="level" placeholder="0"/></td>

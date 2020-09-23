@@ -8,6 +8,7 @@ var WidgetMap = require('favite_common.WidgetMap');
 var framework = require('web.framework');
 var widgetRegistry = require('web.widget_registry');
 var Coordinate = require('favite_common.coordinate');
+var Canvas = require('favite_common.Canvas');
 
 var QWeb = core.qweb;
 var _t = core._t;
@@ -119,46 +120,9 @@ var WidgetMapRaw = WidgetMap.extend({
 		    
 		    
 		    self._drawObjects();
+		    
 		    self.map.requestRenderAll();
         });
-		
-/*		var defs = [];
-		for(var i = 0; i < self.hawkeyeObj.blocks.length; i++){
-			for(var j = 0; j < self.hawkeyeObj.blocks[i].length; j++){
-				var b = self.hawkeyeObj.blocks[i][j];
-
-	        	var src = self.image_path + '/Image/IP'+(b['iIPIndex']+1)+'/jpegfile/AoiL_IP'+b['iIPIndex']+'_scan'+b['iScanIndex']+'_block'+b['iBlockIndex']+'.jpg';
-	        	var image = new fabric.Image();
-	        	image.set({
-        			left: b.iRange_Left - first_block.iRange_Left,
-        			top: height - (b.iRange_Top - first_block.iRange_Bottom),
-        			flipY:true,
-        			hasControls:false,
-        			lockMovementX:true,
-        			lockMovementY:true,
-        			selectable:false });
-
-	        	image.def = $.Deferred();
-	        	image.setSrc(src, function(img){
-	        		if(img.width > 0 && img.height > 0){
-		        		self.map.add(img);
-	        		}
-	        		
-	        		img.def.resolve();
-	        	});
-	        	defs.push(image.def);
-			}
-		}
-		
-		$.when(...defs).then(function(){
-			var p = self._geo2map(self.hawkeyeObj.point);
-			self.map.viewportTransform[4] = (-p.x + dim.width/2)*self.map.getZoom();
-		    self.map.viewportTransform[5] = (-p.y + dim.height/2)*self.map.getZoom();
-		    self.map.requestRenderAll();
-		    
-		    self._drawObjects();
-	    })*/
-
     },
     
     _onHawkeyeChange:function(obj){
@@ -168,7 +132,27 @@ var WidgetMapRaw = WidgetMap.extend({
     	this.hawkeyeObj = obj;
     	this.showMap();
     	console.log(obj.blocks)
-    }
+    },
+    
+    _drawPeriod:function(){    
+    	if(this.period)
+    		return;
+    	if(!this.map)
+    		return;
+    	if(!this.image)
+    		return;
+    	
+    	this.period = new Canvas.Period({ 
+ 			left: this.image.width/2, 
+ 			top: this.image.height/2,
+ 			visible:false
+ 			});
+    	this.map.add(this.period);
+    	this.period.bringToFront();
+    	
+    },
+    
+
 });
 
 

@@ -63,7 +63,7 @@ var FieldArrayNumeric = basic_fields.InputField.extend({
     			throw new Error(_.str.sprintf(core._t("'%s' is not a correct numbric"), item));
     		
     		var id = item.indexOf(".");
-    		if (self.isFloat){
+    		if (self.formatType =="float_array"){
             	if(id == -1){
             		//throw new Error(_.str.sprintf(core._t("'%s' is not a correct float"), item));
             		item = item+'.0'

@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
   <data>
-	<record id="gsp_form_simplified" model="ir.ui.view">
+  
+  	<record id="gsp_form_simplified" model="ir.ui.view">
 		<field name="name">favite_bif.gsp.form.simplified</field>
 		<field name="model">favite_bif.gsp</field>
-		<field name="priority">2</field>
+		<field name="priority">1000</field>
 		<field name="arch" type="xml">
 			<form string="gsp">
 				<sheet>
 					<group>
+						<field name="bif_id"  invisible="1"/>
 						<field name="name" string="Name" />
 						<label for="summary" string="Summary" />
 						<div name="summary_def">
 							<field name="description" />
 						</div>
+						<field name="src_panel_id" options="{'no_create_edit': True}"/>
 					</group>
 				</sheet>
 			</form>
 		</field>
-	</record>	  
+	</record>
+		  
 	<record id="gsp_form" model="ir.ui.view">
 		<field name="name">favite_bif.gsp.form</field>
 		<field name="model">favite_bif.gsp</field>
 		<field name="priority">0</field>
 		<field name="arch" type="xml">
 			<form string="Gsp" >
+				<field name="bif_id"  invisible="1"/>
 				<field name="camera_path" invisible="1"/>
 				<field name="camera_ini" invisible="1"/>
 				<field name="geo"  invisible="1"/>
 				<field name="glass" invisible="1"/>
 				<field name="gmd_id" invisible="1"/>
 				<field name="src_panel_id" invisible="1"/>
+				
 				<group>
+					<field name="period" readonly="1"/>
 					<field name="pad_id"  context="{'default_gmd_id': gmd_id,'default_src_panel_id':src_panel_id}" options="{'no_create_edit': False, 'no_quick_create': False}"/>
 				</group>
 				<notebook>		

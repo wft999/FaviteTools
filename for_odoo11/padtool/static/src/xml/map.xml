@@ -53,6 +53,7 @@
             <li><a href="#">uninspectZone</a></li>
             <li><a href="#">inspectZone</a></li>
             <li><a href="#">unregularInspectZone</a></li>
+            <li><a href="#">pframe</a></li>
             <li class="divider"></li>
             <li><a href="#">Save</a></li>
         </ul>
@@ -115,6 +116,50 @@
     	
 	</div>
 </t>
+
+
+<t  t-name="FrameGoaDialog">
+<div>
+
+	<form class="form-inline">
+	<div class="form-group">
+		<label for="zone" class=" control-label">Type     :</label>
+		<div class="input-group">
+			<select name="cars" class="o_set_type_input" >
+			<option value="0" selected="selected">vertical</option>
+			<option value="1">horizontal</option>
+			<option value="2">lean</option>
+			</select>
+		</div>
+    </div>
+	</form>
+	
+	<form class="form-inline" style="margin-top:10px;">
+	
+	<div class="form-group">
+    	<label for="periodx" class=" control-label">Period(horizontal,vertical):</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_periodx_input" id="periodx" placeholder="0" disabled="disabled"/>
+    	</div>
+  	</div>
+
+	<div class="form-group">
+    	<label for="periody" class="control-label">,</label>
+      	<div class="input-group">
+      		<input type="text" class="form-control o_set_periody_input" id="periody" placeholder="0" disabled="disabled"/>
+      		<div class="input-group-addon">um</div>
+    	</div>
+  	</div>
+  	</form>
+  	
+	<div>
+      <img class="img-responsive" src=""/>
+	</div>
+</div>
+</t>
+
+
+
 
 <t  t-name="GoaDialog">
 <div>
@@ -217,14 +262,14 @@
 <div>
 	<form class="form-inline">
 		<div class="form-group">
-	    	<label for="period0" class=" control-label">Period0:</label>
+	    	<label for="period0" class=" control-label">PeriodX0:</label>
 	      	<div class="input-group">
 	      		<input type="text" class="form-control o_set_customerx_input" id="period0"  />
 	    	</div>
 	  	</div>
 	
 		<div class="form-group">
-	    	<label for="angle0" class="control-label">Angle0:</label>
+	    	<label for="angle0" class="control-label">PeriodY0:</label>
 	      	<div class="input-group">
 	      		<input type="text" class="form-control o_set_customery_input" id="angle0"  />
 	    	</div>
@@ -232,16 +277,51 @@
 	</form>
 	<form class="form-inline">
 		<div class="form-group">
-	    	<label for="period1" class=" control-label">Period1:</label>
+	    	<label for="period1" class=" control-label">PeriodX1:</label>
 	      	<div class="input-group">
 	      		<input type="text" class="form-control o_set_customerx_input" id="period1"  />
 	    	</div>
 	  	</div>
 	
 		<div class="form-group">
-	    	<label for="angle1" class="control-label">Angle1:</label>
+	    	<label for="angle1" class="control-label">PeriodY1:</label>
 	      	<div class="input-group">
 	      		<input type="text" class="form-control o_set_customery_input" id="angle1"  />
+	    	</div>
+	  	</div>
+	</form>
+</div>
+</t>
+
+<t  t-name="SetInspectDialog">
+<div>
+	<form class="form-inline">
+		<div class="form-group">
+	    	<label for="tolerancex" class=" control-label">Period(horizontal):</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="periodx"  />
+	    	</div>
+	  	</div>
+	
+		<div class="form-group">
+	    	<label for="tolerancey" class="control-label">Period(vertical):</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="periody"  />
+	    	</div>
+	  	</div>
+	</form>
+	<form class="form-inline">
+		<div class="form-group">
+	    	<label for="tolerancex" class=" control-label">Tolerance(dark):</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="tolerancex"  />
+	    	</div>
+	  	</div>
+	
+		<div class="form-group">
+	    	<label for="tolerancey" class="control-label">Tolerance(bright):</label>
+	      	<div class="input-group">
+	      		<input type="text" class="form-control" id="tolerancey"  />
 	    	</div>
 	  	</div>
 	</form>

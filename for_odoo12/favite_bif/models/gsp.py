@@ -10,9 +10,11 @@ import numpy as np
 import cv2
 import math
 
+from setuptools.dist import sequence
+
 _logger = logging.getLogger(__name__)
-DOMAIN_WIDTH = 1024
-DOMAIN_HEIGHT = 1024
+ZONE_FRAME_WIDTH = 1024
+ZONE_FRAME_HEIGHT = 1024
 # class Zone(models.Model):
 #     _name = 'favite_bif.gsp_zone'   
 #     
@@ -28,43 +30,128 @@ DOMAIN_HEIGHT = 1024
 class Gsp(models.Model):
     _name = 'favite_bif.gsp'   
     _inherit = ['favite_common.geometry']
+    _order = 'id'
     
-    _sql_constraints = [
-        ('name_uniq', 'unique (name,bif_id)', "Name already exists !"),
-    ]
+#     _sql_constraints = [
+#         ('name_uniq', 'unique (name,bif_id)', "Name already exists !"),
+#     ]
     
 #     zone_enabletbz =  fields.Boolean(string='Enable tbz')  
 #     zone_ids = fields.One2many('favite_bif.gsp_zone', 'gsp_id', string='Zone')
-    
-    @api.model    
-    def _default_geo(self):
-        bif = self.env['favite_bif.bif'].browse(self._context['default_bif_id'])
-        panel = self.env['favite_bif.panel'].browse(self._context['default_src_panel_id'])
-        gmd = bif.gmd_id
+       
+    def _default_geo(self,bif_id,src_panel_id):
+        bif = self.env['favite_bif.bif'].browse(bif_id)
+        panel = self.env['favite_bif.panel'].browse(src_panel_id)
         objs = bif.geo['panel']['objs']
         geo = {
-        "domain":{"objs":[]},
-        "bright":{"objs":[]},
-        "dark":{"objs":[]},
+        "zoneFrame":{"objs":[]},
+        "brightDomain":{"objs":[]},
+        "darkDomain":{"objs":[]},
         "zone":{"objs":[]},
         
         "polygon":{"objs":[]},
         "circle":{"objs":[]},
         "bow":{"objs":[]},
         
-        "panel":{"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
+         "panel":{"noselect":True,"readonly":True,'objs':[obj for obj in objs if obj['name'] == panel.name]}
         }
         return geo
     
-    geo = fields.Jsonb(string = "geometry value",default=_default_geo)   
+    @api.one
+    def _compute_name(self):
+        self.name = 'gsp%d' % self.id
+        
+    @api.one
+    def _compute_seq(self):
+        gsp = self.env['favite_bif.gsp'].sudo().search([('id','<',self.id),('bif_id','=',self.bif_id.id)])
+        self.sequence = len(gsp)
+        
+    @api.one
+    @api.depends('x_inspect_mode','x_miniledcompare_period','x_todcompare_period','x_multiperiodcompare_period','x_ps_basicperiod','x_neighorcompare_shortperiod_period')
+    def _compute_period(self):
+        if self.x_inspect_mode == 2:
+            self.period = self.x_neighorcompare_shortperiod_period
+        elif self.x_inspect_mode == 3:
+            self.period = self.x_ps_basicperiod
+        elif self.x_inspect_mode == 4:
+            self.period = self.x_multiperiodcompare_period
+        elif self.x_inspect_mode == 5:
+            self.period = self.x_todcompare_period
+        elif self.x_inspect_mode == 6:
+            self.period = self.x_neighorcompare_shortperiod_period
+        elif self.x_inspect_mode == 7:
+            self.period = self.x_miniledcompare_period
+        else:
+            self.period = self.x_neighorcompare_shortperiod_period
+        
+    @api.multi    
+    def refresh(self):
+        for g in self:
+            objs = g.bif_id.geo['panel']['objs']
+        
+            geo = g.geo
+            geo['panel'] = {"noselect":True,"readonly":True,'objs':[obj for obj in objs if obj['name'] == g.src_panel_id.name]}
+            g.write({'geo':geo})
+    
+    name = fields.Char(compute='_compute_name')
+    sequence = fields.Integer(compute='_compute_seq')
+    period = fields.NumericArray(compute='_compute_period')
+    geo = fields.Jsonb(string = "geometry value")   
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     bif_id = fields.Many2one('favite_bif.bif',ondelete='cascade')  
     gmd_id = fields.Many2one('favite_gmd.gmd',related='bif_id.gmd_id')
     pad_id = fields.Many2one('favite_bif.pad',ondelete='set null',domain="[('gmd_id', '=', gmd_id),('src_panel_id', '=', src_panel_id)]")  
-    src_panel_id = fields.Many2one('favite_bif.panel',ondelete='cascade', domain="[('gmd_id', '=', gmd_id)]")  
+    src_panel_id = fields.Many2one('favite_bif.panel',ondelete='cascade', domain="[('bif_id', '=', bif_id)]")  
 
     camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True) 
+    
+    
+    @api.model
+    def newFromPanel(self,bif_id,src_panel_name):
+        panel = self.env['favite_bif.panel'].sudo().search([('name','=',src_panel_name),('bif_id','=',bif_id)])
+        gsp = self.create({'bif_id':bif_id,'src_panel_id':panel.id})
+        return gsp.id
+    
+    @api.model
+    def create(self, vals):
+        vals['geo'] = self._default_geo(vals['bif_id'], vals['src_panel_id'])
+        return super(Gsp, self).create(vals)
+    
+    @api.one
+    def write(self, vals):
+        for g in self:
+            
+            inspect_mode = vals['x_inspect_mode'] if 'x_inspect_mode' in vals else g.x_inspect_mode
+                
+            if inspect_mode == 2:
+                period = vals['x_neighorcompare_shortperiod_period'] if 'x_neighorcompare_shortperiod_period' in vals else g.x_neighorcompare_shortperiod_period
+            elif inspect_mode == 3:
+                period = vals['x_ps_basicperiod'] if 'x_ps_basicperiod' in vals else g.x_ps_basicperiod
+            elif inspect_mode == 4:
+                period = vals['x_multiperiodcompare_period'] if 'x_multiperiodcompare_period' in vals else g.x_multiperiodcompare_period
+            elif inspect_mode == 5:
+                period = vals['x_todcompare_period'] if 'x_todcompare_period' in vals else g.x_todcompare_period
+            elif inspect_mode == 6:
+                period = vals['x_neighorcompare_shortperiod_period'] if 'x_neighorcompare_shortperiod_period' in vals else g.x_neighorcompare_shortperiod_period
+            elif inspect_mode == 7:
+                period = vals['x_miniledcompare_period'] if 'x_miniledcompare_period' in vals else g.x_miniledcompare_period
+
+
+            if period:
+                if not 'geo' in vals:
+                    vals['geo'] = g.geo
+                    
+                for o in vals['geo']['zone']['objs']:
+                    x = (o['points'][0]['x'] + o['points'][1]['x'] )/2
+                    y = (o['points'][0]['y'] + o['points'][1]['y'] )/2
+                    o['points'][0]['x'] = x - float(period[0]/2)
+                    o['points'][0]['y'] = y - float(period[1]/2)
+                    o['points'][1]['x'] = x + float(period[0]/2)
+                    o['points'][1]['y'] = y + float(period[1]/2)
+            
+
+        return super(Gsp, self).write(vals)
     
     @api.multi
     def edit_dialog(self):
@@ -90,7 +177,7 @@ class Gsp(models.Model):
             'view_type': 'map',
             'view_mode': 'map',
             'target': 'current',
-            'flags':{'hasSearchView':False}
+            'flags':{'hasSearchView':False},
             }
         
     @api.multi
@@ -112,9 +199,12 @@ class Gsp(models.Model):
             }
         
     def export_image(self,directory_ids):
-        imgWidth = int(self.geo['domain']['objs'][0]['imgWidth'])
-        imgHeight = int(self.geo['domain']['objs'][0]['imgHeight'])
-        blocks = json.loads(self.geo['domain']['objs'][0]['strBlocks'])
+        if len(self.geo['zoneFrame']['objs']) == 0:
+            return 
+        
+        imgWidth = int(self.geo['zoneFrame']['objs'][0]['imgWidth'])
+        imgHeight = int(self.geo['zoneFrame']['objs'][0]['imgHeight'])
+        blocks = json.loads(self.geo['zoneFrame']['objs'][0]['strBlocks'])
          
         origin = Image.new('L', (imgWidth,imgHeight))   
         left = 0
@@ -148,10 +238,23 @@ class Gsp(models.Model):
                 origin.save(f, format="BMP")
         
         zone = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        b = np.array([[[0,0],[0,imgHeight],[imgWidth,imgHeight],[imgWidth,0]]], dtype = np.int32)
+        cv2.fillPoly(zone, b, int(self.geo['zone']['background'] if 'background' in self.geo['zone'] else '15'))
         for o in self.geo['zone']['objs']:
+            if len(o['points']) != 2:
+                continue
+            
             p2 = []
-            for p in o['points']:
-                p2.append([int(p['offsetX']),int(p['offsetY'])])
+            x1 = int(o['points'][0]['offsetX'])
+            y1 = int(o['points'][0]['offsetY'])
+            x2 = int(o['points'][1]['offsetX'])
+            y2 = int(o['points'][1]['offsetY'])
+
+            p2.append([x1,y1])
+            p2.append([x1,y2])
+            p2.append([x2,y2])
+            p2.append([x2,y1])
+            
             b = np.array([p2], dtype = np.int32)
             cv2.fillPoly(zone, b, int(o['level'] if 'level' in o else '15'))
   
@@ -163,12 +266,14 @@ class Gsp(models.Model):
             cv2.imwrite(path, zone)
         
         obj = self.geo['panel']['objs'][0]
-        p1 = obj['points'][0]
-        p2 = obj['points'][1]
-        left = min(p1['x'],p2['x'])
-        right = max(p1['x'],p2['x'])
-        bottom = min(p1['y'],p2['y'])
-        top = max(p1['y'],p2['y'])
+        p0 = obj['points'][0]
+        p1 = obj['points'][1]
+        p2 = obj['points'][2]
+        p3 = obj['points'][3]
+        left = min(p0['x'],p1['x'],p2['x'],p3['x'])
+        right = max(p0['x'],p1['x'],p2['x'],p3['x'])
+        bottom = min(p1['y'],p2['y'],p0['y'],p3['y'])
+        top = max(p1['y'],p2['y'],p0['y'],p3['y'])
         
         imgWidth = self.bif_id.x_global_polygon_width
         rate = imgWidth / (right - left)
@@ -241,12 +346,12 @@ class Gsp(models.Model):
             strZone += 'gsp.%d.zone.%d.shortedgeminsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgeminsize'] if 'shortedgeminsize' in geo['zone']['objs'][i] else '0')
             strZone += 'gsp.%d.zone.%d.shortedgemaxsize = %s\n'%(index,i,geo['zone']['objs'][i]['shortedgemaxsize'] if 'shortedgemaxsize' in geo['zone']['objs'][i] else '0')
         
-        strDomain = 'gsp.%d.domain = %s\n' % (index,json.dumps(geo['domain']))
+        strDomain = 'gsp.%d.zoneFrame = %s\n' % (index,json.dumps(geo['zoneFrame']))
         
-        num = len(geo['dark']['objs'])
+        num = len(geo['darkDomain']['objs'])
         strDark = 'gsp.%d.domain.dark.number = %d\n' % (index,num)
         for i in range(0,num):
-            obj = geo['dark']['objs'][i]
+            obj = geo['darkDomain']['objs'][i]
             p1 = obj['points'][0]
             p2 = obj['points'][1]
             left = min(p1['offsetX'],p2['offsetX'])
@@ -256,10 +361,10 @@ class Gsp(models.Model):
             strDark += 'gsp.%d.domain.dark.%d.obj = %s\n' % (index,i,json.dumps(obj))
             strDark += 'gsp.%d.domain.dark.%d.position = %d,%d,%d,%d\n' % (index,i,int(left),int(top),int(right),int(bottom))
             
-        num = len(geo['bright']['objs'])
+        num = len(geo['brightDomain']['objs'])
         strBright = 'gsp.%d.domain.bright.number = %d\n' % (index,num)
         for i in range(0,num):
-            obj = geo['bright']['objs'][i]
+            obj = geo['brightDomain']['objs'][i]
             p1 = obj['points'][0]
             p2 = obj['points'][1]
             left = min(p1['offsetX'],p2['offsetX'])
@@ -271,7 +376,7 @@ class Gsp(models.Model):
             
         strParameter = 'gsp.%d.name = %s\n' %(index,self.name)
         fields_data = self.env['ir.model.fields']._get_manual_field_data(self._name)
-        for name, field in self._fields.items():
+        for name, field in sorted(self._fields.items(), key=lambda f: f[0]):
             if not field.manual or not name.startswith('x_'):
                 continue
             elif field.type == 'boolean' or field.type == 'selection':
@@ -287,16 +392,16 @@ class Gsp(models.Model):
         prefix = 'gsp.%s.' % gspindex
         obj = {'name':gspname}
         geo = {
-        "domain":{"objs":[]},
-        "bright":{"objs":[]},
-        "dark":{"objs":[]},
+        "zoneFrame":{"objs":[]},
+        "brightDomain":{"objs":[]},
+        "darkDomain":{"objs":[]},
         "zone":{"objs":[]},
         
         "polygon":{"objs":[]},
         "circle":{"objs":[]},
         "bow":{"objs":[]},
         
-        "panel":{"readonly":True,'objs':[obj for obj in bif.geo['panel']['objs'] if obj['name'] == panel.name]}
+        "panel":{"noselect":True,"readonly":True,'objs':[obj for obj in bif.geo['panel']['objs'] if obj['name'] == panel.name]}
         }
         
 #         pad_item = 'gsp.%s.padfile'% gspindex
@@ -311,17 +416,17 @@ class Gsp(models.Model):
         geo['polygon'] = json.loads(par['gsp.%s.polygon'%gspindex])
         geo['circle'] = json.loads(par['gsp.%s.circle'%gspindex])
         geo['bow'] = json.loads(par['gsp.%s.bow'%gspindex])
-        geo['domain'] = json.loads(par['gsp.%s.domain'%gspindex])
+        geo['zoneFrame'] = json.loads(par['gsp.%s.zoneFrame'%gspindex])
          
         num = int(par.get('gsp.%s.domain.dark.number'%gspindex,0))
         for i in range(0, num):
             o = json.loads(par['gsp.%s.domain.dark.%d.obj'%(gspindex,i)])
-            geo['dark']['objs'].append(o)
+            geo['darkDomain']['objs'].append(o)
               
         num = int(par.get('gsp.%s.domain.bright.number'%gspindex,0))
         for i in range(0, num):
             o = json.loads(par['gsp.%s.domain.bright.%d.obj'%(gspindex,i)])
-            geo['bright']['objs'].append(o)
+            geo['brightDomain']['objs'].append(o)
               
         num = int(par.get('gsp.%s.zone.number'%gspindex,0))
         for i in range(0, num):

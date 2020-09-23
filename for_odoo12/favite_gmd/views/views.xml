@@ -145,6 +145,17 @@
 			</map>
 		</field>
 	</record>
+	<record id="favite_gmd_geo_tree" model="ir.ui.view">
+		<field name="model">favite_gmd.gmd</field>
+		<field name="arch" type="xml">
+			<tree string="Fields"  duplicate="false">
+				<field name="name" />
+				<field name="description"  />
+				<field name="camera_path"  />
+				<field name="write_date" />
+			</tree>
+		</field>
+	</record>
 	
 	<record id="open_create_gmd" model="ir.actions.act_window">
 		<field name="name">Create a Gmd</field>

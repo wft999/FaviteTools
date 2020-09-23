@@ -1,5 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_inspect_mode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_inspect_mode</field>
+			<field name="complete_name">inspectmode</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(2,'normal'),(3,'ps'),(4,'mulitiperiod'),(5,'tod'),(6,'dent'),(7,'miniled')]</field>
+            <field name="default_value">3</field>
+            
+            <field name="locate">Global.</field>
+            <field name="field_description">Inspect Mode</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">1</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_zone_enabletbz">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_zone_enabletbz</field>
+			<field name="complete_name">zone.enabletbz</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.Zone</field>
+            <field name="field_description">Enable tbz</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="True"></field>
+            <field name="sequence">2</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_domain_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_domain_threshold</field>
+			<field name="complete_name">domain.threshold</field>
+			<field name="ttype">boolean</field>
+            <field name="locate">Global.Domain</field>
+            <field name="field_description">Threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0"></field>
+            <field name="sequence">3</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_domain_contrastratio">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_domain_contrastratio</field>
+			<field name="complete_name">domain.contrastratio</field>
+			<field name="ttype">float</field>
+            <field name="locate">Global.Domain</field>
+            <field name="field_description">Contrast ratio</field>
+            <field name="help">it is a help</field>
+            <field name="default_value" eval="0.0"></field>
+            <field name="sequence">4</field>
+    </record>
+    	
+    
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_subpixelrate">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
             <field name="name">x_neighorcompare_subpixelrate</field>
@@ -9,7 +57,7 @@
             <field name="field_description">Subpixel rate</field>
             <field name="help">it is a help</field>
             <field name="default_value">0.20, 0.20</field>
-            <field name="sequence">10</field>
+            <field name="sequence">5</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_enablefilternoise">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -20,7 +68,7 @@
             <field name="field_description">Enable filter noise</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="True"></field>
-            <field name="sequence">11</field>
+            <field name="sequence">6</field>
     </record>
     
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_shortperiod_threshold">
@@ -32,7 +80,7 @@
             <field name="field_description">Threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value">10,10</field>
-            <field name="sequence">1</field>
+            <field name="sequence">7</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_shortperiod_period">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -43,7 +91,7 @@
             <field name="field_description">Period</field>
             <field name="help">it is a help</field>
             <field name="default_value">4956.6000,4909.7500</field>
-            <field name="sequence">2</field>
+            <field name="sequence">8</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_shortperiod_dynamictolerance">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -54,7 +102,7 @@
             <field name="field_description">Dynamic tolerance</field>
             <field name="help">it is a help</field>
             <field name="default_value">0.10,0.10</field>
-            <field name="sequence">3</field>
+            <field name="sequence">9</field>
     </record>    
     
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_enable">
@@ -66,7 +114,7 @@
             <field name="field_description">Enable</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="False"></field>
-            <field name="sequence">4</field>
+            <field name="sequence">10</field>
     </record>     
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_threshold">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -77,7 +125,7 @@
             <field name="field_description">Threshold</field>
             <field name="help">it is a help</field>
             <field name="default_value">10,10</field>
-            <field name="sequence">5</field>
+            <field name="sequence">11</field>
     </record>    
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_period">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -88,7 +136,7 @@
             <field name="field_description">Period</field>
             <field name="help">it is a help</field>
             <field name="default_value">4956.6000,4909.7500</field>
-            <field name="sequence">6</field>
+            <field name="sequence">12</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_locateimagesize">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -99,7 +147,7 @@
             <field name="field_description">Locate image size</field>
             <field name="help">it is a help</field>
             <field name="default_value">100,100</field>
-            <field name="sequence">7</field>
+            <field name="sequence">13</field>
     </record>    
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_dynamictolerance">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -110,7 +158,7 @@
             <field name="field_description">Dynamic tolerance</field>
             <field name="help">it is a help</field>
             <field name="default_value">0.10,0.10</field>
-            <field name="sequence">8</field>
+            <field name="sequence">14</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_neighorcompare_longperiod_locateinterval">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
@@ -121,7 +169,7 @@
             <field name="field_description">Locate interval</field>
             <field name="help">it is a help</field>
             <field name="default_value" eval="50"></field>
-            <field name="sequence">9</field>
+            <field name="sequence">15</field>
     </record>
     
     
@@ -174,6 +222,19 @@
     
     
     
+    <record  model="ir.model.fields"  id="favite_bif_gsp_multiperiodcompare_periodmode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_multiperiodcompare_periodmode</field>
+			<field name="complete_name">multiperiodcompare.periodmode</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(0,'X'),(1,'Y'),(2,'XY')]</field>
+            <field name="default_value" eval="0" />
+            
+            <field name="locate">MPeriod.</field>
+            <field name="field_description">period mode</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">13</field>
+    </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_multiperiodcompare_threshold">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
             <field name="name">x_multiperiodcompare_threshold</field>
@@ -201,8 +262,8 @@
             <field name="name">x_multiperiodcompare_preprocessmethod</field>
 			<field name="complete_name">multiperiodcompare.preprocessmethod</field>
 			<field name="ttype">selection</field>
-            <field name="selection">[('0','None'),('1','horizontal 2points'),('2','vertical 2points'),('3','neighor 4points'),('4','neighor 8points')]</field>
-            <field name="default" eval="0" />
+            <field name="selection">[(0,'None'),(1,'horizontal 2points'),(2,'vertical 2points'),(3,'neighor 4points'),(4,'neighor 8points')]</field>
+            <field name="default_value" eval="0" />
             
             <field name="locate">MPeriod.</field>
             <field name="field_description">Preprocess method</field>
@@ -245,8 +306,19 @@
     
     
     
-    
-    
+    <record  model="ir.model.fields"  id="favite_bif_gsp_todcompare_periodmode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_todcompare_periodmode</field>
+			<field name="complete_name">todcompare.periodmode</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(0,'X'),(1,'Y'),(2,'XY')]</field>
+            <field name="default_value" eval="0" />
+            
+            <field name="locate">Tod.</field>
+            <field name="field_description">period mode</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">19</field>
+    </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_todcompare_threshold">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
             <field name="name">x_todcompare_threshold</field>
@@ -274,8 +346,8 @@
             <field name="name">x_todcompare_preprocessmethod</field>
 			<field name="complete_name">todcompare.preprocessmethod</field>
 			<field name="ttype">selection</field>
-            <field name="selection">[('0','None'),('1','horizontal 2points'),('2','vertical 2points'),('3','neighor 4points')]</field>
-            <field name="default" eval="0" />
+            <field name="selection">[(0,'None'),(1,'horizontal 2points'),(2,'vertical 2points'),(3,'neighor 4points')]</field>
+            <field name="default_value" eval="0" />
             
             <field name="locate">Tod.</field>
             <field name="field_description">Preprocess method</field>
@@ -329,15 +401,130 @@
     
     
     
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_periodmode">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_periodmode</field>
+			<field name="complete_name">miniledcompare.periodmode</field>
+			<field name="ttype">selection</field>
+            <field name="selection">[(0,'X'),(1,'Y'),(2,'XY')]</field>
+            <field name="default_value" eval="0" />
+            
+            <field name="locate">Miniled.</field>
+            <field name="field_description">period mode</field>
+            <field name="help">it is a help</field>
+            <field name="sequence">19</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_threshold">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_threshold</field>
+			<field name="complete_name">miniledcompare.threshold</field>
+			<field name="ttype">integer_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">threshold</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">20,20</field>
+            <field name="sequence">20</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod</field>
+			<field name="complete_name">miniledcompare.preprocessperiod</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period1</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">21</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod2">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod2</field>
+			<field name="complete_name">miniledcompare.preprocessperiod2</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period2</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">22</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod3">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod3</field>
+			<field name="complete_name">miniledcompare.preprocessperiod3</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period3</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">23</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod4">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod4</field>
+			<field name="complete_name">miniledcompare.preprocessperiod4</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period4</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">24</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod5">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod5</field>
+			<field name="complete_name">miniledcompare.preprocessperiod5</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period5</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">25</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_preprocessperiod6">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_preprocessperiod6</field>
+			<field name="complete_name">miniledcompare.preprocessperiod6</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">preprocess period6</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.0,0.0</field>
+            <field name="sequence">26</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_period">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_period</field>
+			<field name="complete_name">miniledcompare.period</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">period</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">20.0,20.0</field>
+            <field name="sequence">27</field>
+    </record>
+    <record  model="ir.model.fields"  id="favite_bif_gsp_miniledcompare_dynamictolerance">
+            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
+            <field name="name">x_miniledcompare_dynamictolerance</field>
+			<field name="complete_name">miniledcompare.dynamictolerance</field>
+			<field name="ttype">float_array</field>
+            <field name="locate">Miniled.</field>
+            <field name="field_description">dynamic tolerance</field>
+            <field name="help">it is a help</field>
+            <field name="default_value">0.1,0.1</field>
+            <field name="sequence">28</field>
+    </record>
+    
+    
+    
     <record  model="ir.model.fields"  id="favite_bif_gsp_searchpanelborder_period">
             <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
             <field name="name">x_searchpanelborder_period</field>
 			<field name="complete_name">searchpanelborder.period</field>
-			<field name="ttype">integer_array</field>
+			<field name="ttype">float_array</field>
             <field name="locate">Border.</field>
             <field name="field_description">Period</field>
             <field name="help">it is a help</field>
-            <field name="default_value">500,500</field>
+            <field name="default_value">500.0,500.0</field>
             <field name="sequence">27</field>
     </record>
     <record  model="ir.model.fields"  id="favite_bif_gsp_searchpanelborder_searchrange">
@@ -386,43 +573,6 @@
     </record>
     
     
-    
-    
-    <record  model="ir.model.fields"  id="favite_bif_gsp_zone_enabletbz">
-            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
-            <field name="name">x_zone_enabletbz</field>
-			<field name="complete_name">zone.enabletbz</field>
-			<field name="ttype">boolean</field>
-            <field name="locate">Domain.Zone</field>
-            <field name="field_description">Enable tbz</field>
-            <field name="help">it is a help</field>
-            <field name="default_value" eval="True"></field>
-            <field name="sequence">32</field>
-    </record>
-    
-    
-    
-    <record  model="ir.model.fields"  id="favite_bif_gsp_domain_threshold">
-            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
-            <field name="name">x_domain_threshold</field>
-			<field name="complete_name">domain.threshold</field>
-			<field name="ttype">boolean</field>
-            <field name="locate">Domain.Domain</field>
-            <field name="field_description">Threshold</field>
-            <field name="help">it is a help</field>
-            <field name="default_value" eval="0"></field>
-            <field name="sequence">33</field>
-    </record>
-    <record  model="ir.model.fields"  id="favite_bif_gsp_domain_contrastratio">
-            <field name="model_id" ref="favite_bif.model_favite_bif_gsp" />
-            <field name="name">x_domain_contrastratio</field>
-			<field name="complete_name">domain.contrastratio</field>
-			<field name="ttype">float</field>
-            <field name="locate">Domain.Domain</field>
-            <field name="field_description">Contrast ratio</field>
-            <field name="help">it is a help</field>
-            <field name="default_value" eval="0.0"></field>
-            <field name="sequence">34</field>
-    </record>
+
     
 </odoo>
