@@ -28,10 +28,13 @@ var ZoneFrame = Canvas.Polyline.extend({
     	var obj = this.obj;
     	obj.nocross = true;
     	
+		var zone_frame_width = parseFloat(this.widget.getParent().state.data.period[0]);
+		var zone_frame_height = parseFloat(this.widget.getParent().state.data.period[1]);
+    	
     	if(obj.points && obj.points.length == 1){
-    		obj.points.push({x:obj.points[0].x + ZONE_FRAME_WIDTH,y:obj.points[0].y + ZONE_FRAME_HEIGHT});
-    		obj.points[0].x -= ZONE_FRAME_WIDTH;
-    		obj.points[0].y -= ZONE_FRAME_HEIGHT;
+    		obj.points.push({x:obj.points[0].x + zone_frame_width/2,y:obj.points[0].y + zone_frame_height/2});
+    		obj.points[0].x -= zone_frame_width/2;
+    		obj.points[0].y -= zone_frame_height/2;
     	}
     	
    	 	this.widget.coord.GetRectIntersectionInfoInBlockMapMatrix(obj.points[0].x,obj.points[0].y,obj.points[1].x,obj.points[1].y,true);
@@ -46,9 +49,55 @@ var ZoneFrame = Canvas.Polyline.extend({
         		return memo  + (block&&block.bHasIntersection?block.iInterSectionHeight:0); 
         		}, 0);
     	}
+    	
+    	this.widget.coord.GetRectIntersectionInfoInBlockMapMatrix(obj.points[0].x-zone_frame_width,obj.points[0].y-zone_frame_height,obj.points[1].x+zone_frame_width,obj.points[1].y+zone_frame_height,true);
+    	if(this.widget.coord.bmpBlockMapPara.m_BlockMap.length == 0 || this.widget.coord.bmpBlockMapPara.m_BlockMap[0].length == 0){
+    		this.do_warn(_t('Incorrect Operation'),_t('Width  or height is 0!'),false);
+    	}else{
+    		obj.strBlocks3 = JSON.stringify(this.widget.coord.bmpBlockMapPara.m_BlockMap);
+    		obj.imgWidth3 = _.reduce(this.widget.coord.bmpBlockMapPara.m_BlockMap, function(memo, block){ 
+        		return memo + (block[0]&&block[0].bHasIntersection?block[0].iInterSectionWidth:0); 
+        		}, 0);
+        	obj.imgHeight3 = _.reduce(this.widget.coord.bmpBlockMapPara.m_BlockMap[0], function(memo, block){ 
+        		return memo  + (block&&block.bHasIntersection?block.iInterSectionHeight:0); 
+        		}, 0);
+    	}
 
     	return true;
 	},
+	
+	_render: function(ctx) {
+		this._super.apply(this, arguments);
+		
+		var zone_frame_width = parseFloat(this.widget.getParent().state.data.period[0]);
+		var zone_frame_height = parseFloat(this.widget.getParent().state.data.period[1]);
+		var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
+		
+		var x1 = this.obj.points[0].x - zone_frame_width;
+		var y1 = this.obj.points[0].y - zone_frame_height;
+		var x2 = this.obj.points[1].x + zone_frame_width;
+		var y2 = this.obj.points[1].y + zone_frame_height;
+		
+		var tmp = this.widget._geo2map({x:x1,y:y1});
+		x1 = tmp.x;
+		y1 = tmp.y;
+		tmp = this.widget._geo2map({x:x2,y:y2});
+		x2 = tmp.x;
+		y2 = tmp.y;
+		
+		var line = new Canvas.Line([x1,y1,x1,y2],attr);
+		this.lines.push(line);
+		this.widget.map.add(line);
+		line = new Canvas.Line([x1,y2,x2,y2],attr);
+		this.lines.push(line);
+		this.widget.map.add(line);
+		line = new Canvas.Line([x2,y2,x2,y1],attr);
+		this.lines.push(line);
+		this.widget.map.add(line);
+		line = new Canvas.Line([x2,y1,x1,y1],attr);
+		this.lines.push(line);
+		this.widget.map.add(line);
+	}
     
 });
 
@@ -65,11 +114,18 @@ var Zone = Canvas.Polyline.extend({
 		this.shortedgemaxsize = 0;*/
 	},
 	
-	checkPoint:function(point){
-		if(this.points && this.points.length > 0){
+	checkCross:function(point){
+		var dz = this.widget.geo["zoneFrame"];
+		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
+		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+
+		var p = this.widget._map2geo(point);
+		if(p.x < left || p.x > right || p.y > top || p.y < bottom)
 			return false;
-		}
-		return true;
+
+    	return true;
 	},
 	
 	specialHandle: function(){
@@ -78,54 +134,66 @@ var Zone = Canvas.Polyline.extend({
 			return false;
 		
 		var obj = this.obj;
-    	obj.nocross = true;
+    	//obj.nocross = true;
     	
 		var dz = this.widget.geo["zoneFrame"];
 		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
 		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
 		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
 		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
-		
-		var zone = this.widget.getParent().state.data.period;
-		var zone_width = parseFloat(zone[0]);
-		var zone_height = parseFloat(zone[1]);
-		
-		var x1 = obj.points[0].x - zone_width/2;
-		var y1 = obj.points[0].y - zone_height/2;
-		if(x1 < left || x1 > right || y1 > top || y1 < bottom)
-			return false;
-		var x2 = obj.points[0].x + zone_width/2;
-		var y2 = obj.points[0].y + zone_height/2;
-		if(x2 < left || x2 > right || y2 > top || y2 < bottom)
-			return false;
-		
-		obj.points = [{x:x1,y:y1},{x:x2,y:y2}];
 		var org = this.widget._geo2map({x:left,y:bottom});
-    	this.obj.points.forEach(function(p){
-    		var tmp = self.widget._geo2map(p);
-    		p.offsetX = tmp.x - org.x;
-    		p.offsetY = -tmp.y + org.y;
-    	})
-    	
+		
+		for(var i = 0; i < obj.points.length; i++){
+			var x = obj.points[i].x;
+			var y = obj.points[i].y;
+			if(x < left || x > right || y > top || y < bottom)
+				return false;
+			
+			var tmp = self.widget._geo2map(obj.points[i]);
+			obj.points[i].offsetX = tmp.x - org.x;
+			obj.points[i].offsetY = -tmp.y + org.y;
+		}
+
     	return true;
 	},
 });
+
 var DarkBright = Canvas.Polyline.extend({
+	
+	checkCross:function(point){
+		var zone_frame_width = parseFloat(this.widget.getParent().state.data.period[0]);
+		var zone_frame_height = parseFloat(this.widget.getParent().state.data.period[1]);
+
+    	var dz = this.widget.geo["zoneFrame"];
+    	var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x) - zone_frame_width;
+		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x) + zone_frame_width;
+		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y) + zone_frame_height;
+		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y) - zone_frame_height;
+    	
+		var p = this.widget._map2geo(point);
+		if(p.x < left || p.x > right || p.y > top || p.y < bottom)
+			return false;
+    	
+    	return true;
+	},
 	
 	checkPoint: function(point){
 		if(this.points && this.points.length >= 2){
 			return false;
 		}
+		
+		var zone_frame_width = parseFloat(this.widget.getParent().state.data.period[0]);
+		var zone_frame_height = parseFloat(this.widget.getParent().state.data.period[1]);
 
-		var point = this.widget._map2geo(point);
+		var p = this.widget._map2geo(point);
     	var dz = this.widget.geo["zoneFrame"];
     	if(dz && dz.objs.length > 0){
-    		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
-    		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x);
-    		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
-    		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y);
+    		var left = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x) - zone_frame_width;
+    		var right = Math.max(dz.objs[0].points[0].x,dz.objs[0].points[1].x) + zone_frame_width;
+    		var top = Math.max(dz.objs[0].points[0].y,dz.objs[0].points[1].y) + zone_frame_height;
+    		var bottom = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y) - zone_frame_height;
     		
-    		return point.x >= left && point.x <= right && point.y <= top && point.y >= bottom; 
+    		return p.x >= left && p.x <= right && p.y <= top && p.y >= bottom; 
     	}else{
     		return false;
     	}
@@ -133,9 +201,12 @@ var DarkBright = Canvas.Polyline.extend({
 	},
 	
 	specialHandle: function(){
+		var zone_frame_width = parseFloat(this.widget.getParent().state.data.period[0]);
+		var zone_frame_height = parseFloat(this.widget.getParent().state.data.period[1]);
+		
 		var dz = this.widget.geo["zoneFrame"];
-		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x)
-		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y)
+		var x = Math.min(dz.objs[0].points[0].x,dz.objs[0].points[1].x) - zone_frame_width;
+		var y = Math.min(dz.objs[0].points[0].y,dz.objs[0].points[1].y) - zone_frame_height;
 		var org = this.widget._geo2map({x,y});
 		
 		var self = this;
@@ -157,13 +228,13 @@ var Circle = Canvas.Polyline.extend({
 		return this._super.apply(this, arguments);
 	},
 	checkPoint:function(point){
-		if(this.points && this.points.length >= 2){
+		if(this.points && this.points.length >= 3){
 			return false;
 		}
 		return this._super.apply(this, arguments);
 	},
 	
-	containsPoint:function(point){
+/*	containsPoint:function(point){
 		var poly
 		if(this.points.length < 2 ){
 			return false;
@@ -175,6 +246,27 @@ var Circle = Canvas.Polyline.extend({
 			
 			return radius <= this.arc.radius;
 		}
+	},*/
+	_calculate_cicular: function(){
+	    var x1, y1, x2, y2, x3, y3;
+	    var a, b, c, g, e, f;
+	    x1 = this.points[0].x;
+	    y1 = this.points[0].y;
+	    x2 = this.points[1].x;
+	    y2 = this.points[1].y;
+	    x3 = this.points[2].x;
+	    y3 = this.points[2].y;
+	    e = 2 * (x2 - x1);
+	    f = 2 * (y2 - y1);
+	    g = x2*x2 - x1*x1 + y2*y2 - y1*y1;
+	    a = 2 * (x3 - x2);
+	    b = 2 * (y3 - y2);
+	    c = x3*x3 - x2*x2 + y3*y3 - y2*y2;
+	    
+	    var x = (g*b - c*f) / (e*b - a*f);
+	    var y = (a*g - c*e) / (a*f - b*e);
+	    var r = Math.sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1));
+	    return {x,y,r};
 	},
 	_render: function(ctx){
 		while(this.crosses.length)
@@ -193,18 +285,15 @@ var Circle = Canvas.Polyline.extend({
 			this.widget.map.remove(this.arc);
 
 		var wh = 10/this.widget.map.getZoom();
-		if(this.points.length >= 2){
-			var tmpx = this.points[1].x - this.points[0].x;
-			var tmpy = this.points[1].y - this.points[0].y;
-			var radius = Math.sqrt(tmpx * tmpx + tmpy * tmpy);
-			
+		if(this.points.length > 2){
+			let {x,y,r} = this._calculate_cicular();			
 			this.arc = new Canvas.Arc({
-	            radius,
+	            radius:r,
 	            startAngle:0,
 	            endAngle : 2 * Math.PI,
-	            left: this.points[0].x,
-	            top: this.points[0].y,
-	            strokeWidth : 1/this.widget.map.getZoom(),
+	            left: x,
+	            top: y,
+	            strokeWidth : Math.round(1/this.widget.map.getZoom()),
 	            visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color
 	          });
 			
@@ -235,12 +324,12 @@ var Circle = Canvas.Polyline.extend({
 var Bow = Canvas.Polyline.extend({
 	specialHandle: function(){
 		if(this.obj.points && this.obj.points.length == 3){
-			var tmpx = this.obj.points[1].x - this.obj.points[0].x;
-			var tmpy = this.obj.points[1].y - this.obj.points[0].y;
-			var radius = Math.sqrt(tmpx * tmpx + tmpy * tmpy);
-			var engle = Math.atan2(this.obj.points[2].y - this.obj.points[0].y, this.obj.points[2].x - this.obj.points[0].x);
-			this.obj.points[2].x = this.obj.points[0].x + Math.cos(engle) * radius;
-			this.obj.points[2].y = this.obj.points[0].y + Math.sin(engle) * radius;
+//			var tmpx = this.obj.points[1].x - this.obj.points[0].x;
+//			var tmpy = this.obj.points[1].y - this.obj.points[0].y;
+//			var radius = Math.sqrt(tmpx * tmpx + tmpy * tmpy);
+//			var engle = Math.atan2(this.obj.points[2].y - this.obj.points[0].y, this.obj.points[2].x - this.obj.points[0].x);
+//			this.obj.points[2].x = this.obj.points[0].x + Math.cos(engle) * radius;
+//			this.obj.points[2].y = this.obj.points[0].y + Math.sin(engle) * radius;
 		}
     	
     	return true;
@@ -257,7 +346,7 @@ var Bow = Canvas.Polyline.extend({
 		return this._super.apply(this, arguments);
 	},
 	
-	containsPoint:function(point){
+/*	containsPoint:function(point){
 		var poly
 		if(this.points.length < 2 ){
 			return false;
@@ -270,15 +359,36 @@ var Bow = Canvas.Polyline.extend({
 			
 			return radius <= this.arc.radius && (( engle >= this.arc.startAngle && engle <= this.arc.endAngle) || ( engle <= this.arc.startAngle && engle >= this.arc.endAngle));
 		}
+	},*/
+	
+	_calculate_cicular: function(){
+	    var x1, y1, x2, y2, x3, y3;
+	    var a, b, c, g, e, f;
+	    x1 = this.points[0].x;
+	    y1 = this.points[0].y;
+	    x2 = this.points[1].x;
+	    y2 = this.points[1].y;
+	    x3 = this.points[2].x;
+	    y3 = this.points[2].y;
+	    e = 2 * (x2 - x1);
+	    f = 2 * (y2 - y1);
+	    g = x2*x2 - x1*x1 + y2*y2 - y1*y1;
+	    a = 2 * (x3 - x2);
+	    b = 2 * (y3 - y2);
+	    c = x3*x3 - x2*x2 + y3*y3 - y2*y2;
+	    
+	    var x = (g*b - c*f) / (e*b - a*f);
+	    var y = (a*g - c*e) / (a*f - b*e);
+	    var r = Math.sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1));
+	    return {x,y,r};
 	},
+	
 	_render: function(ctx){
-		while(this.crosses.length)
-		{
+		while(this.crosses.length){
 			var cross = this.crosses.pop()
 			this.widget.map.remove(cross);
 		}
-		while(this.lines.length)
-		{
+		while(this.lines.length){
 			var line = this.lines.pop()
 			this.widget.map.remove(line);
 		}
@@ -290,23 +400,27 @@ var Bow = Canvas.Polyline.extend({
 		var wh = 10/this.widget.map.getZoom();
 		var attr = {visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color};
 		if(this.points.length > 2){
-			var tmpx = this.points[1].x - this.points[0].x;
-			var tmpy = this.points[1].y - this.points[0].y;
-			var radius = Math.sqrt(tmpx * tmpx + tmpy * tmpy);
+			let {x,y,r} = this._calculate_cicular();
 			
-			var line = new Canvas.Line([this.points[1].x,this.points[1].y,this.points[2].x,this.points[2].y],attr);
+			var line = new Canvas.Line([this.points[0].x,this.points[0].y,this.points[2].x,this.points[2].y],attr);
 			this.lines.push(line);
 			this.widget.map.add(line);
 			
-			var startAngle = Math.atan2(this.points[1].y - this.points[0].y, this.points[1].x - this.points[0].x);
-			var endAngle = Math.atan2(this.points[2].y - this.points[0].y,this.points[2].x - this.points[0].x);
+			var startAngle = Math.atan2(this.points[0].y - y, this.points[0].x - x);
+			var endAngle = Math.atan2(this.points[2].y - y,this.points[2].x - x);
+			var dir = (this.points[1].x - this.points[0].x) * (this.points[2].y - this.points[1].y) - (this.points[1].y - this.points[0].y) * (this.points[2].x - this.points[1].x);
+			if(dir <= 0){
+				var t = startAngle
+				startAngle = endAngle;
+				endAngle = t;
+			}
 
 			this.arc = new Canvas.Arc({
-	            radius,
+	            radius:r,
 	            startAngle,
 	            endAngle,
-	            left: this.points[0].x,
-	            top: this.points[0].y,
+	            left: x,
+	            top: y,
 	        	strokeWidth : 1/this.widget.map.getZoom(),
 	            visible:true,strokeDash:this.strokeDash,fill: this.color,stroke: this.color
 	          });

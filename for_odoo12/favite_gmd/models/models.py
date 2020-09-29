@@ -13,7 +13,6 @@ except ImportError:
  
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools
 
-PANEL_MAP_RATE = 1/10
 _logger = logging.getLogger(__name__)
 
     
@@ -36,7 +35,7 @@ class Gmd(models.Model):
     
     @api.model
     def _default_glass(self):
-        glass = {"corner":1,"size":[2200,2500],"coord":0,"iCenterMode":-1,"iLongEdge":-1,"iStartQuandrant":-1}
+        glass = {"corner":1,"size":[2200,2500],"coord":0,"iCenterMode":-1,"iLongEdge":-1,"iStartQuandrant":1}
         return glass
     
     @api.depends('camera_path')
@@ -262,10 +261,10 @@ class Gmd(models.Model):
                 
         dest.save(root + '\glass.bmp', format="bmp")
         
-    def generate_panel_map(self,panelName,width,height,strBlocks):
+    def generate_panel_map(self,panelName,width,height,strBlocks,map_rate):
         root = self.camera_path  
         blocks = json.loads(strBlocks)
-        dest = Image.new('L', (int(width*PANEL_MAP_RATE),int(height*PANEL_MAP_RATE)))
+        dest = Image.new('L', (int(width*map_rate),int(height*map_rate)))
         left = 0
         top = 0
         for x in range(len(blocks)):
@@ -276,8 +275,8 @@ class Gmd(models.Model):
                 
                 imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (root,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
                 
-                rw = int(b['iInterSectionWidth']*PANEL_MAP_RATE)
-                rh = int(b['iInterSectionHeight']*PANEL_MAP_RATE)
+                rw = int(b['iInterSectionWidth']*map_rate)
+                rh = int(b['iInterSectionHeight']*map_rate)
                 try:
                     im = Image.open(imgFile)
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)

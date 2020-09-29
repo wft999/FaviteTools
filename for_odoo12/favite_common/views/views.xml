@@ -1,6 +1,49 @@
 <odoo>
   <data>
     <!-- explicit list view definition -->
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit</field>
+            <field name="model">res.config.settings</field>
+            <field name="priority" eval="30"/>
+            <field name="inherit_id" ref="base.res_config_settings_view_form" />
+            <field name="arch" type="xml">
+            	<xpath expr="//div[hasclass('settings_tab')]" position="attributes" >
+            		<attribute name="class">settings_tab o_hidden</attribute>
+            	</xpath>
+            	<xpath expr="//div[hasclass('o_setting_search')]" position="attributes" >
+            		<attribute name="class">o_setting_search o_hidden</attribute>
+            	</xpath>
+                <xpath expr="//div[hasclass('settings')]" position="inside" >
+                    <div class="app_settings_block" data-string="favite_common" string="favite_common" data-key="favite_common" >
+                    	
+                        <div class="row mt16 o_settings_container">
+                        
+                        	<div class="col-xs-12 col-md-6 o_setting_box">
+                        			<div class="o_setting_left_pane">
+                                    	<div class="text-muted">
+                                        	panel map size
+                                    	</div>
+                                	</div>
+                                    <div class="o_setting_right_pane">
+                                        <div class="content-group">
+                                            <div class="mt16 row">
+                                                <label for="panel_map_margin" string="margin(um)" class="col-xs-3 col-md-3 o_light_label"></label>
+                                                <field name="panel_map_margin" class="oe_inline" required="1"></field>
+                                            </div>
+                                            <div class="mt16 row">
+                                                <label for="panel_map_size"  string="size(pixel)" class="col-xs-3 col-md-3 o_light_label"></label>
+                                                <field name="panel_map_size" class="oe_inline" required="1"></field>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+							</div>
+                        </div>
+                        
+                    </div>
+                </xpath>
+            </field>
+        </record>
 
 	<record model="ir.ui.view" id="model_view_kanban">
 		<field name="name">Models Kanban</field>
@@ -98,10 +141,20 @@
         	<field name="view_id" ref="export_directory_view_tree"/>
         	<field name="target">current</field>
     	</record>
+    	
+    <record id="action_parameter_setting" model="ir.actions.act_window">
+            <field name="name">General Settings</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="target">inline</field>
+            <field name="context">{'module' : 'favite_common'}</field>
+    	</record>
 
     <menuitem name="Config" id="favite_common_config_menu"  parent="favite_common.menu_root" sequence="10000"/>
 	<menuitem name="Config Models" id="favite_common_models_menu" action="favite_common.action_model_model" parent="favite_common.favite_common_config_menu" sequence="10001"/>
 	<menuitem name="Export directory" id="favite_common_export_menu" action="favite_common.action_export_settings" parent="favite_common.favite_common_config_menu" sequence="10002" />
+	<menuitem name="Config parameter" id="favite_common_parameter_menu" action="favite_common.action_parameter_setting" parent="favite_common.favite_common_config_menu" sequence="10003"/>
    	
   </data>
 </odoo>

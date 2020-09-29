@@ -81,7 +81,7 @@ var Cross = fabric.util.createClass(fabric.Object, {
 		console.log("this.strokeWidth:%f\n",zoom);
 		
 		ctx.beginPath(); 
-		ctx.lineWidth= Math.round(2/zoom);
+		ctx.lineWidth= 2/zoom;
 		//ctx.strokeStyle="yellow"; 
 		ctx.moveTo(-this.width/2,0);
 		ctx.lineTo(this.width/2,0);
@@ -114,30 +114,8 @@ var Cross = fabric.util.createClass(fabric.Object, {
         }
       },
       
-    mouseMove: function(){
-/*    	if(this.inner){
-    		if((this.left>= this.inner[0].left && this.left<= this.inner[1].left) || 
-    				(this.top>= this.inner[1].top && this.top<= this.inner[0].top) ||
-    				this.left < 10 || this.left > (this.canvas.width - 10)/this.canvas.getZoom() ||
-    				this.top < 10 || this.top > (this.canvas.height - 10)/this.canvas.getZoom()){
-    			this.left = this.polyline.points[this.id].x;
-    			this.top = this.polyline.points[this.id].y;
-    			this.setCoords();
-    			return false;
-    		}
-    	}else if(this.outer){
-    		if(this.left>= this.outer[1].left || 
-    				this.left<= this.outer[0].left || 
-    				this.top<= this.outer[1].top || 
-    				this.top>= this.outer[0].top){
-    			this.left = this.polyline.points[this.id].x;
-    			this.top = this.polyline.points[this.id].y;
-    			this.setCoords();
-    			return false;
-    		}
-    	}*/
-    	
-    	if(this.polyline.checkCross()){
+    mouseMove: function(p){    	
+    	if(this.polyline.checkCross(p)){
     		return true;
     	}else{
     		this.left = this.polyline.points[this.id].x;
@@ -270,7 +248,7 @@ var Hawkeye = fabric.util.createClass(fabric.Object, {
 		this.width = this.w/this.canvas.getZoom();
 		this.height = this.w/this.canvas.getZoom();
 		//this.strokeWidth = 1/this.canvas.getZoom();
-		ctx.lineWidth= Math.round(1/this.canvas.getZoom());
+		ctx.lineWidth= 1/this.canvas.getZoom();
 
 		switch(this.coord){
 		case 0:
@@ -502,10 +480,10 @@ var Polyline = Class.extend({
 	
 	select: function(selected){
 		this.obj.selected = selected;
-		var dash = 4 / this.widget.map.getZoom();
+		var dash = 100 / this.widget.map.getZoom();
 		_.each(this.lines,function(l){
-			l.strokeDashArray = selected? [dash,dash] : [];
-			//l.stroke = 'red';
+			l.strokeDashArray = selected? [20,20] : [];
+			//l.stroke = selected?'red':'yellow';
 			l.dirty=true;
 			l.setCoords();
 		})
@@ -542,7 +520,7 @@ var Polyline = Class.extend({
 		return true;
 	},
 	
-	checkCross:function(){
+	checkCross:function(p){
 		return true;
 	},
 	

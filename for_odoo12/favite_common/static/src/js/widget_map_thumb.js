@@ -13,8 +13,8 @@ var _t = core._t;
 
 var Coordinate = require('favite_common.coordinate');
 
-var PANEL_MAP_MARGIN = 10000;
-var PANEL_MAP_RATE = 1/10;
+//var PANEL_MAP_MARGIN = 10000;
+//var PANLE_MAP_SIZE = 5000 * 5000;
 var WidgetMapThumb = WidgetMap.extend({
     events: {
 //        'keydown.canvas-map': '_onKeydown'
@@ -74,21 +74,25 @@ var WidgetMapThumb = WidgetMap.extend({
 		self.map.polylines = [];
 		self._drawObjects();
     },
+   
     
     LoadPanelMap(){
     	var self = this;
     	self.image = new fabric.Image();
     	
     	var data = this.getParent().state.data;
+    	var panel_map_margin = data.conf['panel_map_margin'];
+    	var panel_map_size = data.conf['panel_map_size'];
+    	
     	var ps = data.geo.panel.objs[0].points;
-    	var left = Math.min(ps[0].x,ps[1].x,ps[2].x,ps[3].x) - PANEL_MAP_MARGIN;
+    	var left = Math.min(ps[0].x,ps[1].x,ps[2].x,ps[3].x) - panel_map_margin;
     	if(left < 0) left = 0;
-    	var right = Math.max(ps[0].x,ps[1].x,ps[2].x,ps[3].x) + PANEL_MAP_MARGIN;
+    	var right = Math.max(ps[0].x,ps[1].x,ps[2].x,ps[3].x) + panel_map_margin;
     	if(right > self.coord.mpMachinePara.dGlassCenterX*2)
     		right = self.coord.mpMachinePara.dGlassCenterX*2;
-    	var top = Math.min(ps[0].y,ps[1].y,ps[2].y,ps[3].y) - PANEL_MAP_MARGIN;
+    	var top = Math.min(ps[0].y,ps[1].y,ps[2].y,ps[3].y) - panel_map_margin;
     	if(top < 0) top = 0;
-    	var bottom = Math.max(ps[0].y,ps[1].y,ps[2].y,ps[3].y) + PANEL_MAP_MARGIN;
+    	var bottom = Math.max(ps[0].y,ps[1].y,ps[2].y,ps[3].y) + panel_map_margin;
     	if(bottom > self.coord.mpMachinePara.dGlassCenterY*2)
     		bottom = self.coord.mpMachinePara.dGlassCenterY*2;
     	
@@ -110,10 +114,11 @@ var WidgetMapThumb = WidgetMap.extend({
 				x:first_block.iRange_Left + first_block.iInterSectionStartX,
 				y:first_block.iRange_Bottom + first_block.iInterSectionStartY
 				};
-    	
-    	self.size = {x:imgWidth*PANEL_MAP_RATE,y:imgHeight*PANEL_MAP_RATE};
-		self.ratio.x = PANEL_MAP_RATE;
-    	self.ratio.y = PANEL_MAP_RATE;
+		
+    	var map_rate = (imgWidth * imgHeight > panel_map_size) ? Math.sqrt(panel_map_size/(imgWidth * imgHeight)) : 1;
+    	self.size = {x:imgWidth*map_rate,y:imgHeight*map_rate};
+		self.ratio.x = map_rate;
+    	self.ratio.y = map_rate;
 		if(self.coord){
 			delete self.coord;
 		}
@@ -129,11 +134,11 @@ var WidgetMapThumb = WidgetMap.extend({
     	var src = '/gmd/'+((data.gmd_id && data.gmd_id.res_id)|| data.id)+'/panel/'+data.geo.panel.objs[0].name+'/image?t='+ d.getTime();
 
     	self.image.setSrc(src, function(img){
-    		if(img.width != Math.floor(imgWidth*PANEL_MAP_RATE) || img.height != Math.floor(imgHeight*PANEL_MAP_RATE)){
+    		if(img.width != Math.floor(imgWidth*map_rate) || img.height != Math.floor(imgHeight*map_rate)){
     			self._rpc({
 	                model: 'favite_gmd.gmd',
 	                method: 'generate_panel_map',
-	                args: [data.gmd_id.res_id,data.geo.panel.objs[0].name, imgWidth,imgHeight,strBlocks],
+	                args: [data.gmd_id.res_id,data.geo.panel.objs[0].name, imgWidth,imgHeight,strBlocks,map_rate],
 	            }).then(function (res) {
 	            	self.image.setSrc(src, function(img){
 	            		self.image.set({left: 0,top: 0,hasControls:false,lockMovementX:true,lockMovementY:true,selectable:false,hasBorders:false });

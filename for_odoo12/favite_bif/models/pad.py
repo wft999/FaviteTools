@@ -34,11 +34,8 @@ class Pad(models.Model):
         "panel":{"noselect":True,"readonly":True,'objs':[]}
         }
         
-        for b in gmd.geo['block']['objs']:
-            if 'panels' in b:
-                for p in b['panels']:
-                    if p['name'] == panel.name:
-                        geo['panel']['objs'].append(p)
+        p = panel.gsp_id.geo['panel']['objs'][0]
+        geo['panel']['objs'].append(p)
         
         return geo
         

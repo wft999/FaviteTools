@@ -47,6 +47,12 @@ class CostumModel(models.AbstractModel):
     name = fields.Char(required=True,)
     description = fields.Text()
     color = fields.Integer(string='Color Index', default=10)
+    
+    @api.one
+    def _compute_config(self):
+        self.conf = self.env['res.config.settings'].get_values();
+        
+    conf = fields.Jsonb(string = "config",compute=_compute_config)   
 
     
     @api.one

@@ -67,7 +67,7 @@ class Gsp(models.Model):
         self.sequence = len(gsp)
         
     @api.one
-    @api.depends('x_inspect_mode','x_miniledcompare_period','x_todcompare_period','x_multiperiodcompare_period','x_ps_basicperiod','x_neighorcompare_shortperiod_period')
+#    @api.depends('x_inspect_mode','x_miniledcompare_period','x_todcompare_period','x_multiperiodcompare_period','x_ps_basicperiod','x_neighorcompare_shortperiod_period')
     def _compute_period(self):
         if self.x_inspect_mode == 2:
             self.period = self.x_neighorcompare_shortperiod_period
@@ -201,10 +201,9 @@ class Gsp(models.Model):
     def export_image(self,directory_ids):
         if len(self.geo['zoneFrame']['objs']) == 0:
             return 
-        
-        imgWidth = int(self.geo['zoneFrame']['objs'][0]['imgWidth'])
-        imgHeight = int(self.geo['zoneFrame']['objs'][0]['imgHeight'])
-        blocks = json.loads(self.geo['zoneFrame']['objs'][0]['strBlocks'])
+        imgWidth = int(self.geo['zoneFrame']['objs'][0]['imgWidth3'])
+        imgHeight = int(self.geo['zoneFrame']['objs'][0]['imgHeight3'])
+        blocks = json.loads(self.geo['zoneFrame']['objs'][0]['strBlocks3'])
          
         origin = Image.new('L', (imgWidth,imgHeight))   
         left = 0
@@ -236,24 +235,51 @@ class Gsp(models.Model):
             path = os.path.join(dir,self.bif_id.name+'_'+self.name+'_org.bmp')
             with open(path, 'wb') as f:
                 origin.save(f, format="BMP")
+                        
+        
+        imgWidth = int(self.geo['zoneFrame']['objs'][0]['imgWidth'])
+        imgHeight = int(self.geo['zoneFrame']['objs'][0]['imgHeight'])
+        blocks = json.loads(self.geo['zoneFrame']['objs'][0]['strBlocks'])
+         
+        zone_origin = Image.new('L', (imgWidth,imgHeight))   
+        left = 0
+        top = 0 
+        for x in range(len(blocks)):
+            for y in range(len(blocks[x])-1,-1,-1):
+                b = blocks[x][y]    
+                if b is None or b['bHasIntersection'] == False:
+                    continue;
+                
+                try:
+                    imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    with Image.open(imgFile) as im:
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                        region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
+                        zone_origin.paste(region, (left,top))
+                        if y == 0:
+                            left += region.width
+                            top = 0
+                        else:
+                            top += region.height
+                except:
+                    raise UserError("No such file:%s"% (imgFile))
+        zone_origin = zone_origin.transpose(Image.FLIP_TOP_BOTTOM)
+        for d in directory_ids:  
+            dir = os.path.join(d.name ,'bif')
+            if not os.path.isdir(dir):
+                os.makedirs(dir)
+            path = os.path.join(dir,self.bif_id.name+'_'+self.name+'_zone_org.bmp')
+            with open(path, 'wb') as f:
+                zone_origin.save(f, format="BMP")
         
         zone = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
         b = np.array([[[0,0],[0,imgHeight],[imgWidth,imgHeight],[imgWidth,0]]], dtype = np.int32)
-        cv2.fillPoly(zone, b, int(self.geo['zone']['background'] if 'background' in self.geo['zone'] else '15'))
+        cv2.fillPoly(zone, b, int(self.geo['zone']['background'] if 'background' in self.geo['zone'] else '0'))
         for o in self.geo['zone']['objs']:
-            if len(o['points']) != 2:
+            if len(o['points']) < 2:
                 continue
             
-            p2 = []
-            x1 = int(o['points'][0]['offsetX'])
-            y1 = int(o['points'][0]['offsetY'])
-            x2 = int(o['points'][1]['offsetX'])
-            y2 = int(o['points'][1]['offsetY'])
-
-            p2.append([x1,y1])
-            p2.append([x1,y2])
-            p2.append([x2,y2])
-            p2.append([x2,y1])
+            p2 = [[int(p['offsetX']),int(p['offsetY'])] for p in o['points']]
             
             b = np.array([p2], dtype = np.int32)
             cv2.fillPoly(zone, b, int(o['level'] if 'level' in o else '15'))
@@ -286,38 +312,65 @@ class Gsp(models.Model):
             b = np.array([p2], dtype = np.int32)
             cv2.fillPoly(polygon, b, 255)
             
-        for o in self.geo['bow']['objs']:
+        def _calculate_cicular(x1,y1,x2,y2,x3,y3):   
+            e = 2 * (x2 - x1)
+            f = 2 * (y2 - y1)
+            g = x2*x2 - x1*x1 + y2*y2 - y1*y1
+            a = 2 * (x3 - x2)
+            b = 2 * (y3 - y2)
+            c = x3*x3 - x2*x2 + y3*y3 - y2*y2
+            
+            x = (g*b - c*f) / (e*b - a*f)
+            y = (a*g - c*e) / (a*f - b*e)
+            r = math.sqrt((x-x1)*(x-x1)+(y-y1)*(y-y1))
+            return {'x':x,'y':y,'r':r}; 
+            
+        for o in self.geo['bow']['objs']:            
             p = o['points']
-            x = int((p[0]['x']-left)*rate)
-            y = int((top-p[0]['y'])*rate)
-            x1 = int((p[1]['x']-left)*rate)
-            y1 = int((top-p[1]['y'])*rate)
-            x2 = int((p[2]['x']-left)*rate)
-            y2 = int((top-p[2]['y'])*rate)
-            r = math.sqrt((x1-x)**2 + (y1-y)**2)
-            startAngle = math.degrees(math.atan2(y1 - y, x1 - x))
-            endAngle = math.degrees(math.atan2(y2 - y, x2 - x))
-            
-            p2 = [[x,y],[x1,y1],[x2,y2]]
+            x1 = (p[0]['x']-left)*rate
+            y1 = (top-p[0]['y'])*rate
+            x2 = (p[1]['x']-left)*rate
+            y2 = (top-p[1]['y'])*rate
+            x3 = (p[2]['x']-left)*rate
+            y3 = (top-p[2]['y'])*rate
+            res = _calculate_cicular(x1,y1,x2,y2,x3,y3)
+            x = int(res['x'])
+            y = int(res['y'])
+            r = int(res['r'])
+
+            p2 = [[x,y],[int(x1),int(y1)],[int(x3),int(y3)]]
             b = np.array([p2], dtype = np.int32)
-            
-            if endAngle < startAngle:
-                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,startAngle,360,255,cv2.FILLED)
-                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,0,endAngle,255,cv2.FILLED)
-                cv2.fillPoly(polygon, b, 255)
+            startAngle = math.degrees(math.atan2(y1 - y, x1 - x))
+            endAngle = math.degrees(math.atan2(y3 - y, x3 - x))
+            dir = (x2 - x1) * (y3 - y2) - (y2 - y1) * (x3 - x2);
+            if dir > 0:
+                startAngle = math.degrees(math.atan2(y1 - y, x1 - x))
+                endAngle = math.degrees(math.atan2(y3 - y, x3 - x))
             else:
-                cv2.ellipse(polygon, (x,y), (int(r),int(r)),0,startAngle,endAngle,255,cv2.FILLED)
+                endAngle = math.degrees(math.atan2(y1 - y, x1 - x))
+                startAngle = math.degrees(math.atan2(y3 - y, x3 - x))
+                
+            cv2.ellipse(polygon, (x,y), (r,r),0,startAngle,endAngle,255,cv2.FILLED)
+            
+            if abs(startAngle - endAngle) > 180:
+                cv2.fillPoly(polygon, b, 255)
+            else:   
                 cv2.fillPoly(polygon, b, 0)
             
             
             
         for o in self.geo['circle']['objs']:
             p = o['points']
-            x = int((p[0]['x']-left)*rate)
-            y = int((top-p[0]['y'])*rate)
-            x1 = int((p[1]['x']-left)*rate)
-            y1 = int((top-p[1]['y'])*rate)
-            r = math.sqrt((x1-x)**2 + (y1-y)**2)
+            x1 = (p[0]['x']-left)*rate
+            y1 = (top-p[0]['y'])*rate
+            x2 = (p[1]['x']-left)*rate
+            y2 = (top-p[1]['y'])*rate
+            x3 = (p[2]['x']-left)*rate
+            y3 = (top-p[2]['y'])*rate
+            res = _calculate_cicular(x1,y1,x2,y2,x3,y3)
+            x = int(res['x'])
+            y = int(res['y'])
+            r = int(res['r'])
             cv2.circle(polygon, (x,y), int(r),255,cv2.FILLED)
             
         for d in directory_ids:  

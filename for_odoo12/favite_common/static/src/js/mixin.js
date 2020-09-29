@@ -52,15 +52,17 @@ var MapMouseHandle = {
 		var newPointer = this.map.getPointer(opt.e);
 		var isClick = _.isEqual(newPointer,this.map.lastPointer);
 		
+		if(this._isObjectMoving){
+			this._isObjectMoving = false;
+			return;
+		}
+		
 		if(this.map.hoverCursor == 'default'){
 			if(this._isSelectCross){
 				this._isSelectCross = false;
 				return;
 			}
-			if(this._isObjectMoving){
-				this._isObjectMoving = false;
-				return;
-			}
+			
 				
 			
 			if(this.map.curPolyline){
@@ -206,8 +208,8 @@ var MapEventHandle = {
     },
     
     _onObjectMoving: function(opt){
-    	if(this.map.hoverCursor !== 'default')
-    		return;
+    	//if(this.map.hoverCursor !== 'default')
+    		//return;
     	
     	this._isObjectMoving = true;
     	
@@ -235,7 +237,7 @@ var MapEventHandle = {
    	 	if(opt.target.type == "hawkeye"){
    	 		this._changeHawkeye({x:opt.target.left,y:opt.target.top});	
     	}else if(opt.target.type == "cross"){
-    		if(opt.target.mouseMove()){
+    		if(opt.target.mouseMove({x:opt.target.left, y:opt.target.top})){
     			var obj = opt.target.polyline.obj;
     			obj.points[opt.target.id] = this._map2geo({x:opt.target.left, y:opt.target.top});
     			opt.target.polyline.specialHandle();

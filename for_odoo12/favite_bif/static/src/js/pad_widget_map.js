@@ -16,7 +16,7 @@ var _t = core._t;
 
 var Frame = Canvas.Polyline.extend({
 	showCross:true,
-	checkCross:function(){
+	checkCross:function(p){
 		return (this.crosses[0].left < this.crosses[1].left) && 
 				(this.crosses[1].left < this.crosses[2].left) && 
 				(this.crosses[2].left < this.crosses[3].left) &&

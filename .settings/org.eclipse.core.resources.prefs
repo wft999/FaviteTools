@@ -34,6 +34,7 @@ encoding//for_odoo12/favite_common/controllers/controllers.py=utf-8
 encoding//for_odoo12/favite_common/models/__init__.py=utf-8
 encoding//for_odoo12/favite_common/models/fields.py=utf-8
 encoding//for_odoo12/favite_common/models/models.py=utf-8
+encoding//for_odoo12/favite_common/models/res_config_settings.py=utf-8
 encoding//for_odoo12/favite_common/wizard/__init__.py=utf-8
 encoding//for_odoo12/favite_common/wizard/export_wizard.py=utf-8
 encoding//for_odoo12/favite_gmd/__init__.py=utf-8

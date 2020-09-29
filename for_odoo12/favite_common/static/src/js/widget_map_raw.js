@@ -134,23 +134,7 @@ var WidgetMapRaw = WidgetMap.extend({
     	console.log(obj.blocks)
     },
     
-    _drawPeriod:function(){    
-    	if(this.period)
-    		return;
-    	if(!this.map)
-    		return;
-    	if(!this.image)
-    		return;
-    	
-    	this.period = new Canvas.Period({ 
- 			left: this.image.width/2, 
- 			top: this.image.height/2,
- 			visible:false
- 			});
-    	this.map.add(this.period);
-    	this.period.bringToFront();
-    	
-    },
+
     
 
 });

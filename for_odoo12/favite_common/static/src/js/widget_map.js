@@ -197,7 +197,7 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
         				objClass = canvas_registry.get(baseKey+key);
         			
          			var p = new objClass(self,key,obj,color,!!self.geo[key].readonly,!!self.geo[key].noselect);
-         			if(p.intersectsWithRect(0,self.size.x,0,self.size.y))
+         			//if(p.intersectsWithRect(0,self.size.x,0,self.size.y))
          				p.render();
          			
          			if(obj.selected){
@@ -206,6 +206,13 @@ var WidgetMap = Widget.extend(Mixin.MapMouseHandle,Mixin.MapEventHandle,Mixin.Ma
     				}
          			
          			p.focus(obj.focused);
+         			if(obj.focused){
+         				self.map.curPolyline = p;
+         				
+         				self.$('a.dropdown-toggle').toggleClass('o_hidden',true);
+         				self._showMode('crosshair',true);
+         				self.$('button[data-mode="crosshair"]').click();
+         			}
          			
          			if(self.objTypes){
          				var visible = self.objTypes.hasOwnProperty(p.type);
