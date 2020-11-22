@@ -800,12 +800,13 @@ var Hawkmap = Widget.extend({
 				this.do_warn(_t('Incorrect Operation'),_t('Mark is across multiple IPs!'),false);
 			}
     	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='inspectZone' ||this.pad.curType=='unregularInspectZone' || this.pad.curType=='uninspectZone'|| this.pad.curType=='pframe')){
-    		if(!this.map.curPad){
-    			var pad = new Mycanvas.MyPolyline(this.parent.map,this.pad.curType);
+    		if((!this.map.curPad) || (this.map.curPad && this.map.curPad.padType == 'inspectZoneFrame')){
+				var pad = new Mycanvas.MyPolyline(this.parent.map,this.pad.curType);
 				this.map.curPad = new Mycanvas.MyPolyline(this.map,this.pad.curType);
 				this.map.curPad.panelpad = pad;
 				pad.hawkpad = this.map.curPad;
 			}
+    		
     		this.parent.register(this.map.curPad.panelpad);
     		
 			let {dOutputX:ux,dOutputY:uy} = this.parent.coordinate.HawkmapCoordinateToUMCoordinate(endPointer.x/zoom,this.image.height-endPointer.y/zoom);
@@ -818,7 +819,7 @@ var Hawkmap = Widget.extend({
     			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
     		}
     	}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && (this.pad.curType=='subMark' && this.parent.isPolygonSubMark)){
-    		if(!this.map.curPad){
+    		if((!this.map.curPad) || (this.map.curPad && this.map.curPad.padType == 'inspectZoneFrame')){
     			var pad = new Mycanvas.MyPolyline(this.parent.map,this.pad.curType);
 				this.map.curPad = new Mycanvas.MyPolyline(this.map,this.pad.curType);
 				this.map.curPad.panelpad = pad;
@@ -836,7 +837,7 @@ var Hawkmap = Widget.extend({
     			this.do_warn(_t('Incorrect Operation'),_t('Please enter valid point!'),false);
     		}    			
 		}else if(!_isDrawRect && this.map.hoverCursor == CROSSHAIR && this.pad.curType=='frame' ){
-    		if(!this.map.curPad){
+			if((!this.map.curPad) || (this.map.curPad && this.map.curPad.padType == 'inspectZoneFrame')){
     			var pad = new Mycanvas.MyPolyline(this.parent.map,"frame-goa");
 				this.map.curPad = new Mycanvas.MyPolyline(this.map,"frame-goa");
 				this.map.curPad.panelpad = pad;

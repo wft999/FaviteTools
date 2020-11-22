@@ -206,7 +206,6 @@ class Camera(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "Name already exists !"),
     ]    
-        
 
     @api.model
     def _generate_glass_map(self,root):
@@ -245,9 +244,8 @@ class Camera(models.Model):
 
         finally:
             job_cr.commit()
+            
         
-
-
 # class FSWatchdog(object):
 #     def __init__(self):
 #         self.observer = Observer()

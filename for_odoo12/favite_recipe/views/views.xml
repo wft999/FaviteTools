@@ -319,6 +319,7 @@
 		<field name="view_mode">tree,form</field>
 		<field name="target">current</field>
 	</record>
+
         
 	<act_window
             id="actions_act_window_export_recipe"

@@ -20,6 +20,7 @@ return BasicController.extend({
 
     },
     
+    
     _onUpdateRecord: function (ev) {
         var changes = _.clone(ev.data);
         

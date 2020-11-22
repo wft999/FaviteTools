@@ -15,29 +15,42 @@
             	</xpath>
                 <xpath expr="//div[hasclass('settings')]" position="inside" >
                     <div class="app_settings_block" data-string="favite_common" string="favite_common" data-key="favite_common" >
-                    	
+                    	<h2>Parameter Management</h2>
                         <div class="row mt16 o_settings_container">
                         
                         	<div class="col-xs-12 col-md-6 o_setting_box">
-                        			<div class="o_setting_left_pane">
-                                    	<div class="text-muted">
-                                        	panel map size
-                                    	</div>
-                                	</div>
                                     <div class="o_setting_right_pane">
+                                    	<span class="o_form_label">Margin</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." aria-label="Values set here are company-specific." groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Set the margin of panel map
+                                        </div>
                                         <div class="content-group">
                                             <div class="mt16 row">
                                                 <label for="panel_map_margin" string="margin(um)" class="col-xs-3 col-md-3 o_light_label"></label>
                                                 <field name="panel_map_margin" class="oe_inline" required="1"></field>
                                             </div>
+                                        </div>
+                                    </div>
+							</div>
+							
+							<div class="col-xs-12 col-md-6 o_setting_box">
+                                    <div class="o_setting_right_pane">
+                                    	<span class="o_form_label">Size</span>
+                                        <span class="fa fa-lg fa-building-o" title="Values set here are company-specific." aria-label="Values set here are company-specific." groups="base.group_multi_company" role="img"/>
+                                        <div class="text-muted">
+                                            Set the size of panel map
+                                        </div>
+                                        <div class="content-group">
                                             <div class="mt16 row">
                                                 <label for="panel_map_size"  string="size(pixel)" class="col-xs-3 col-md-3 o_light_label"></label>
                                                 <field name="panel_map_size" class="oe_inline" required="1"></field>
                                             </div>
                                         </div>
-                                        
                                     </div>
 							</div>
+							
+							
                         </div>
                         
                     </div>
