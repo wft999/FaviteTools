@@ -1,0 +1,49 @@
+<odoo>
+    <data>
+       <template id="scratch.tour_layout" name="Main Frontend Layout">
+        <t t-call="web.layout">
+
+            <t t-set="direction" t-value="request.env['res.lang'].search([('code', '=', request.env.lang)]).direction"/>
+            <div id="wrapwrap" t-attf-class="#{pageName or ''} #{direction == 'rtl' and 'o_rtl' or ''} #{'o_portal' if is_portal else ''}">
+                <main>
+                
+                
+                    <div class="carousel-inner">
+					      	<img class="d-block w-100" t-attf-src="/scratch/static/tours/#{tour_name}.gif" alt="First slide" />
+					  </div>
+
+					<script type="text/javascript">
+	                    $(function() {
+	                    	var audios = <t t-esc="audios"/>
+	                    	var _audio = null;
+	                    	if (typeof(Audio) !== "undefined"){
+					            _audio = new Audio();
+					        }
+					        /*
+							$('.carousel').carousel({
+	  							interval: false
+							}).on('slid.bs.carousel', function (e) {
+ 								if(_audio){
+ 									_audio.pause();
+ 									_audio.src = "/web/content/" + audios[e.to];
+ 									_audio.play();
+ 								}
+							});
+							
+							$('.carousel').click(function(){
+								if(_audio){
+									if(!_audio.src){
+										_audio.src = "/web/content/" + audios[0];
+ 										_audio.play();
+									}
+								}
+							});*/
+							
+						});
+	                </script>
+                </main>
+            </div>
+        </t>
+    </template>
+    </data>
+</odoo>

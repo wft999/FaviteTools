@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="exercise_form" model="ir.ui.view">
+			<field name="name">exercise.form</field>
+			<field name="model">p2p.course.exercise</field>
+			<field name="arch" type="xml">
+				<form string="exercise">
+					<field name="active" invisible="1"/>
+					<sheet>
+						<widget name="web_ribbon" title="Archived"
+							bg_color="bg-danger"
+							attrs="{'invisible': [('active', '=', True)]}" />
+						<field name="description" nolabel="1"
+									placeholder="Describe your exercise..." type="html" />
+						<div class="oe_clear" />
+					</sheet>
+				</form>
+			</field>
+		</record>
+		
+		<record id="slide_form" model="ir.ui.view">
+			<field name="name">slide.form</field>
+			<field name="model">p2p.course.slide</field>
+			<field name="arch" type="xml">
+				<form string="slide">
+					<sheet>
+						<notebook>
+							<page name="content" string="content">
+								<field name="content" nolabel="1"
+									placeholder="add slide content..." type="html" />
+								<div class="oe_clear" />
+							</page>
+							<page name="tts" string="tts">
+								<field name="tts" nolabel="1"
+									placeholder="add slide tss..."  />
+								<div class="oe_clear" />
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+		
+		<record id="p2p.lesson_form" model="ir.ui.view">
+			<field name="name">lesson.form</field>
+			<field name="model">p2p.course.lesson</field>
+			<field name="arch" type="xml">
+				<form string="Lesson">
+					<field name="active" invisible="1"/>
+					<sheet>
+						<widget name="web_ribbon" title="Archived"
+							bg_color="bg-danger"
+							attrs="{'invisible': [('active', '=', True)]}" />
+						<div class="oe_title">
+							<h1>
+								<field name="title" placeholder="Lesson title" />
+							</h1>
+						</div>
+						<notebook>
+							<page name="description_page" string="Description">
+								<field name="description" nolabel="1"
+									placeholder="Describe your course..." type="html" />
+								<div class="oe_clear" />
+							</page>
+							<page name="slide" string="Slide" groups="p2p.group_author">
+								<field name="slide_ids" widget="one2many_list">
+		                            <tree create="1" delete="1">
+		                            	<field name="sequence" widget="handle" />
+										<field name="name" />
+										<field name="description" />
+		                            </tree>
+	                        	</field>
+								<div class="oe_clear" />
+							</page>
+							<page name="exercise" string="Exercise">
+								<field name="exercise_ids" widget="one2many_list">
+		                            <tree create="1" delete="1">
+		                            	<field name="sequence" widget="handle" />
+										<field name="name" />
+		                            </tree>
+	                        	</field>
+								<div class="oe_clear" />
+							</page>
+							<page name="settings" string="Settings" groups="p2p.group_author">
+								<group>
+									<group>
+
+									</group>
+									<group>
+									</group>
+									<group name="extra_settings">
+									</group>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="lesson_view_form_simplified" model="ir.ui.view">
+			<field name="name">p2p.lesson.view.form.simplified</field>
+			<field name="model">p2p.course.lesson</field>
+			<field name="arch" type="xml">
+				<form string="Lesson">
+					<group>
+						<field name="name" class="oe_inline" string="Lesson Name"
+							placeholder="e.g. Office Party" />
+
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="open_create_lesson" model="ir.actions.act_window">
+			<field name="name">Create a lesson</field>
+			<field name="res_model">p2p.course.lesson</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="p2p.lesson_view_form_simplified" />
+			<field name="target">new</field>
+		</record>
+
+		<record id="lesson_view_list" model="ir.ui.view">
+			<field name="name">p2p.lesson.view.list</field>
+			<field name="model">p2p.course.lesson</field>
+			<field name="arch" type="xml">
+				<tree string="Lesson">
+					<field name="sequence" widget="handle" />
+					<field name="name" />
+				</tree>
+			</field>
+		</record>
+
+		<record id="act_p2p_course_2_p2p_lesson_all"
+			model="ir.actions.act_window">
+			<field name="name">Lesson</field>
+			<field name="res_model">p2p.course.lesson</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('course_id', '=', active_id)]</field>
+			<field name="context">{
+				'default_course_id': active_id,
+				}
+			</field>
+			<!-- <field name="search_view_id" ref="view_lesson_search_form"/> -->
+			<field name="help" type="html">
+				<p class="o_view_nocontent_smiling_face">
+					No Lessons found. Let's create one!
+				</p>
+				<p>
+					To get things done, use activities and status on tasks.
+					<br />
+					Chat in real time or by email to collaborate efficiently.
+				</p>
+			</field>
+		</record>
+
+
+	</data>
+</odoo>

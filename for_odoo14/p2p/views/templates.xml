@@ -1,0 +1,71 @@
+<odoo>
+	<data>
+		<template id="assets_backend" name="favite assets" inherit_id="web.assets_backend">
+			<xpath expr="." position="inside">
+				<script type="text/javascript" src="/p2p/static/src/js/discuss.js"></script>
+
+			</xpath>
+		</template>
+
+		<template id="webslide" name="webslide Layout" inherit_id="web.layout" primary="True">
+			<xpath expr="//head/meta[last()]" position="after">
+				<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+			</xpath>
+			<xpath expr="//head/link[last()]" position="after">
+				<link rel="stylesheet" type='text/css' media='all' href="/p2p/static/lib/webslide/css/webslides.css" />
+				<link rel="stylesheet" type="text/css" media="all" href="/p2p/static/lib/webslide/css/svg-icons.css" />
+			</xpath>
+			<xpath expr="//head/script" position="after">
+				<script type="text/javascript">
+					odoo.session_info =<t t-raw="json.dumps(request.env['ir.http'].session_info())" />;
+					if (!/(^|;\s)tz=/.test(document.cookie)) {
+					const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+					document.cookie = `tz=${userTZ}; path=/`;
+					}
+				</script>
+				<t t-call-assets="web.assets_common_minimal_js" t-css="false"
+					defer_load="True" />
+				<t t-call-assets="web.assets_frontend_minimal_js" t-css="false"
+					defer_load="True" />
+				<t t-call="web.conditional_assets_tests" />
+				<t t-call-assets="web.assets_common_lazy" t-css="false"
+					lazy_load="True" />
+				<t t-call-assets="web.assets_frontend_lazy" t-css="false"
+					lazy_load="True" />
+			</xpath>
+			<xpath expr="//t[@t-raw='0']" position="replace">
+				<main role="main">
+						<article id="webslides" class="vertical">
+							<t t-raw="content" />
+						</article>
+					</main>
+					<script type="text/javascript" src="/p2p/static/lib/webslide/js/webslides.js"></script>
+					<script>window.ws = new WebSlides();</script>
+					<script type="text/javascript" src="/p2p/static/lib/webslide/js/svg-icons.js"></script>
+			</xpath>
+		</template>
+
+		<template id="exercise_scratch2" name="do  exercise">
+			&lt;!DOCTYPE html&gt;
+			<html>
+				<head>
+					<meta charset="UTF-8" />
+					<meta name="viewport"
+						content="width=device-width, initial-scale=1" />
+					<meta name="google" value="notranslate" />
+					<link rel="shortcut icon"
+						href="/p2p/static/lib/scratch/static/favicon.ico" />
+					<title>Scratch 3.0 GUI</title>
+				</head>
+				<body>
+					<script type="text/javascript"
+						src="/p2p/static/lib/scratch/lib.min.js"></script>
+					<script type="text/javascript"
+						src="/p2p/static/lib/scratch/chunks/gui.js"></script>
+				</body>
+			</html>
+		</template>
+
+
+	</data>
+</odoo>

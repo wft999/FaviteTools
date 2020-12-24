@@ -1,0 +1,88 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+    <record id="tour_form" model="ir.ui.view">
+		<field name="name">favite.tour.form</field>
+		<field name="model">scratch.tour</field>
+		<field name="arch" type="xml">
+			<form string="Bif">
+				<sheet>
+					<group>
+						<field name="name" string="Name" />
+						<label for="summary" string="Summary" />
+						<div name="summary_def">
+							<field name="description" />
+						</div>
+					</group>
+					<notebook>
+						<page string="Steps">
+	                        <field name="step_ids" widget="one2many_list">
+	                            <tree editable="bottom"  string="step Items">
+	                            	<field name="sequence"/>
+	                              	<field name="description"/>
+	                            </tree>
+	                        </field>
+						</page>	
+					</notebook>
+				</sheet>
+			</form>
+		</field>
+	</record>   
+    
+    <record model="ir.ui.view" id="scratch.list">
+      <field name="name">scratch list</field>
+      <field name="model">scratch.tour</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="name"/>
+          <field name="description"/>
+          <field name="tag_ids"/>
+          <button name="play_tour" type="object"  string="Play" />
+        </tree>
+      </field>
+    </record>
+   
+
+    <!-- actions opening views on models -->
+    
+    <record model="ir.actions.act_window" id="scratch.action_window">
+      <field name="name">scratch tours</field>
+      <field name="res_model">scratch.tour</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+   
+
+    <!-- server action to the one above -->
+    <!--
+    <record model="ir.actions.server" id="scratch.action_server">
+      <field name="name">scratch server</field>
+      <field name="model_id" ref="model_scratch_scratch"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": self._name,
+        }
+      </field>
+    </record>
+    -->
+
+    <!-- Top menu item -->
+    
+    <menuitem name="scratch" id="scratch.menu_root"/>
+   
+    <!-- menu categories -->
+    
+    <menuitem name="Menu 1" id="scratch.menu_1" parent="scratch.menu_root"/>
+    <menuitem name="Menu 2" id="scratch.menu_2" parent="scratch.menu_root"/>
+   
+    <!-- actions -->
+    
+    <menuitem name="List" id="scratch.menu_1_list" parent="scratch.menu_1"
+              action="scratch.action_window"/>
+<!--    <menuitem name="Server to list" id="scratch" parent="scratch.menu_2"
+              action="scratch.action_server"/>
+    -->
+  </data>
+</odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_scratch_tour,scratch.tour,model_scratch_tour,,1,1,1,1
+access_scratch_step,scratch.step,model_scratch_step,,1,1,1,1
+access_scratch_tags,scratch.tags,model_scratch_tags,,1,1,1,1

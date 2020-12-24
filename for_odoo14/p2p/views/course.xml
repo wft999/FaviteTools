@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="p2p.course_form" model="ir.ui.view">
+			<field name="name">course.form</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<form string="course">
+					<field name="active" invisible="1"/>
+					<field name="create_uid" invisible="1"/>
+					<sheet>
+						
+						<div class="oe_button_box" name="button_box">
+							<button name="action_attend" type="object" class="oe_stat_button" icon="fa-universal-access" attrs="{'invisible' : [('active', '!=', True)]}">Attend</button>
+                    	</div>
+						<widget name="web_ribbon" title="Archived"
+							bg_color="bg-danger"
+							attrs="{'invisible': [('active', '=', True)]}" />
+						<div class="oe_title">
+							<label for="name" class="oe_edit_only"/>
+                            <h1><field name="name" required="1"/></h1>
+						</div>
+						<notebook>
+							<page name="description_page" string="Description">
+								<field name="description" nolabel="1"
+									placeholder="Describe your course..." type="html" />
+								<div class="oe_clear" />
+							</page>
+							<page string="Lessons">
+								<field name="lesson_ids" widget="one2many_list">
+		                            <tree create="1" delete="1">
+		                            	<field name="sequence" widget="handle" />
+		                            	<field name="name" />
+										<field name="title" />
+		                            </tree>
+	                        	</field>
+							</page>
+							<page name="settings" string="Settings" groups="p2p.group_author">
+								<group>
+									<group>
+										<field name="level"/>
+									</group>
+									<group>
+									</group>
+									<group name="extra_settings">
+									</group>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_course_filter" model="ir.ui.view">
+			<field name="name">p2p.course.list.select</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<search string="Search course">
+					<field name="name" filter_domain="[('name','ilike', self)]"
+						string="Course" />
+					<separator />
+					<field name="category_id" />
+					<searchpanel>
+						<field name="category_id" string="Categories"
+							enable_counters="1" />
+					</searchpanel>
+				</search>
+			</field>
+		</record>
+
+		<record id="course_view_form_simplified" model="ir.ui.view">
+			<field name="name">p2p.course.view.form.simplified</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<form string="Course">
+					<group>
+						<field name="name" class="oe_inline" string="Course Name"
+							placeholder="e.g. Office Party" />
+
+						<field name="category_id" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="open_create_course" model="ir.actions.act_window">
+			<field name="name">Create a Course</field>
+			<field name="res_model">p2p.course</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="p2p.course_view_form_simplified" />
+			<field name="target">new</field>
+		</record>
+
+		<record model="ir.ui.view" id="p2p.course_kanban">
+			<field name="name">p2p.course.kanban</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<kanban class="o_modules_kanban"
+					on_create="p2p.open_create_course" sample="1">
+					<field name="displayed_image_id" />
+					<field name="name" />
+					<field name="active" />
+					<field name="description" />
+					<field name="attend_count" />
+					<field name="lesson_count" />
+					<templates>
+						<t t-name="kanban-box">
+							<div  t-attf-class="oe_kanban_card oe_kanban_global_click">
+								<div t-if="record.displayed_image_id.value">
+									<field name="displayed_image_id"
+										widget="attachment_image" />
+								</div>
+								<div class="float-left">
+                                    <span class="o_value"><t t-esc="record.lesson_count.value"/></span>
+                                    <span class="o_label">Lessons/</span>
+                                    <span class="o_value"><t t-esc="record.attend_count.value"/></span>
+                                    <span class="o_label">persons</span>
+                                </div>
+								<div class="float-right" groups="p2p.group_author">
+                                    <a t-if="widget.editable" type="set_cover"  data-field="displayed_image_id">Set Cover Image</a>
+                                </div>
+							</div>
+						</t>
+					</templates>
+				</kanban>
+			</field>
+		</record>
+
+
+		<!-- actions opening views on models -->
+		<record model="ir.actions.act_window"
+			id="p2p.course_action_window">
+			<field name="name">Course</field>
+			<field name="res_model">p2p.course</field>
+			<field name="view_mode">kanban,form</field>
+		</record>
+
+
+
+		<record id="action_discuss" model="ir.actions.client">
+			<field name="name">p2pDiscuss</field>
+			<field name="tag">p2p.discuss</field>
+			<field name="target">current</field>
+		</record>
+
+<!-- 		<menuitem id="p2p.menu_root_discuss" name="p2pDiscuss"
+			action="action_discuss" web_icon="mail,static/description/icon.png"
+			groups="base.group_user" sequence="1" /> -->
+
+		<!-- server action to the one above -->
+		<!-- <record model="ir.actions.server" id="p2p.action_server"> <field name="name">p2p 
+			server</field> <field name="model_id" ref="model_p2p_p2p"/> <field name="state">code</field> 
+			<field name="code"> action = { "type": "ir.actions.act_window", "view_mode": 
+			"tree,form", "res_model": model._name, } </field> </record> -->
+
+		<!-- Top menu item -->
+
+		<menuitem name="p2p" id="p2p.menu_root"/>
+
+		<!-- menu categories -->
+
+		<menuitem name="Course" id="p2p.menu_course"
+			parent="p2p.menu_root" />
+		<menuitem name="Menu 2" id="p2p.menu_2"
+			parent="p2p.menu_root" />
+
+		<!-- actions -->
+
+		<menuitem name="All course" id="p2p.menu_cousr_kanban" parent="p2p.menu_course" action="p2p.course_action_window"/>
+		<!-- <menuitem name="Server to list" id="p2p" parent="p2p.menu_2" action="p2p.action_server"/> -->
+
+	</data>
+</odoo>

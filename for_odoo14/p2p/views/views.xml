@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="p2p.course_form" model="ir.ui.view">
+			<field name="name">course.form</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<form string="course">
+					<sheet>
+						<widget name="web_ribbon" title="Archived"
+							bg_color="bg-danger"
+							attrs="{'invisible': [('active', '=', True)]}" />
+						<div class="oe_title">
+							<h1>
+								<field name="name" placeholder="Course Name" />
+							</h1>
+						</div>
+						<notebook>
+							<page name="description_page" string="Description">
+								<field name="description" nolabel="1"
+									placeholder="Describe your course..." type="html" />
+								<div class="oe_clear" />
+							</page>
+							<page name="settings" string="Settings">
+								<group>
+									<group>
+										<field name="active" invisible="1" />
+										<field name="category_id" string="Category" />
+									</group>
+									<group>
+									</group>
+									<group name="extra_settings">
+									</group>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>
+
+		<record id="view_course_filter" model="ir.ui.view">
+			<field name="name">p2p.course.list.select</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<search string="Search course">
+					<field name="name" filter_domain="[('name','ilike', self)]"
+						string="Course" />
+					<separator />
+					<field name="category_id" />
+					<searchpanel>
+						<field name="category_id" string="Categories"
+							enable_counters="1" />
+					</searchpanel>
+				</search>
+			</field>
+		</record>
+
+		<record id="course_view_form_simplified" model="ir.ui.view">
+			<field name="name">p2p.course.view.form.simplified</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<form string="Course">
+					<group>
+						<field name="name" class="oe_inline" string="Course Name"
+							placeholder="e.g. Office Party" />
+
+						<field name="category_id" />
+					</group>
+				</form>
+			</field>
+		</record>
+
+
+		<record id="open_create_course" model="ir.actions.act_window">
+			<field name="name">Create a Course</field>
+			<field name="res_model">p2p.course</field>
+			<field name="view_mode">form</field>
+			<field name="view_id" ref="p2p.course_view_form_simplified" />
+			<field name="target">new</field>
+		</record>
+
+		<record model="ir.ui.view" id="p2p.course_kanban">
+			<field name="name">p2p.course.kanban</field>
+			<field name="model">p2p.course</field>
+			<field name="arch" type="xml">
+				<kanban class="o_modules_kanban"
+					on_create="p2p.open_create_course" sample="1">
+					<field name="displayed_image_id" />
+					<field name="name" />
+					<field name="active" />
+					<field name="description" />
+					<field name="website" />
+					<field name="lesson_count" />
+					<templates>
+						<t t-name="kanban-box">
+							<div class="oe_module_vignette">
+								<div class="o_dropdown_kanban dropdown" tabindex="-1">
+									<a class="dropdown-toggle o-no-caret btn"
+										data-toggle="dropdown" data-display="static" href="#"
+										role="button" aria-label="Dropdown menu" title="Dropdown menu">
+										<span class="fa fa-ellipsis-v" />
+									</a>
+									<div class="dropdown-menu" role="menu"
+										aria-labelledby="dLabel">
+										<a t-if="widget.editable" role="menuitem" type="set_cover"
+											class="dropdown-item" data-field="displayed_image_id">Set Cover Image</a>
+										<a t-if="widget.editable" role="menuitem" type="edit"
+											class="dropdown-item">Edit</a>
+										<a t-if="widget.editable" role="menuitem"
+											class="dropdown-item" name="toggle_active" type="object">
+											<t t-if="record.active.raw_value">Archive</t>
+											<t t-if="!record.active.raw_value">Restore</t>
+										</a>
+										<a t-if="widget.deletable" role="menuitem" type="delete"
+											class="dropdown-item">Delete</a>
+									</div>
+								</div>
+								<div t-if="record.displayed_image_id.value">
+									<field name="displayed_image_id"
+										widget="attachment_image" />
+								</div>
+								<div class="oe_module_desc">
+									<h4 class="o_kanban_record_title">
+										<field name="description" />
+										&amp;nbsp;
+									</h4>
+									<p class="oe_module_name">
+										<field groups="!base.group_no_one" name="description" />
+										<code groups="base.group_no_one">
+											<field name="name" />
+										</code>
+									</p>
+									<div class="oe_module_action">
+										<a name="action_view_lessons" type="object">
+											<div>
+												<span class="o_value">
+													<t t-esc="record.lesson_count.value" />
+												</span>
+												<span class="o_label">
+													Lessons
+												</span>
+											</div>
+										</a>
+										<a t-att-href="record.website.raw_value" target="_blank"
+											attrs="{'invisible':[('website', '=', '')]}"
+											class="btn btn-sm btn-secondary float-right" role="button">Learn
+										</a>
+
+									</div>
+								</div>
+							</div>
+						</t>
+					</templates>
+				</kanban>
+			</field>
+		</record>
+
+
+		<!-- actions opening views on models -->
+		<record model="ir.actions.act_window"
+			id="p2p.course_action_window">
+			<field name="name">Course</field>
+			<field name="res_model">p2p.course</field>
+			<field name="view_mode">kanban,form</field>
+		</record>
+		
+		<record id="act_p2p_course_2_p2p_lession_all" model="ir.actions.act_window">
+            <field name="name">Lession</field>
+            <field name="res_model">p2p.course.lession</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('course_id', '=', active_id)]</field>
+            <field name="context">{
+                'default_course_id': active_id,
+            }</field>
+<!--             <field name="search_view_id" ref="view_lession_search_form"/> -->
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Lessions found. Let's create one!
+                </p><p>
+                    To get things done, use activities and status on tasks.<br/>
+                    Chat in real time or by email to collaborate efficiently.
+                </p>
+            </field>
+        </record>
+
+
+
+		<!-- server action to the one above -->
+		<!-- <record model="ir.actions.server" id="p2p.action_server"> <field name="name">p2p 
+			server</field> <field name="model_id" ref="model_p2p_p2p"/> <field name="state">code</field> 
+			<field name="code"> action = { "type": "ir.actions.act_window", "view_mode": 
+			"tree,form", "res_model": model._name, } </field> </record> -->
+
+		<!-- Top menu item -->
+
+		<menuitem name="p2p" id="p2p.menu_root" />
+
+		<!-- menu categories -->
+
+		<menuitem name="Course" id="p2p.menu_course"
+			parent="p2p.menu_root" />
+		<menuitem name="Menu 2" id="p2p.menu_2"
+			parent="p2p.menu_root" />
+
+		<!-- actions -->
+
+		<menuitem name="Kanban" id="p2p.menu_cousr_kanban"
+			parent="p2p.menu_course" action="p2p.course_action_window" />
+		<!-- <menuitem name="Server to list" id="p2p" parent="p2p.menu_2" action="p2p.action_server"/> -->
+
+	</data>
+</odoo>
