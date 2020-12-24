@@ -7,7 +7,10 @@
         subtitle on modules listing or apps.openerp.com""",
 
     'description': """
-        版本：2.0.1日期：20201104
+        版本：2.0.3
+        日期：20201216
+        
+        1）自动周期添加intersection搜索方式；
     """,
 
     'author': "My Company",

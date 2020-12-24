@@ -1,6 +1,4 @@
 eclipse.preferences.version=1
-encoding//for_odoo11/biftool/controllers/controllers.py=utf-8
-encoding//for_odoo11/biftool/models/models.py=utf-8
 encoding//for_odoo11/favite_import_module/models/module_update_wizard.py=utf-8
 encoding//for_odoo11/padtool/__init__.py=utf-8
 encoding//for_odoo11/padtool/__manifest__.py=utf-8
@@ -68,4 +66,10 @@ encoding//for_odoo12/tsdb/models/table.py=utf-8
 encoding//for_odoo12/web_guide/__manifest__.py=utf-8
 encoding//for_odoo12/web_guide/controllers/controllers.py=utf-8
 encoding//for_odoo12/web_guide/models/models.py=utf-8
+encoding//for_odoo14/p2p/__manifest__.py=utf-8
+encoding//for_odoo14/p2p/controllers/__init__.py=utf-8
+encoding//for_odoo14/p2p/controllers/controllers.py=utf-8
+encoding//for_odoo14/p2p/models/__init__.py=utf-8
+encoding//for_odoo14/p2p/models/course.py=utf-8
+encoding//for_odoo14/p2p/models/learning.py=utf-8
 encoding/<project>=UTF-8

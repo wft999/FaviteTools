@@ -129,6 +129,7 @@
 			<option value="0" selected="selected">vertical</option>
 			<option value="1">horizontal</option>
 			<option value="2">lean</option>
+			<option value="3">intersection</option>
 			</select>
 		</div>
     </div>
@@ -179,6 +180,7 @@
 			<option value="0" selected="selected">vertical</option>
 			<option value="1">horizontal</option>
 			<option value="2">lean</option>
+			<option value="3">intersection</option>
 			</select>
 		</div>
     </div>
@@ -262,31 +264,31 @@
 <div>
 	<form class="form-inline">
 		<div class="form-group">
-	    	<label for="period0" class=" control-label">PeriodX0:</label>
+	    	<label for="periodx0" class=" control-label">PeriodX0:</label>
 	      	<div class="input-group">
-	      		<input type="text" class="form-control o_set_customerx_input" id="period0"  />
+	      		<input type="text" class="form-control o_set_customerx_input" id="periodx0"  />
 	    	</div>
 	  	</div>
 	
 		<div class="form-group">
-	    	<label for="angle0" class="control-label">PeriodY0:</label>
+	    	<label for="periody0" class="control-label">PeriodY0:</label>
 	      	<div class="input-group">
-	      		<input type="text" class="form-control o_set_customery_input" id="angle0"  />
+	      		<input type="text" class="form-control o_set_customery_input" id="periody0"  />
 	    	</div>
 	  	</div>
 	</form>
 	<form class="form-inline">
 		<div class="form-group">
-	    	<label for="period1" class=" control-label">PeriodX1:</label>
+	    	<label for="periodx1" class=" control-label">PeriodX1:</label>
 	      	<div class="input-group">
-	      		<input type="text" class="form-control o_set_customerx_input" id="period1"  />
+	      		<input type="text" class="form-control o_set_customerx_input" id="periodx1"  />
 	    	</div>
 	  	</div>
 	
 		<div class="form-group">
-	    	<label for="angle1" class="control-label">PeriodY1:</label>
+	    	<label for="periody1" class="control-label">PeriodY1:</label>
 	      	<div class="input-group">
-	      		<input type="text" class="form-control o_set_customery_input" id="angle1"  />
+	      		<input type="text" class="form-control o_set_customery_input" id="periody1"  />
 	    	</div>
 	  	</div>
 	</form>

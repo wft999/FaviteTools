@@ -465,10 +465,33 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         	size: 'medium',
         	$content: $content,
         	buttons: [{text: _t('Confirm'), classes: 'btn-primary', close: true, click: function(){
-        		var period0 = parseFloat(this.$content.find('#period0').val());
-            	var angle0 = parseFloat(this.$content.find('#angle0').val());
-            	var period1 = parseFloat(this.$content.find('#period1').val());
-            	var angle1 = parseFloat(this.$content.find('#angle1').val());
+        		var periodx0 = parseFloat(this.$content.find('#periodx0').val());
+            	var periody0 = parseFloat(this.$content.find('#periody0').val());
+            	var periodx1 = parseFloat(this.$content.find('#periodx1').val());
+            	var periody1 = parseFloat(this.$content.find('#periody1').val());
+            	
+            	var angle0,period0,angle1,period1;
+            	if(periody0 == 0){
+        			angle0 = Math.Pi / 2.0;
+        			period0 = periodx0;
+        		}else if(periodx0 == 0){
+        			angle0 = 0;
+        			period0 = periody0;
+        		}else{
+        			angle0 = Math.atan(periody0/periodx0);
+        			period0 = periodx0 / Math.cos(angle0);
+        		}
+            	
+            	if(periody1 == 0){
+        			angle1 = 0;
+        			period1 = periodx1;
+        		}else if(periodx1 == 0){
+        			angle1 = Math.PI / 2.0;
+        			period1 = periody1;
+        		}else{
+        			angle1 = Math.atan(periody1/periodx1);
+        			period1 = periodx1 / Math.cos(angle1);
+        		}
             	
             	_.each(self.map.pads, function(p){
             		if(p.selected && p.padType == 'region'){
@@ -486,14 +509,18 @@ var Panelmap = Map.extend(ControlPanelMixin,{
         });
         this.dialog.opened().then(function () {
         	var pad = _.find(self.map.pads,p => p.selected && p.padType == 'region');
-            var $period0 = self.dialog.$('#period0');
-            $period0.val(pad.period0 || 0);
-            var $angle0 = self.dialog.$('#angle0');
-            $angle0.val(pad.angle0 || 0);
-            var $period1 = self.dialog.$('#period1');
-            $period1.val(pad.period1 || 0);
-            var $angle1 = self.dialog.$('#angle1');
-            $angle1.val(pad.angle1 || 0);
+        	
+            var periodx0 = (pad.period0 || 0) * Math.cos(pad.angle0 || 0);
+            self.dialog.$('#periodx0').val(periodx0.toFixed(2));
+            var periody0 = (pad.period0 || 0) * Math.sin(pad.angle0 || 0);
+            self.dialog.$('#periody0').val(periody0.toFixed(2));
+            
+            var periodx1 = (pad.period1 || 0) * Math.cos(pad.angle1 || 0);
+            self.dialog.$('#periodx1').val(periodx1.toFixed(2));
+            var periody1 = (pad.period1 || 0) * Math.sin(pad.angle1 || 0);
+            self.dialog.$('#periody1').val(periody1.toFixed(2));
+            
+            
         });
         this.dialog.open();
     },

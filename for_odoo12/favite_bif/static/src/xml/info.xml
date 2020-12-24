@@ -97,6 +97,7 @@
 					<option value="0" selected="selected">vertical</option>
 					<option value="1">horizontal</option>
 					<option value="2">lean</option>
+					<option value="3">intersection</option>
 				</select>
 			</td>
        	</tr>
