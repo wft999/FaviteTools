@@ -30,20 +30,42 @@ class Course(http.Controller):
             'content': content,
         })
         
-    @http.route('/p2p/course/answer/<int:id>', type='http', auth="user", website=True)
-    def do_exercise(self,id, **kw):
-        return werkzeug.utils.redirect('/p2p/static/lib/scratch/index.html#%d' % id)
-        answer = http.request.env['p2p.learning.answer'].browse(id)
-         
-        category = answer.exercise_id.lesson_id.course_id.category_id.name
-        if category == 'Scratch':
-            template = 'p2p.exercise_scratch'
-        else:
-            template = 'p2p.exercise_c'
-         
-        return http.request.render(template, {
-            'content': answer.content,
-            })
+    @http.route('/p2p/online/request/<int:remote>', type='http', auth="user", website=True)
+    def online_request(self,remote, **kw):
+        db = request.db
+        self_id = request.uid
+        return http.request.render('p2p.webrtc', {
+            'self_id':self_id,
+            'remote_id':remote,
+            'is_request':1,
+            'cur_db':db
+        })
+        
+    @http.route('/p2p/online/accept/<int:remote>', type='http', auth="user", website=True)
+    def online_accept(self,remote, **kw):
+        db = request.db
+        self_id = request.uid
+        return http.request.render('p2p.webrtc', {
+            'self_id':self_id,
+            'remote_id':remote,
+            'is_request':0,
+            'cur_db':db
+        })
+        
+#     @http.route('/p2p/course/answer/<int:id>', type='http', auth="user", website=True)
+#     def do_exercise(self,id, **kw):
+#         return werkzeug.utils.redirect('/p2p/static/lib/block/index.html#%d' % id)
+#         answer = http.request.env['p2p.learning.answer'].browse(id)
+#          
+#         category = answer.exercise_id.lesson_id.course_id.category_id.name
+#         if category == 'Block':
+#             template = 'p2p.exercise_block'
+#         else:
+#             template = 'p2p.exercise_c'
+#          
+#         return http.request.render(template, {
+#             'content': answer.content,
+#             })
 
 #     @http.route('/p2p/course/objects/', auth='public')
 #     def list(self, **kw):

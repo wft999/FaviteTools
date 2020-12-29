@@ -137,14 +137,6 @@
 			<field name="view_mode">kanban,form</field>
 		</record>
 
-
-
-		<record id="action_discuss" model="ir.actions.client">
-			<field name="name">p2pDiscuss</field>
-			<field name="tag">p2p.discuss</field>
-			<field name="target">current</field>
-		</record>
-
 <!-- 		<menuitem id="p2p.menu_root_discuss" name="p2pDiscuss"
 			action="action_discuss" web_icon="mail,static/description/icon.png"
 			groups="base.group_user" sequence="1" /> -->
@@ -157,18 +149,11 @@
 
 		<!-- Top menu item -->
 
-		<menuitem name="p2p" id="p2p.menu_root"/>
-
-		<!-- menu categories -->
-
-		<menuitem name="Course" id="p2p.menu_course"
-			parent="p2p.menu_root" />
-		<menuitem name="Menu 2" id="p2p.menu_2"
-			parent="p2p.menu_root" />
+		<menuitem name="p2p" id="p2p.menu_root"  sequence="0"/>
 
 		<!-- actions -->
 
-		<menuitem name="All course" id="p2p.menu_cousr_kanban" parent="p2p.menu_course" action="p2p.course_action_window"/>
+		<menuitem name="All course" id="p2p.menu_cousr_kanban" parent="p2p.menu_root" action="p2p.course_action_window"/>
 		<!-- <menuitem name="Server to list" id="p2p" parent="p2p.menu_2" action="p2p.action_server"/> -->
 
 	</data>

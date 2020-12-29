@@ -12,7 +12,7 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.join(__dirname, 'static/js'),
+    path: path.join(__dirname, '../for_odoo14/p2p//static/lib/webslide/js'),
     publicPath: '/static/js/'
   },
   devServer: {

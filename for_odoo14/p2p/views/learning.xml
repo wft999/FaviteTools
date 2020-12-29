@@ -34,8 +34,11 @@
 						<widget  name="web_ribbon" title="passed" bg_color="bg-success" attrs="{'invisible': [('status', '!=', 'passed')]}" />
 
 						<div class="oe_button_box" name="button_box" groups="base.group_user">
-	                        <button  class="oe_stat_button" name="%(p2p.action_discuss)d" type="action" icon="fa-file-text-o">
-								online teacher
+							<button  class="oe_stat_button" name="action_listen" type="object" icon="fa-headphones">
+								listen
+	                        </button>
+	                        <button  class="oe_stat_button" name="action_online" type="object" icon="fa-phone">
+								online
 	                        </button>
                     	</div>
 						<div class="oe_title">
@@ -46,9 +49,7 @@
 						<notebook>
 							<page name="description" string="description">
 								<field name="description" nolabel="1" type="html" />
-								<button  class="btn btn-primary" name="action_document_view" type="object" icon="fa-file-text-o">
-									listen Document
-	                        	</button>
+								
 							</page>
 							<page name="Exercise" string="Exercise">
 								<field name="answer_ids" widget="one2many_list">
@@ -76,14 +77,22 @@
 			<field name="arch" type="xml">
 				<form string="learning">
 					<sheet>
+						<field name="user_is_student" invisible="1"/>
+						<field name="user_is_teacher" invisible="1"/>
+						<field name="user_is_assistant" invisible="1"/>
 						<div class="oe_title">
 							<h1>
-								<field name="name" placeholder="course Name" />
+								<field name="name" placeholder="course Name" readonly="1"/>
 							</h1>
 						</div>
+						
+						<group>
+							<group attrs="{'invisible': [('user_is_student', '=', True)]}"><field name="student_id"/></group>
+							<group attrs="{'invisible': [('user_is_teacher', '=', True)]}"><field name="teacher_id"/></group>
+							<group attrs="{'invisible': [('user_is_assistant', '=', True)]}"><field name="assistant_id"/></group>
+						</group>
 						<field name="step_ids">
                             <tree decoration-primary="status in ('learning','pending','exercising')" decoration-muted="status == 'Not learning'" decoration-success="status == 'passed'" decoration-danger="status=='failed'">
-                            	<field name="sequence" widget="handle" />
                             	<field name="name" />
 								<field name="title" />
 								<field name="status" />
@@ -106,10 +115,9 @@
 					<field name="description" />
 					<field name="attend_count" />
 					<field name="lesson_count" />
-					<field name="finished_count" />
 					<templates>
 						<t t-name="kanban-box">
-							<div  t-attf-class="oe_kanban_card o_has_icon">
+							<div  t-attf-class="oe_kanban_card o_has_icon  oe_kanban_global_click">
 								<div class="float-left">
                                     <span class="o_value"><t t-esc="record.lesson_count.value"/></span>
                                     <span class="o_label">Lessons/</span>
@@ -119,7 +127,7 @@
 								<div class="float-right">
                                     <a type="object" name="action_finsidhed_view">
                                     	<div>
-                                            <span class="o_value"><t t-esc="record.finished_count.value"/></span>
+                                            <span class="o_value"></span>
                                             <span class="o_label">Finished</span>
                                         </div>
                                     </a>
@@ -133,15 +141,51 @@
 			</field>
 		</record>
 		
+		<record id="learning_tree" model="ir.ui.view">
+            <field name="name">p2p.learning.tree</field>
+            <field name="model">p2p.learning</field>
+            <field name="arch" type="xml">
+                <tree string="learning" export_xlsx="0" create="0" delete="0">
+                    <field name="name" string="Name" class="font-weight-bold"/>
+                    <field name="student_id"/>
+                    <field name="teacher_id"/>
+                    <field name="assistant_id"/>
+                    <field name="progress"/>
+                    <button string="Continue" class="btn btn-primary" name="action_continue" type="object"/>
+                    <button string="Abort" class="btn btn-primary" name="action_abort" type="object"/>
+                </tree>
+            </field>
+        </record>
+		
 		<record model="ir.actions.act_window" id="learning_action_window">
-			<field name="name">my learning</field>
+			<field name="name">My course</field>
 			<field name="res_model">p2p.learning</field>
-			<field name="view_mode">kanban,form</field>
+			<field name="view_mode">tree,form</field>
 			<field name="domain">[('student_id', '=', uid)]</field>
+			<field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No projects found. Let's create one!
+                </p><p>
+                    Projects regroup tasks on the same topic and each have their own dashboard.
+                </p>
+            </field>
+		</record>
+		<record model="ir.actions.act_window" id="assistant_action_window">
+			<field name="name">My assistant</field>
+			<field name="res_model">p2p.learning</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('assistant_id', '=', uid)]</field>
+		</record>
+		<record model="ir.actions.act_window" id="teaching_action_window">
+			<field name="name">My teaching</field>
+			<field name="res_model">p2p.learning</field>
+			<field name="view_mode">tree,form</field>
+			<field name="domain">[('teacher_id', '=', uid)]</field>
 		</record>
 		
-		<menuitem name="My course" id="p2p.menu_learning_kanban" parent="p2p.menu_course" action="p2p.learning_action_window"/>
-
+		<menuitem name="My course" id="p2p.menu_learning_kanban" parent="p2p.menu_root" action="learning_action_window" />
+		<menuitem name="My assistant" id="p2p.menu_assistant_kanban" parent="p2p.menu_root" action="assistant_action_window" groups="group_assistant"/>
+		<menuitem name="My teaching" id="p2p.menu_teaching_kanban" parent="p2p.menu_root" action="teaching_action_window" groups="group_teacher"/>
 
 	</data>
 </odoo>

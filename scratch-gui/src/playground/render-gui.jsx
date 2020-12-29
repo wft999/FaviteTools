@@ -84,6 +84,7 @@ export default appTarget => {
             />,*/
             <WrappedGui
                 canSave={true}
+                projectHost={'/p2p/answer'}
             />,
         appTarget);
 };

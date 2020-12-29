@@ -3,9 +3,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
+import SaveButton from '../save-button/save-button.jsx';
 import GreenFlag from '../green-flag/green-flag.jsx';
 import StopAll from '../stop-all/stop-all.jsx';
 import TurboMode from '../turbo-mode/turbo-mode.jsx';
+import SaveStatus from '../menu-bar/save-status.jsx';
 
 import styles from './controls.css';
 
@@ -19,6 +21,11 @@ const messages = defineMessages({
         id: 'gui.controls.stop',
         defaultMessage: 'Stop',
         description: 'Stop button title'
+    },
+   saveTitle: {
+        id: 'gui.menuBar.saveNowLink',
+        defaultMessage: 'Save',
+        description: 'Save button title'
     }
 });
 
@@ -46,6 +53,10 @@ const Controls = function (props) {
                 active={active}
                 title={intl.formatMessage(messages.stopTitle)}
                 onClick={onStopAllClick}
+            />
+            <SaveButton 
+            	active={active}
+            	title={intl.formatMessage(messages.saveTitle)}
             />
             {turbo ? (
                 <TurboMode />

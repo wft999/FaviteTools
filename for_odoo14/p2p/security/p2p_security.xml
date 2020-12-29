@@ -5,16 +5,16 @@
         <field name="description">Helps you coding, etc...</field>
         <field name="sequence">3</field>
     </record>
-
+<!-- 
     <record id="group_student" model="res.groups">
         <field name="name">Student</field>
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         <field name="category_id" ref="base.module_category_services_p2p"/>
     </record>
-    
+     -->
     <record id="group_assistant" model="res.groups">
         <field name="name">Assistant</field>
-        <field name="implied_ids" eval="[(4, ref('group_student'))]"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         <field name="category_id" ref="base.module_category_services_p2p"/>
     </record>
 
@@ -22,21 +22,20 @@
         <field name="name">Teacher</field>
         <field name="category_id" ref="base.module_category_services_p2p"/>
         <field name="implied_ids" eval="[(4, ref('group_assistant'))]"/>
-        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
     
     <record id="group_author" model="res.groups">
         <field name="name">Author</field>
-        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_teacher'))]"/>
         <field name="category_id" ref="base.module_category_services_p2p"/>
         <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
     </record>
 
 
 <data noupdate="1">
-    <record id="base.default_user" model="res.users">
+<!--     <record id="base.default_user" model="res.users">
         <field name="groups_id" eval="[(4,ref('p2p.group_student'))]"/>
-    </record>
+    </record> -->
 
     <record model="ir.rule" id="p2p_course_author_rule">
         <field name="name">P2p: course author: all</field>

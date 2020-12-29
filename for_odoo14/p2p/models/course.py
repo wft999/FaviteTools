@@ -16,11 +16,27 @@ class CourseCategory(models.Model):
         return randint(1, 11)
 
     name = fields.Char(string='Tag Name', required=True, translate=True)
-    color = fields.Integer(string='Color Index')
+    color = fields.Integer(string='Color Index', default=_get_default_color)
     parent_id = fields.Many2one('p2p.course.category', string='Parent Category', index=True, ondelete='cascade')
     child_ids = fields.One2many('p2p.course.category', 'parent_id', string='Child Tags')
     active = fields.Boolean(default=True, help="The active field allows you to hide the category without removing it.")
     parent_path = fields.Char(index=True)
+    
+    def check_relation(self,other):
+        if self.id == other.id:
+            return True
+        
+        for c in self.child_ids:
+            if c.check_relation(other):
+                return True
+        
+        parent = self.parent_id
+        while parent:   
+            if parent.id == other.id:
+                return True
+            parent = parent.parent_id
+            
+        return False
 
     @api.constrains('parent_id')
     def _check_parent_id(self):

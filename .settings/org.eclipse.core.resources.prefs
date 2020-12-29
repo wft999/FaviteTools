@@ -72,4 +72,5 @@ encoding//for_odoo14/p2p/controllers/controllers.py=utf-8
 encoding//for_odoo14/p2p/models/__init__.py=utf-8
 encoding//for_odoo14/p2p/models/course.py=utf-8
 encoding//for_odoo14/p2p/models/learning.py=utf-8
+encoding//for_odoo14/p2p/models/res_users.py=utf-8
 encoding/<project>=UTF-8

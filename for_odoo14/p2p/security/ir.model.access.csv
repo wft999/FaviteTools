@@ -13,6 +13,6 @@ access_p2p_course_exercise_author,p2p.course.exercise,model_p2p_course_exercise,
 access_p2p_course_slide,p2p.course.slide,model_p2p_course_slide,base.group_user,1,0,0,0
 access_p2p_course_slide_author,p2p.course.slide,model_p2p_course_slide,p2p.group_author,1,1,1,1
 
-access_p2p_learning,p2p.learning,model_p2p_learning,base.group_user,1,0,0,0
-access_p2p_learning_step,p2p.learning.step,model_p2p_learning_step,base.group_user,1,0,0,0
+access_p2p_learning,p2p.learning,model_p2p_learning,base.group_user,1,1,0,0
+access_p2p_learning_step,p2p.learning.step,model_p2p_learning_step,base.group_user,1,1,0,0
 access_p2p_learning_answer,p2p.learning.answer,model_p2p_learning_answer,base.group_user,1,1,1,0

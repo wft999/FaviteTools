@@ -1,19 +1,29 @@
 <odoo>
 	<data>
-		<template id="assets_backend" name="favite assets" inherit_id="web.assets_backend">
+		<template id="assets_backend" name="webrtc backend assets" inherit_id="web.assets_backend">
 			<xpath expr="." position="inside">
-				<script type="text/javascript" src="/p2p/static/src/js/discuss.js"></script>
-
+				<script type="text/javascript" src="/p2p/static/src/js/web_client_bus.js"></script>
 			</xpath>
 		</template>
+		<template id="assets_frontend" name="webrtc frontend assets" inherit_id="web.assets_frontend">
+			<xpath expr="." position="inside">
+				<script type="text/javascript" src="/p2p/static/src/js/webrtc.js"></script>
+			</xpath>
+		</template>
+		
+		<template id="assets_webslide">
+        	<link rel="stylesheet" type='text/css' media='all' href="/p2p/static/lib/webslide/css/webslides.css" />
+			<link rel="stylesheet" type="text/css" media="all" href="/p2p/static/lib/webslide/css/svg-icons.css" />
+			<script type="text/javascript" src="/p2p/static/lib/webslide/js/webslides.js"></script>
+			<script type="text/javascript" src="/p2p/static/lib/webslide/js/svg-icons.js"></script>
+    	</template>
 
 		<template id="webslide" name="webslide Layout" inherit_id="web.layout" primary="True">
 			<xpath expr="//head/meta[last()]" position="after">
 				<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 			</xpath>
 			<xpath expr="//head/link[last()]" position="after">
-				<link rel="stylesheet" type='text/css' media='all' href="/p2p/static/lib/webslide/css/webslides.css" />
-				<link rel="stylesheet" type="text/css" media="all" href="/p2p/static/lib/webslide/css/svg-icons.css" />
+				<t t-call-assets="p2p.assets_webslide" t-js="false"/>
 			</xpath>
 			<xpath expr="//head/script" position="after">
 				<script type="text/javascript">
@@ -23,49 +33,84 @@
 					document.cookie = `tz=${userTZ}; path=/`;
 					}
 				</script>
-				<t t-call-assets="web.assets_common_minimal_js" t-css="false"
-					defer_load="True" />
-				<t t-call-assets="web.assets_frontend_minimal_js" t-css="false"
-					defer_load="True" />
-				<t t-call="web.conditional_assets_tests" />
-				<t t-call-assets="web.assets_common_lazy" t-css="false"
-					lazy_load="True" />
-				<t t-call-assets="web.assets_frontend_lazy" t-css="false"
-					lazy_load="True" />
+				<t t-call-assets="p2p.assets_webslide" t-css="false"/>
 			</xpath>
 			<xpath expr="//t[@t-raw='0']" position="replace">
 				<main role="main">
-						<article id="webslides" class="vertical">
-							<t t-raw="content" />
-						</article>
-					</main>
-					<script type="text/javascript" src="/p2p/static/lib/webslide/js/webslides.js"></script>
-					<script>window.ws = new WebSlides();</script>
-					<script type="text/javascript" src="/p2p/static/lib/webslide/js/svg-icons.js"></script>
+					<article id="webslides" class="vertical">
+						<t t-raw="content" />
+					</article>
+				</main>
+				<script>window.ws = new WebSlides();</script>
 			</xpath>
 		</template>
-
-		<template id="exercise_scratch2" name="do  exercise">
-			&lt;!DOCTYPE html&gt;
-			<html>
-				<head>
-					<meta charset="UTF-8" />
-					<meta name="viewport"
-						content="width=device-width, initial-scale=1" />
-					<meta name="google" value="notranslate" />
-					<link rel="shortcut icon"
-						href="/p2p/static/lib/scratch/static/favicon.ico" />
-					<title>Scratch 3.0 GUI</title>
-				</head>
-				<body>
-					<script type="text/javascript"
-						src="/p2p/static/lib/scratch/lib.min.js"></script>
-					<script type="text/javascript"
-						src="/p2p/static/lib/scratch/chunks/gui.js"></script>
-				</body>
-			</html>
-		</template>
-
+		
+	<template id="webrtc" name="webrtc Layout" inherit_id="web.layout" primary="True">
+        <xpath expr="//head/meta[last()]" position="after">
+            <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+        </xpath>
+        <xpath expr="//head/link[last()]" position="after">
+            <t t-call-assets="p2p.assets_webslide" t-js="false"/>
+        </xpath>
+        <xpath expr="//head/script" position="after">
+            <script type="text/javascript">
+                odoo.session_info = <t t-raw="json.dumps(request.env['ir.http'].get_frontend_session_info())"/>;
+                if (!/(^|;\s)tz=/.test(document.cookie)) {
+                    const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    document.cookie = `tz=${userTZ}; path=/`;
+                }
+            </script>
+            <t t-call-assets="web.assets_common_minimal_js" t-css="false" defer_load="True"/>
+            <t t-call-assets="web.assets_frontend_minimal_js" t-css="false" defer_load="True"/>
+            <t t-call="web.conditional_assets_tests"/>
+            <t t-call-assets="web.assets_common_lazy" t-css="false" lazy_load="True"/>
+            <t t-call-assets="web.assets_frontend_lazy" t-css="false" lazy_load="True"/>
+        </xpath>
+        <xpath expr="//t[@t-raw='0']" position="replace">
+        	<header role="banner">
+		      <nav role="navigation">
+		        <p class="logo"><a href="../index.html" title="WebSlides">WebSlides</a></p>
+		        <ul>
+		          <li class="github">
+		            <a rel="external" href="https://github.com/webslides/webslides" title="Github">
+		              <svg class="fa-github">
+		              </svg>
+		              <em>WebSlides</em>
+		            </a>
+		          </li>
+		          <li class="twitter">
+		            <a rel="external" href="https://twitter.com/webslides" title="Twitter">
+		              <svg class="fa-twitter">
+		              </svg>
+		              <em>@WebSlides</em>
+		            </a>
+		          </li>
+		        </ul>
+		      </nav>
+		    </header>
+        	<main role="main" t-attf-data-self="{{ self_id }}" t-attf-data-remote="{{ remote_id }}" t-attf-data-request="{{ is_request }}" t-attf-data-db="{{ cur_db }}">
+				<article class="vertical">
+					<section class="o_webrtc bg-black-blue aligncenter">
+					  <video class="background-video" autoplay="1" muted="1" poster="https://webslides.tv/static/images/working.jpg">
+          			  </video>
+			          <!--.wrap = container (width: 90%) with fadein animation -->
+			          <div class="wrap">
+			            <p class="text-subtitle">WebSlides Tutorial</p>
+			            <h1 class="text-landing">Classes</h1>
+			            <p class="text-symbols">* * * </p>
+			            <p>
+			              <a class="button ghost" href="https://github.com/webslides/webslides" title="Download WebSlides">
+			                Free Download
+			              </a>
+			            </p>
+			          </div>
+			          <!-- .end .wrap -->
+			        </section>
+				</article>
+			</main>
+					
+        </xpath>
+    </template>
 
 	</data>
 </odoo>

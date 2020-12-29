@@ -5,6 +5,7 @@ var Widget = require('web.Widget');
 const AbstractAction = require('web.AbstractAction');
 const { action_registry, qweb } = require('web.core');
 var session = require('web.session');
+var web_client = require('web.web_client');
 
 const DiscussWidget = AbstractAction.extend({
     template: 'p2p.Discuss',
@@ -48,7 +49,6 @@ const DiscussWidget = AbstractAction.extend({
         this.action = action;
         this.actionManager = parent;
         this.options = options;
-        
     },
     
 
@@ -100,6 +100,7 @@ const DiscussWidget = AbstractAction.extend({
     		},
     
     start() {
+    	
         this.remote = session.uid == 2?6:2;
     	this.self_channel = session.db+',webrtc,'+session.uid;
     	this.remote_channel = session.db+',webrtc,'+this.remote;
@@ -124,6 +125,7 @@ const DiscussWidget = AbstractAction.extend({
             this.$buttons.off().remove();
         }
         this._super(...arguments);
+        web_client.webrtc = null;
     },
     
     send(message){
@@ -293,7 +295,11 @@ const DiscussWidget = AbstractAction.extend({
         	    if (candidate) {
         	      this.handleNewICECandidateMsg(candidate);
         	    }
-            }
+            }else if (notif[1][0] === 'accept'){
+        		this._displayAcceptNotification();
+        	}else if (notif[1][0] === 'refuse'){
+        		this._displayRefuseNotification();
+        	}
         }
     }    
 

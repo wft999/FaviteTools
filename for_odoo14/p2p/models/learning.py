@@ -2,6 +2,12 @@
 
 from odoo import models, fields, api,_
 
+class LearningRoom(models.Model):
+    _name = 'p2p.learning.room'
+    _description = 'It is a learning room'
+
+    teacher_id = fields.Many2one('res.users', string='Teacher', ondelete='cascade')
+
 class LearningAnswer(models.Model):
     _name = 'p2p.learning.answer'
     _description = 'It is a learning answer'
@@ -20,9 +26,13 @@ class LearningAnswer(models.Model):
     ], default='awaiting_data')
     
     def action_do_exercise(self):
+        category = self.exercise_id.lesson_id.course_id.category_id.name
+        if category == 'Block':
+            url = "/p2p/static/lib/block/index.html#%d"%self.id
+            
         return {
             "type": "ir.actions.act_url",
-            "url": "/p2p/course/answer/%d"%self.id,
+            "url": url,
             "target": "new",
         }
 
@@ -66,10 +76,18 @@ class LearningStep(models.Model):
             else:
                 step.status = 'Not learning'
                 
-    def action_document_view(self):
+    def action_listen(self):
         return {
             "type": "ir.actions.act_url",
             "url": "/p2p/course/lesson/%d"%self.lesson_id.id,
+            "target": "new",
+        }
+        
+    def action_online(self):
+        remote_uid = self.learning_id.teacher_id.id if self.env.uid == self.learning_id.student_id.id else self.learning_id.student_id.id
+        return {
+            "type": "ir.actions.act_url",
+            "url": "/p2p/online/request/%d"%remote_uid,
             "target": "new",
         }
     
@@ -93,21 +111,33 @@ class Learning(models.Model):
     _inherits = {'p2p.course': 'course_id'}
 
     student_id = fields.Many2one('res.users', string='Student', ondelete='cascade',default=lambda self: self.env.user)
-    teacher_id = fields.Many2one('res.users', string='Teacher', ondelete='set null')
+    teacher_id = fields.Many2one('res.users', string='Teacher', ondelete='set null',
+                                domain=lambda self: [('groups_id', 'in', self.env.ref('p2p.group_teacher').id)])
+    assistant_id = fields.Many2one('res.users', string='Assistant', ondelete='set null',
+                                domain=lambda self: [('groups_id', 'in', self.env.ref('p2p.group_assistant').id)])
     
     course_id = fields.Many2one('p2p.course',  ondelete='cascade', string='course',required=True)
     step_ids = fields.One2many('p2p.learning.step', 'learning_id', string='step list')
-    finished_count = fields.Integer(compute='_compute_finished_count', string="Finished Count")
+    progress = fields.Char(compute='_compute_progress', string="Finished/Total")
+    user_is_teacher = fields.Boolean(compute='_compute_user')
+    user_is_assistant = fields.Boolean(compute='_compute_user')
+    user_is_student = fields.Boolean(compute='_compute_user')
     
-    def _compute_finished_count(self):
+    def _compute_user(self):
+        for rec in self:
+            rec.user_is_teacher = (rec.env.uid == rec.teacher_id.id)
+            rec.user_is_assistant = (rec.env.uid == rec.assistant_id.id)
+            rec.user_is_student = (rec.env.uid == rec.student_id.id)
+    
+    def _compute_progress(self):
         for l in self:
-            l.finished_count = len(l.step_ids) - 1
+            l.progress = "%d/%d"%(len(l.step_ids) - 1,len(l.course_id.lesson_ids))
             
-    def abort_learning(self):
+    def action_abort(self):
         self.sudo().unlink();
         return {'type': 'ir.actions.act_window_close'}
 
-    def start_learning(self):
+    def action_continue(self):
 
         return {
             'name': _('Learning'),
@@ -118,7 +148,7 @@ class Learning(models.Model):
             'target': 'current'
         }
         
-    def action_finsidhed_view(self):
+    def action_view_finsidhed(self):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Finished lessons'),

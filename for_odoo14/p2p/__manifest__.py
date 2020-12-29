@@ -30,6 +30,7 @@
         'views/lesson.xml',
         'views/learning.xml',
         'views/templates.xml',
+        'views/res_users_views.xml',
         'data/p2p_course_category.xml'
     ],
     'qweb': [
