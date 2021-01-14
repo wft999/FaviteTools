@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-
+<t t-name="favite_fixpoint.info">
+    <div t-att-data-id="widget.id" class="oe_action">
+        <div t-attf-class="oe_header #{widget.string ? '' : 'oe_header_empty'}">
+            <span class="badge badge-info">Fixpoint</span>
+            <div t-if="!widget.readonly" class="btn-group" role="group">
+				<button class="btn btn-secondary btn-sm fa fa-trash" title="Delete all"/>
+		    </div>
+			
+            <t t-if="!widget.string">&amp;nbsp;</t>
+            <!-- <span class='oe_icon oe_close'></span> -->
+            <span class='oe_icon oe_minimize oe_fold' t-if="!widget.fold"></span>
+            <span class='oe_icon oe_maximize oe_fold' t-if="widget.fold"></span>
+        </div>
+        <div t-att-class="'o_form_view oe_content' + (widget.fold ? ' oe_folded' : '')" >
+        	<table class="o_group o_inner_group o_label_nowrap fixpoint_info">
+        		<tr>
+           			<td class="o_td_label"><label for="name" class="o_form_label">Name</label></td>
+           			<td width="100%"><input type="text" class="o_field_widget o_input o_panel_data" name="name" /></td>
+       			</tr>
+        	</table>
+        </div>
+    </div>
+</t>
 
 <t t-name="favite_bif.info">
     <div t-att-data-id="widget.id" class="oe_action">

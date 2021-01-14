@@ -5,6 +5,7 @@ import os
 import requests
 import base64
 import json
+from random import randint
 
 class CourseCategory(models.Model):
     _description = 'Course Tags'
@@ -69,10 +70,10 @@ class CourseCategory(models.Model):
 class CourseSlide(models.Model):
     _name = 'p2p.course.slide'
     _description = 'It is a course slide'
-    _order = 'sequence'
+    _order = 'sequence, id desc'
 
     lesson_id = fields.Many2one('p2p.course.lesson',  ondelete='cascade', string='Course lesson',required=True)
-    
+    active = fields.Boolean(default=True)
     sequence = fields.Integer(string='Sequence', index=True, default=0)
     content = fields.Text()
     tts = fields.Text()
@@ -89,7 +90,7 @@ class CourseSlide(models.Model):
     @api.depends('tts')
     def _compute_description(self):
         for s in self:
-            s.description = s.tts.slice(0,80) if s.tts else ''
+            s.description = s.tts[0:80] if s.tts else ''
 
     description = fields.Char(compute='_compute_description')
     
@@ -279,7 +280,6 @@ class Course(models.Model):
         if not learning:
             learning = self.env['p2p.learning'].sudo().create({
                 'course_id':self.id,
-                'student_id':self.env.uid
                 })
             step = self.env['p2p.learning.step'].sudo().create({
                     'learning_id':learning.id,

@@ -1,26 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="p2p_course_category_code" model="p2p.course.category">
-        <field name="name">Code</field>
-    </record>
-    <record id="p2p_course_category_block" model="p2p.course.category">
-        <field name="name">Block</field>
-        <field name="parent_id" ref="p2p_course_category_code"/>
-    </record>
-<!--     <record id="p2p_course_category_scratch_low" model="p2p.course.category">
-        <field name="name">Low</field>
-        <field name="color" eval="0"/>
-        <field name="parent_id" ref="p2p_course_category_scratch"/>
-    </record>
-	<record id="p2p_course_category_scratch_normal" model="p2p.course.category">
-        <field name="name">normal</field>
-        <field name="color" eval="0"/>
-        <field name="parent_id" ref="p2p_course_category_scratch"/>
-    </record>
-    <record id="p2p_course_category_scratch_high" model="p2p.course.category">
-        <field name="name">high</field>
-        <field name="color" eval="0"/>
-        <field name="parent_id" ref="p2p_course_category_scratch"/>
-    </record> -->
-  
+	<data>
+	    <record id="course_category_code" model="p2p.course.category">
+	        <field name="name">Code</field>
+	    </record>
+	    <record id="course_category_scratch" model="p2p.course.category">
+	        <field name="name">Scratch</field>
+	        <field name="parent_id" ref="p2p.course_category_code"/>
+	    </record>
+  	</data>
 </odoo>

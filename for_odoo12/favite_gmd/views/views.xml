@@ -47,6 +47,7 @@
 						<page string="Camera ini">
 							<field name="camera_ini" readonly="1" />
 						</page>
+						
 					</notebook>
 				</sheet>
 			</form>
@@ -65,7 +66,7 @@
 						<div name="summary_def">
 							<field name="description" />
 						</div>
-						<field name="camera_path"/>
+						<field name="source_path"/>
 					</group>
 					<footer>
 						<button string="Create" name="close_dialog" type="object"

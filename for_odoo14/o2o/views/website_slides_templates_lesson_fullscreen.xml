@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data>
+	
+<template id="slide_fullscreen" inherit_id="website_slides.slide_fullscreen" name="slide fullscreen">
+    <xpath expr="//div[hasclass('o_wslides_slide_fs_header')]//div" position="inside">
+    	<a class="o_wslides_fs_help d-flex align-items-center px-3" t-att-href="'/o2o/online/request/remote=%d?slide=/slides/slide/%s' %(slide.user_id.id,slug(slide))" target="new">
+             <i class="fa fa-phone"/><span class="d-none d-md-inline-block ml-1">Help</span>
+         </a>
+        <a class="o_switch o_switch_danger o_wslides_fs_audio d-flex align-items-center px-3" href="#">
+             <input type="checkbox"/>
+             <span/>
+             <span class="d-none d-md-inline-block ml-1">Speech</span>
+         </a>
+         
+    </xpath>
+    <xpath expr="//a[hasclass('o_wslides_fs_share')]" position="replace">
+    </xpath>
+    <xpath expr="//a[hasclass('o_wslides_fs_review')]" position="replace">
+    </xpath>
+    <xpath expr="//a[hasclass('o_wslides_fs_exit_fullscreen')]" position="replace">
+    </xpath>
+</template>
+
+<template id="slide_fullscreen_sidebar_category" inherit_id="website_slides.slide_fullscreen_sidebar_category" name="slide fullscreen sidebar category">
+    <xpath expr="//li[@t-att-data-id='slide.id']" position="attributes">
+        <attribute name="t-att-data-description">slide.description</attribute>
+    </xpath>
+    <xpath expr="//ul[@class='list-unstyled w-100 pt-2 small']" position="attributes">
+        <attribute name="t-if">slide.link_ids or slide.slide_resource_ids or (slide.question_ids and not slide.slide_type =='quiz') or slide.has_exercise</attribute>
+    </xpath>
+    <xpath expr="//ul[@class='list-unstyled w-100 pt-2 small']" position="inside">
+    	<li class="o_wslides_fs_sidebar_list_item pl-0 mb-1" t-if="slide.has_exercise">
+			<a t-if="can_access" class="o_wslides_fs_slide_exercise" t-att-href="'%s' % (slide.exercise_url)" t-att-index="i" target="new">
+				<i class="fa fa-pencil text-warning mr-2"/>Exercise
+			</a>
+		</li>
+
+    </xpath>
+</template>
+
+
+</data></odoo>

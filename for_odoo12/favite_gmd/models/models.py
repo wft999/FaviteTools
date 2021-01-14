@@ -6,12 +6,14 @@ import json
 import math
 import copy   
 from PIL import Image
+import shutil
 try:
     import configparser as ConfigParser
 except ImportError:
     import ConfigParser
  
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools
+from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -40,20 +42,22 @@ class Gmd(models.Model):
     
     @api.depends('camera_path')
     def _compute_name(self):
-        iniFile = os.path.join(self.camera_path, 'FISTConfig.ini')
-        iniConf = ConfigParser.RawConfigParser()
-        with open(iniFile, 'r') as f:
-            iniConf.read_string("[DEFAULT]\r\n" + f.read())
-            self.camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
+        for g in self:
+            iniFile = os.path.join(g.camera_path, 'FISTConfig.ini')
+            iniConf = ConfigParser.RawConfigParser()
+            with open(iniFile, 'r') as f:
+                iniConf.read_string("[DEFAULT]\r\n" + f.read())
+                g.camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
     
     @api.depends('camera_path')
     def _compute_ini(self):
-        iniFile = os.path.join(self.camera_path , self.camera_name)
-        iniConf = ConfigParser.RawConfigParser()
-        with open(iniFile, 'r') as f:
-            iniConf.read_string("[DEFAULT]\r\n" + f.read())
-            self.camera_ini =  json.dumps(iniConf._defaults,indent=5)
-    
+        for g in self:
+            iniFile = os.path.join(g.camera_path , g.camera_name)
+            iniConf = ConfigParser.RawConfigParser()
+            with open(iniFile, 'r') as f:
+                iniConf.read_string("[DEFAULT]\r\n" + f.read())
+                g.camera_ini =  json.dumps(iniConf._defaults,indent=5)
+            
     
     def _list_all_camers(self):
         cameras = []
@@ -72,17 +76,17 @@ class Gmd(models.Model):
                 continue
             
             cameras.append((subdir,subdir))
-                
-            glass_map = os.path.join(subdir , "glass.bmp")
-            if not os.path.isfile(glass_map):
-                iniFile = os.path.join(subdir, 'FISTConfig.ini')
-                iniConf = ConfigParser.RawConfigParser()
-                with open(iniFile, 'r') as f:
-                    iniConf.read_string("[DEFAULT]\r\n" + f.read())
-                    camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
-            
-                    self._generate_glass_map(subdir,camera_name)
-                
+#                 
+#             glass_map = os.path.join(subdir , "glass.bmp")
+#             if not os.path.isfile(glass_map):
+#                 iniFile = os.path.join(subdir, 'FISTConfig.ini')
+#                 iniConf = ConfigParser.RawConfigParser()
+#                 with open(iniFile, 'r') as f:
+#                     iniConf.read_string("[DEFAULT]\r\n" + f.read())
+#                     camera_name =  iniConf._defaults['CAMERA_FILE'.lower()]
+#             
+#                     self._generate_glass_map(subdir,camera_name)
+#                 
         return cameras
     
     @api.model
@@ -108,26 +112,82 @@ class Gmd(models.Model):
                 
         return camera
     
-    camera_path = fields.Selection(selection='_list_all_camers',default=_default_camera,string='Camera data path', required=True)
+    source_path = fields.Selection(selection='_list_all_camers',default=_default_camera,string='Camera data path', required=True)
+    camera_path = fields.Char(required=True)
     camera_name = fields.Text(compute='_compute_name')
     camera_ini = fields.Text(compute='_compute_ini')
     geo = fields.Jsonb(required=True,string = "geometry value",default=_default_geo)
     glass = fields.Jsonb(required=True,string = "glass value",default=_default_glass)
     color = fields.Integer('Color Index', default=0)
- 
-    _sql_constraints = [
-        
-    ]    
     
+    def compute_jpeg_path(self,ip,scan,block):
+        if self.x_img_path and self.x_img_path != '':
+            return os.path.join(self.x_img_path,'IP%d'%(ip+1),'jpegfile','AoiL_IP%d_scan%d_block%d.jpg'%(ip,scan,block))
+         
+        selfPath = os.path.join(self.camera_path,'Image','IP%d'%(ip+1),'jpegfile','AoiL_IP%d_scan%d_block%d.jpg'%(ip,scan,block))
+        if os.path.isfile(selfPath):
+            return selfPath
+         
+        sourcePath = os.path.join(self.source_path,'Image','IP%d'%(ip+1),'jpegfile','AoiL_IP%d_scan%d_block%d.jpg'%(ip,scan,block))
+        if os.path.isfile(sourcePath):
+            return sourcePath
+        
+        iniFile = os.path.join(self.camera_path, 'FISTConfig.ini')
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            ip_path = iniConf._defaults['net_path_ip%d'%(ip+1)]
+            backupPath = os.path.join(ip_path,'jpegfile','AoiL_IP%d_scan%d_block%d.jpg'%(ip,scan,block))
+            
+        if os.path.isfile(backupPath):
+            return backupPath
+        
+        raise UserError('Image file does not exist.')
+    
+    def compute_bmp_path(self,ip,scan):
+        if self.x_img_path and self.x_img_path != '':
+            return os.path.join(self.x_img_path,'IP%d'%(ip+1),'bmp','AoiL_IP%d_small%d.bmp'%(ip,scan))
+        
+        selfPath = os.path.join(self.camera_path,'Image','IP%d'%(ip+1),'bmp','AoiL_IP%d_small%d.bmp'%(ip,scan))
+        if os.path.isfile(selfPath):
+            return selfPath
+        
+        sourcePath = os.path.join(self.source_path,'Image','IP%d'%(ip+1),'bmp','AoiL_IP%d_small%d.bmp'%(ip,scan))
+        if os.path.isfile(sourcePath):
+            return sourcePath
+        
+        iniFile = os.path.join(self.camera_path, 'FISTConfig.ini')
+        iniConf = ConfigParser.RawConfigParser()
+        with open(iniFile, 'r') as f:
+            iniConf.read_string("[DEFAULT]\r\n" + f.read())
+            ip_path = iniConf._defaults['net_path_ip%d'%(ip+1)]
+            backupPath = os.path.join(ip_path,'bmp','AoiL_IP%d_small%d.bmp'%(ip,scan))
+            
+        if os.path.isfile(backupPath):
+            return backupPath
+        
+        raise UserError('Image file does not exist.')
+    
+    @api.one
+    @api.constrains('x_img_path')
+    def _check_img_path(self):
+        if self.x_img_path and self.x_img_path != '':
+            if not os.path.isfile(os.path.join(self.x_img_path,'IP1','jpegfile','AoiL_IP0_scan0_block0.jpg')):
+                raise ValidationError('Invalid image file directory.')
+        
     @api.model
     def create(self, vals):   
         root = tools.config['camera_data_path']     
-        if vals['camera_path'].endswith('default'):
-            newPath = os.path.join(root , vals['name'])
-            os.rename(vals['camera_path'],newPath)
-            vals['camera_path'] = newPath
+        newPath = os.path.join(root , vals['name'])
+        shutil.copytree(vals['source_path'],newPath,ignore=lambda src,names:[] if src == vals['source_path'] else names) 
+        vals['camera_path'] = newPath
         
-        return super(Gmd, self).create(vals)
+        gmd = super(Gmd, self).create(vals)
+        
+        if not os.path.isfile(os.path.join(gmd.camera_path , 'glass.bmp')):
+            gmd._generate_glass_map()
+        
+        return gmd
 
         
     def _create_block(self,vals):
@@ -187,9 +247,10 @@ class Gmd(models.Model):
             
         return dLeft,iRange_Left,iRange_Bottom
     
-    def _generate_glass_map(self,root,camera_name):
+    def _generate_glass_map(self):          
+        iniFile = os.path.join(self.camera_path , self.camera_name)
         conf = ConfigParser.RawConfigParser()
-        with open(os.path.join(root, camera_name), 'r') as f:
+        with open(iniFile, 'r') as f:
             conf.read_string("[DEFAULT]\r\n" + f.read())
             
         ip_num = int(conf._defaults['ip.number'])
@@ -205,7 +266,8 @@ class Gmd(models.Model):
         for ip in range(ip_num):
             for scan in range(scan_num):
                 dLeft,iRange_Left,iRange_Bottom = self._get_top_left(conf._defaults,ip,scan,dLeft)
-                imgFile = root + '\\Image\\IP%d\\bmp\\AoiL_IP%d_small%d.bmp'%(ip+1,ip,scan)
+                #imgFile = root + '\\Image\\IP%d\\bmp\\AoiL_IP%d_small%d.bmp'%(ip+1,ip,scan)
+                imgFile = self.compute_bmp_path(ip,scan)
                 dms.append({'imgFile':imgFile,'iRange_Left':iRange_Left,'iRange_Bottom':iRange_Bottom})
                 if iRange_Left > width:
                     width = iRange_Left
@@ -222,7 +284,7 @@ class Gmd(models.Model):
             dest.paste(im, (left,top))
             im.close()
                 
-        dest.save(root + '\glass.bmp', format="bmp")    
+        dest.save(os.path.join(self.camera_path , 'glass.bmp'), format="bmp")    
     
     def _generate_glass_map2(self,root,camera_name):
         conf = ConfigParser.RawConfigParser()
@@ -242,7 +304,8 @@ class Gmd(models.Model):
         for ip in range(ip_num):
             for scan in range(scan_num):
                 dLeft,iRange_Left,iRange_Bottom = self._get_top_left(conf._defaults,ip,scan,dLeft)
-                imgFile = root + '\\Image\\IP%d\\bmp\\AoiL_IP%d_small%d.bmp'%(ip+1,ip,scan)
+                #imgFile = root + '\\Image\\IP%d\\bmp\\AoiL_IP%d_small%d.bmp'%(ip+1,ip,scan)
+                imgFile = self.compute_bmp_path(ip,scan)
                 dms.append({'imgFile':imgFile,'iRange_Left':iRange_Left,'iRange_Bottom':iRange_Bottom})
                 if iRange_Left > width:
                     width = iRange_Left
@@ -273,8 +336,8 @@ class Gmd(models.Model):
                 if b is None or b['bHasIntersection'] == False:
                     continue;
                 
-                imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (root,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
-                
+                #imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (root,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                imgFile = self.compute_jpeg_path(b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
                 rw = int(b['iInterSectionWidth']*map_rate)
                 rh = int(b['iInterSectionHeight']*map_rate)
                 try:

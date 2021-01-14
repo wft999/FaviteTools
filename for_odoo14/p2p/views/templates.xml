@@ -2,19 +2,22 @@
 	<data>
 		<template id="assets_backend" name="webrtc backend assets" inherit_id="web.assets_backend">
 			<xpath expr="." position="inside">
+				<script type="text/javascript" src="/p2p/static/src/js/common.js"></script>
 				<script type="text/javascript" src="/p2p/static/src/js/web_client_bus.js"></script>
 			</xpath>
 		</template>
 		<template id="assets_frontend" name="webrtc frontend assets" inherit_id="web.assets_frontend">
 			<xpath expr="." position="inside">
+				<script type="text/javascript" src="/p2p/static/src/js/adapter.js"></script>
 				<script type="text/javascript" src="/p2p/static/src/js/webrtc.js"></script>
 			</xpath>
 		</template>
 		
 		<template id="assets_webslide">
         	<link rel="stylesheet" type='text/css' media='all' href="/p2p/static/lib/webslide/css/webslides.css" />
-			<link rel="stylesheet" type="text/css" media="all" href="/p2p/static/lib/webslide/css/svg-icons.css" />
 			<script type="text/javascript" src="/p2p/static/lib/webslide/js/webslides.js"></script>
+			
+			<link rel="stylesheet" type="text/css" media="all" href="/p2p/static/lib/webslide/css/svg-icons.css" />
 			<script type="text/javascript" src="/p2p/static/lib/webslide/js/svg-icons.js"></script>
     	</template>
 
@@ -67,44 +70,23 @@
             <t t-call-assets="web.assets_frontend_lazy" t-css="false" lazy_load="True"/>
         </xpath>
         <xpath expr="//t[@t-raw='0']" position="replace">
-        	<header role="banner">
-		      <nav role="navigation">
-		        <p class="logo"><a href="../index.html" title="WebSlides">WebSlides</a></p>
-		        <ul>
-		          <li class="github">
-		            <a rel="external" href="https://github.com/webslides/webslides" title="Github">
-		              <svg class="fa-github">
-		              </svg>
-		              <em>WebSlides</em>
-		            </a>
-		          </li>
-		          <li class="twitter">
-		            <a rel="external" href="https://twitter.com/webslides" title="Twitter">
-		              <svg class="fa-twitter">
-		              </svg>
-		              <em>@WebSlides</em>
-		            </a>
-		          </li>
-		        </ul>
-		      </nav>
-		    </header>
-        	<main role="main" t-attf-data-self="{{ self_id }}" t-attf-data-remote="{{ remote_id }}" t-attf-data-request="{{ is_request }}" t-attf-data-db="{{ cur_db }}">
+        	<main role="main" 
+        		t-attf-data-self="{{ self_id }}" 
+        		t-attf-data-remote="{{ remote_id }}" 
+        		t-attf-data-name="{{ remote_name }}" 
+        		t-attf-data-db="{{ cur_db }}">
 				<article class="vertical">
 					<section class="o_webrtc bg-black-blue aligncenter">
-					  <video class="background-video" autoplay="1" muted="1" poster="https://webslides.tv/static/images/working.jpg">
+					  <video class="background-video" autoplay="1" muted="1" poster="">
+					  <audio class="background-audio" autoplay="1"></audio>
           			  </video>
 			          <!--.wrap = container (width: 90%) with fadein animation -->
 			          <div class="wrap">
-			            <p class="text-subtitle">WebSlides Tutorial</p>
-			            <h1 class="text-landing">Classes</h1>
-			            <p class="text-symbols">* * * </p>
-			            <p>
-			              <a class="button ghost" href="https://github.com/webslides/webslides" title="Download WebSlides">
-			                Free Download
-			              </a>
-			            </p>
+			          	<img class="o_avatar"/>
+			            <p class="o_webrtc_staus text-intro">Connecting <span t-esc="remote_name" /> ......</p>
+			            <button class="o_sharing_screen button">Sharing screen</button>
+			           
 			          </div>
-			          <!-- .end .wrap -->
 			        </section>
 				</article>
 			</main>

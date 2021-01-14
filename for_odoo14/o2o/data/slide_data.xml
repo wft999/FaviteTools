@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="slide_channel_tag_group_category" model="slide.channel.tag.group">
+            <field name="name">Course category</field>
+            <field name="is_published" eval="True"/>
+        </record>
+        <record id="slide_channel_tag_category_basic" model="slide.channel.tag">
+            <field name="name">Scratch</field>
+            <field name="color">10</field>
+            <field name="group_id" ref="o2o.slide_channel_tag_group_category"/>
+        </record>
+        <record id="slide_channel_tag_category_intermediate" model="slide.channel.tag">
+            <field name="name">C</field>
+            <field name="color">3</field>
+            <field name="group_id" ref="o2o.slide_channel_tag_group_category"/>
+        </record>
+        <record id="slide_channel_tag_category_advanced" model="slide.channel.tag">
+            <field name="name">C++</field>
+            <field name="color">1</field>
+            <field name="group_id" ref="o2o.slide_channel_tag_group_category"/>
+        </record>
+        <record id="slide_channel_tag_category_advanced" model="slide.channel.tag">
+            <field name="name">Python</field>
+            <field name="color">1</field>
+            <field name="group_id" ref="o2o.slide_channel_tag_group_category"/>
+        </record>
+        <record id="slide_channel_tag_category_advanced" model="slide.channel.tag">
+            <field name="name">Javascript</field>
+            <field name="color">1</field>
+            <field name="group_id" ref="o2o.slide_channel_tag_group_category"/>
+        </record>
+    </data>
+</odoo>

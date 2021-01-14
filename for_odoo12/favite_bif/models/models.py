@@ -19,7 +19,7 @@ class Pad(models.Model):
     gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')
     src_panel_id = fields.Many2one('favite_bif.panel',ondelete='set null',domain="[('gmd_id', '=', gmd_id)]") 
     
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     @api.multi  
@@ -55,7 +55,7 @@ class Gsp(models.Model):
     src_panel_id = fields.Many2one('favite_bif.panel',ondelete='set null', domain="[('gmd_id', '=', gmd_id)]")  
     panel_polygon_file = fields.Char()
 
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True) 
     
     @api.multi
@@ -127,7 +127,7 @@ class Panel(models.Model):
     gsp_id = fields.Many2one('favite_bif.gsp',ondelete='set null',domain="[('bif_id', '=', bif_id)]")
     
     gmd_id = fields.Many2one('favite_gmd.gmd',related='bif_id.gmd_id')
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     @api.multi
@@ -178,7 +178,7 @@ class Bif(models.Model):
         
     geo = fields.Jsonb(string = "geometry value",compute='_compute_geo',inverse='_inverse_geo')
     
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade')

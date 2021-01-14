@@ -3,6 +3,7 @@ import logging
 import os       
 import sympy
 import copy   
+import math 
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 try:
     import configparser as ConfigParser
@@ -29,7 +30,7 @@ class Fixpoint(models.Model):
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
     
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     @api.multi
@@ -83,11 +84,12 @@ class Fixpoint(models.Model):
         for f in geo['region']['objs']:
             p1 = f['points'][0]
             p2 = f['points'][1]
-            left = min(p1['x'],p2['x'])
-            right = max(p1['x'],p2['x'])
-            bottom = min(p1['y'],p2['y'])
-            top = max(p1['y'],p2['y'])
-            strRegion += 'region.%d.position = %f,%f,%f,%f\n' % (num,left,top,right,bottom)
+            left = int(min(p1['x'],p2['x']))
+            right = int(max(p1['x'],p2['x']))
+            bottom = int(min(p1['y'],p2['y']))
+            top = int(max(p1['y'],p2['y']))
+            strRegion += 'region.%d.name = %s\n' % (num,f['name'])
+            strRegion += 'region.%d.position = %d,%d,%d,%d\n' % (num,(left+right)/2,(top+bottom)/2,right-left,top-bottom)
             num = num + 1
         strRegion += 'region.number = %d\n' % (num,)
 
@@ -140,10 +142,10 @@ class Fixpoint(models.Model):
             
             m = int(par.get('region.number',0))
             for j in range(0, m):
-                left,top,right,bottom = (float(s) for s in par['region.%d.position'%j].split(','))
+                cx,cy,w,h = (float(s) for s in par['region.%d.position'%j].split(','))
                 o = {'points':[]}
-                o['points'].append({'x':left,'y':top})
-                o['points'].append({'x':right,'y':bottom})
+                o['points'].append({'x':cx-w/2,'y':cy+h/2})
+                o['points'].append({'x':cx+w/2,'y':cy-h/2})
                 geo['region']['objs'].append(o)
                 
             obj['geo'] = geo

@@ -3,6 +3,7 @@ import logging
 import os       
 import sympy
 import copy   
+import math 
 from odoo import models, fields, api, SUPERUSER_ID, sql_db, registry, tools,_
 try:
     import configparser as ConfigParser
@@ -29,7 +30,7 @@ class Mark(models.Model):
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', require=True)
     
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     @api.multi

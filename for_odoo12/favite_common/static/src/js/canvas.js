@@ -742,7 +742,7 @@ var Polyline = Class.extend({
 		}
 		
 		var colors = [0,'#f06050','#f4a460','#f7cd1f','#6cc1ed','#814968','#eb7e7f','#2c8397','#475577','#d6145f','#30c381','#9365b8']
-		if(this.obj.name && this.points.length >= 2 &&( this.type == 'block' ||  this.type == 'panel')){
+		if(this.obj.name && this.points.length >= 2 &&( this.type == 'block' ||  this.type == 'panel'||  this.type == 'region')){
 			var name = this.obj.name;
 			var color = this.color;
 			if(this.type == 'panel' && !this.obj.gsp){

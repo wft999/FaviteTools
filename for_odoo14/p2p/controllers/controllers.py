@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
 from odoo import http
-from Demos.BackupRead_BackupWrite import pss
 import werkzeug
 import json
 from odoo.http import request
+from odoo.addons.bus.controllers.main import BusController
+from odoo.addons.bus.models.bus import dispatch
+
+class WebrtcBusController(BusController):
+    # override to add channels
+    def _poll(self, dbname, channels, last, options):
+#       referrer_url = request.httprequest.headers.get('Referer', '')
+
+        if request.session.uid and 'bus_inactivity' in options:
+            request.env['bus.presence'].update(options.get('bus_inactivity'),options.get('is_webrtc'))
+
+        request.cr.close()
+        request._cr = None
+        return dispatch.poll(dbname, channels, last, options)
 
 class Course(http.Controller):  
     @http.route('/p2p/answer/<int:id>', type='http', methods=['GET'],auth="user")
@@ -30,27 +43,18 @@ class Course(http.Controller):
             'content': content,
         })
         
-    @http.route('/p2p/online/request/<int:remote>', type='http', auth="user", website=True)
+    @http.route('/p2p/online/<int:remote>', type='http', auth="user", website=True)
     def online_request(self,remote, **kw):
         db = request.db
         self_id = request.uid
+        remote_user = http.request.env['res.users'].browse(remote)
         return http.request.render('p2p.webrtc', {
             'self_id':self_id,
             'remote_id':remote,
-            'is_request':1,
+            'remote_name':remote_user.name,
             'cur_db':db
         })
-        
-    @http.route('/p2p/online/accept/<int:remote>', type='http', auth="user", website=True)
-    def online_accept(self,remote, **kw):
-        db = request.db
-        self_id = request.uid
-        return http.request.render('p2p.webrtc', {
-            'self_id':self_id,
-            'remote_id':remote,
-            'is_request':0,
-            'cur_db':db
-        })
+
         
 #     @http.route('/p2p/course/answer/<int:id>', type='http', auth="user", website=True)
 #     def do_exercise(self,id, **kw):

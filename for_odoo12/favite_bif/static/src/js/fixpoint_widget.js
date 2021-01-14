@@ -15,9 +15,10 @@ var _t = core._t;
 
 
 var WidgetInfo = Widget.extend({
-	template: 'favite_bif.info',
-    events: {
-
+	template: 'favite_fixpoint.info',
+	events: {
+    	'change input': '_onDataChange',
+    	'click button.fa-trash' : '_onDeleteAll'
     },
 
     init: function(){
@@ -42,6 +43,7 @@ var WidgetInfo = Widget.extend({
         var self = this;
         return this._super.apply(this, arguments).then(function () {
         	core.bus.on('map_select_change', self, self._onMapSelectChange);
+        	self.$('input[name="name"]').hide();
         	
         	return $.when();
         });
@@ -60,7 +62,34 @@ var WidgetInfo = Widget.extend({
     		return
     		
     	var curPolyline = src.map.curPolyline;
+    	if(curPolyline){
+    		this.obj_id = _.findIndex(this.geo[curPolyline.type].objs,o=>{return _.isEqual(o.points,curPolyline.obj.points)});
+    		if(curPolyline.type == 'region'){
+    			this.$('input[name="name"]')[0].value = curPolyline.obj.name;
+    		}
+    		self.$('input[name="name"]').show();
+    	}else{
+    		self.$('input[name="name"]').hide();
+    	}
     },
+    _onDataChange: function(e){
+    	this.geo.region.objs[this.obj_id].name = this.$('input[name="name"]')[0].value;
+
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    },
+    _onDeleteAll: function(){
+    	this.geo.region.objs=[];
+
+    	this.trigger_up('field_changed', {
+            dataPointID: this.getParent().state.id,
+            changes:{geo:this.geo},
+            noundo:true
+        });
+    }
     
 });
 

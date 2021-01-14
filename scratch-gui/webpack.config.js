@@ -110,7 +110,7 @@ module.exports = [
             'player': './src/playground/player.jsx'
         },
         output: {
-            path: path.resolve(__dirname, '../for_odoo14/p2p/static/lib/block'),
+            path: path.resolve(__dirname, '../for_odoo14/o2o/static/lib/scratch'),
             filename: '[name].js'
         },
         externals: {
@@ -146,7 +146,7 @@ module.exports = [
             new HtmlWebpackPlugin({
                 chunks: ['lib.min', 'gui'],
                 template: 'src/playground/index.ejs',
-                title: 'Block',
+                title: 'Scratch',
                 sentryConfig: process.env.SENTRY_CONFIG ? '"' + process.env.SENTRY_CONFIG + '"' : null
             }),
             new HtmlWebpackPlugin({

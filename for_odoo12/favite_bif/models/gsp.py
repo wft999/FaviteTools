@@ -103,7 +103,7 @@ class Gsp(models.Model):
     pad_id = fields.Many2one('favite_bif.pad',ondelete='set null',domain="[('gmd_id', '=', gmd_id),('src_panel_id', '=', src_panel_id)]")  
     src_panel_id = fields.Many2one('favite_bif.panel',ondelete='cascade', domain="[('bif_id', '=', bif_id)]")  
 
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True) 
     
     
@@ -215,7 +215,8 @@ class Gsp(models.Model):
                     continue;
                 
                 try:
-                    imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    #imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    imgFile = self.gmd_id.compute_jpeg_path(b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
                     with Image.open(imgFile) as im:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
                         region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))
@@ -251,7 +252,8 @@ class Gsp(models.Model):
                     continue;
                 
                 try:
-                    imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    #imgFile = '%s/Image/IP%d/jpegfile/AoiL_IP%d_scan%d_block%d.jpg' % (self.camera_path,b['iIPIndex']+1,b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
+                    imgFile = self.gmd_id.compute_jpeg_path(b['iIPIndex'],b['iScanIndex'],b['iBlockIndex'])
                     with Image.open(imgFile) as im:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
                         region = im.crop((b['iInterSectionStartX'] ,im.height-(b['iInterSectionStartY']+b['iInterSectionHeight']),b['iInterSectionStartX']+ b['iInterSectionWidth'], im.height-b['iInterSectionStartY']))

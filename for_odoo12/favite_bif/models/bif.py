@@ -38,7 +38,7 @@ class Panel(models.Model):
     gsp_id = fields.Many2one('favite_bif.gsp',ondelete='set null',domain="[('bif_id', '=', bif_id)]")
     
     gmd_id = fields.Many2one('favite_gmd.gmd',related='bif_id.gmd_id')
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     @api.multi
@@ -134,7 +134,7 @@ class Bif(models.Model):
     geo = fields.Jsonb(string = "geometry value",compute='_compute_geo',inverse='_inverse_geo')
     glass = fields.Jsonb(related='gmd_id.glass', readonly=True)
     
-    camera_path = fields.Selection(related='gmd_id.camera_path', readonly=True)
+    camera_path = fields.Char(related='gmd_id.camera_path', readonly=True)
     camera_ini = fields.Text(related='gmd_id.camera_ini', readonly=True)
     
     gmd_id = fields.Many2one('favite_gmd.gmd',ondelete='cascade', required=True)
@@ -148,11 +148,7 @@ class Bif(models.Model):
     panel_ids = fields.One2many('favite_bif.panel', 'bif_id', string='Panel')
     gsp_ids = fields.One2many('favite_bif.gsp', 'bif_id', string='Gsp')
     
-    color = fields.Integer('Color Index', default=0)
- 
-    _sql_constraints = [
-        
-    ]    
+    color = fields.Integer('Color Index', default=0) 
     
     @api.multi  
     def open_map(self):

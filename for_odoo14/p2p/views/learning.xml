@@ -30,16 +30,18 @@
 			<field name="arch" type="xml">
 				<form string="step">
 					<field name="status" invisible="1"/>
+					<field name="is_self_requested" invisible="1"/>
+					<header>
+                        <button name="action_accept_online" string="Accept" type="object" class="oe_highlight oe_read_only"  attrs="{'invisible': [('is_self_requested', '!=', True)]}"/>
+                        <button name="action_Cancel_online" string="Cancel" type="object" class="oe_read_only"  attrs="{'invisible': [('is_self_requested', '!=', True)]}"/>
+                    </header>
 					<sheet>
 						<widget  name="web_ribbon" title="passed" bg_color="bg-success" attrs="{'invisible': [('status', '!=', 'passed')]}" />
 
 						<div class="oe_button_box" name="button_box" groups="base.group_user">
-							<button  class="oe_stat_button" name="action_listen" type="object" icon="fa-headphones">
-								listen
-	                        </button>
-	                        <button  class="oe_stat_button" name="action_online" type="object" icon="fa-phone">
-								online
-	                        </button>
+						
+							<button  class="oe_stat_button" name="action_watch_slide" type="object" icon="fa-headphones">Slide</button>
+	                        <button  class="oe_stat_button" name="action_request_online" type="object" icon="fa-phone">1-1 Call</button>
                     	</div>
 						<div class="oe_title">
 							<h1>

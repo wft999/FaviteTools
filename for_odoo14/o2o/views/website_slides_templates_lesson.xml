@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo><data>
+	
+<template id="slide_aside_training_category" inherit_id="website_slides.slide_aside_training_category" name="slide aside training category">
+    <xpath expr="//ul[@class='list-group px-2 mb-1 list-unstyled']" position="attributes">
+        <attribute name="t-if">aside_slide.link_ids or aside_slide.slide_resource_ids or aside_slide.question_ids or aside_slide.has_exercise</attribute>
+    </xpath>
+    <xpath expr="//ul[@class='list-group px-2 mb-1 list-unstyled']" position="inside">
+            <li t-if="aside_slide.has_exercise" class="pl-4">
+                <a t-att-href="'%s' % (aside_slide.exercise_url)" class="o_wslides_lesson_aside_list_link text-decoration-none small text-600" target="new">
+                    <i class="fa fa-pencil text-primary"/> Do exercise
+                </a>
+            </li>
+    </xpath>
+</template>
+
+
+</data></odoo>
